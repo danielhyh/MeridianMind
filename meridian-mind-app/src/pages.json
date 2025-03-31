@@ -1,0 +1,110 @@
+{
+  "globalStyle": {
+    "navigationStyle": "default",
+    "navigationBarTitleText": "unibest",
+    "navigationBarBackgroundColor": "#f8f8f8",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#FFFFFF"
+  },
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      "^wd-(.*)": "wot-design-uni/components/wd-$1/wd-$1.vue",
+      "^(?!z-paging-refresh|z-paging-load-more)z-paging(.*)": "z-paging/components/z-paging$1/z-paging$1.vue"
+    }
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#999999",
+    "selectedColor": "#018d71",
+    "backgroundColor": "#F8F8F8",
+    "borderStyle": "black",
+    "height": "50px",
+    "fontSize": "10px",
+    "iconWidth": "24px",
+    "spacing": "3px",
+    "list": [
+      {
+        "pagePath": "pages/message/index",
+        "text": "消息",
+        "icon": "i-ic-outline-message",
+        "iconType": "unocss"
+      },
+      {
+        "pagePath": "pages/colab/index",
+        "text": "协作",
+        "icon": "i-ic-outline-handshake",
+        "iconType": "unocss"
+      },
+      {
+        "pagePath": "pages/work/index",
+        "text": "工作台",
+        "icon": "i-ic-baseline-apps",
+        "iconType": "unocss"
+      },
+      {
+        "pagePath": "pages/contacts/index",
+        "text": "通讯录",
+        "icon": "i-ic-baseline-contact-page",
+        "iconType": "unocss"
+      },
+      {
+        "pagePath": "pages/my/index",
+        "text": "我的",
+        "icon": "i-ic-baseline-person",
+        "iconType": "unocss"
+      }
+    ]
+  },
+  "pages": [
+    {
+      "path": "pages/work/index",
+      "type": "home",
+      "layout": "tabbar",
+      "style": {
+        "navigationBarTitleText": "工作台"
+      }
+    },
+    {
+      "path": "pages/colab/index",
+      "type": "page",
+      "layout": "tabbar",
+      "style": {
+        "navigationBarTitleText": "协作"
+      }
+    },
+    {
+      "path": "pages/contacts/index",
+      "type": "page",
+      "layout": "tabbar",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "通讯录"
+      }
+    },
+    {
+      "path": "pages/login/index",
+      "type": "page",
+      "style": {
+        "navigationBarTitleText": "登录页面"
+      }
+    },
+    {
+      "path": "pages/message/index",
+      "type": "page",
+      "layout": "tabbar",
+      "style": {
+        "navigationBarTitleText": "消息"
+      }
+    },
+    {
+      "path": "pages/my/index",
+      "type": "page",
+      "layout": "tabbar",
+      "style": {
+        "navigationBarTitleText": "我的"
+      }
+    }
+  ],
+  "subPackages": []
+}

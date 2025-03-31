@@ -1,0 +1,92 @@
+export default [
+  {
+    title: 'IT中心工作群',
+    content: '今天下午2点到5点，开部门会议，请各位提前准备好汇报材料。',
+    time: '昨天 15:30',
+    avatar: '/static/images/avatar1.jpg',
+  },
+  {
+    title: '产品设计讨论组',
+    content: '关于新功能的设计稿，大家有什么建议可以在群里提出来。',
+    time: '昨天 18:45',
+    avatar: '/static/images/avatar2.jpg',
+  },
+  {
+    title: '前端开发小组',
+    content: '明天开始进行项目代码review，请各位准备好自己的代码。',
+    time: '今天 09:00',
+    avatar: '/static/images/avatar3.jpg',
+  },
+  {
+    title: '公司年会筹备组',
+    content: '年会节目征集开始了，欢迎大家积极报名参加！',
+    time: '今天 10:20',
+    avatar: '/static/images/avatar4.jpg',
+  },
+  {
+    title: '技术分享会',
+    content: '本周五下午的技术分享会主题是“Vue 3的新特性”，不要错过哦。',
+    time: '今天 14:30',
+    avatar: '/static/images/avatar5.jpg',
+  },
+  {
+    title: 'IT中心工作群',
+    content: '今天下午2点到5点，开部门会议，请各位提前准备好汇报材料。',
+    time: '昨天 15:30',
+    avatar: '/static/images/avatar1.jpg',
+  },
+  {
+    title: '产品设计讨论组',
+    content: '关于新功能的设计稿，大家有什么建议可以在群里提出来。',
+    time: '昨天 18:45',
+    avatar: '/static/images/avatar2.jpg',
+  },
+  {
+    title: '前端开发小组',
+    content: '明天开始进行项目代码review，请各位准备好自己的代码。',
+    time: '今天 09:00',
+    avatar: '/static/images/avatar3.jpg',
+  },
+  {
+    title: '公司年会筹备组',
+    content: '年会节目征集开始了，欢迎大家积极报名参加！',
+    time: '今天 10:20',
+    avatar: '/static/images/avatar4.jpg',
+  },
+  {
+    title: '技术分享会',
+    content: '本周五下午的技术分享会主题是“Vue 3的新特性”，不要错过哦。',
+    time: '今天 14:30',
+    avatar: '/static/images/avatar5.jpg',
+  },
+  {
+    title: 'IT中心工作群',
+    content: '今天下午2点到5点，开部门会议，请各位提前准备好汇报材料。',
+    time: '昨天 15:30',
+    avatar: '/static/images/avatar2.jpg',
+  },
+  {
+    title: '产品设计讨论组',
+    content: '关于新功能的设计稿，大家有什么建议可以在群里提出来。',
+    time: '昨天 18:45',
+    avatar: '/static/images/avatar1.jpg',
+  },
+  {
+    title: '前端开发小组',
+    content: '明天开始进行项目代码review，请各位准备好自己的代码。',
+    time: '今天 09:00',
+    avatar: '/static/images/avatar3.jpg',
+  },
+  {
+    title: '公司年会筹备组',
+    content: '年会节目征集开始了，欢迎大家积极报名参加！',
+    time: '今天 10:20',
+    avatar: '/static/images/avatar2.jpg',
+  },
+  {
+    title: '技术分享会',
+    content: '本周五下午的技术分享会主题是“Vue 3的新特性”，不要错过哦。',
+    time: '今天 14:30',
+    avatar: '/static/images/avatar4.jpg',
+  },
+]
