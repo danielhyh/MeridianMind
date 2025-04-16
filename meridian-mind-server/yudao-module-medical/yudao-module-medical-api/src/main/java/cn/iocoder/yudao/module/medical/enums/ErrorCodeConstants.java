@@ -9,4 +9,5 @@ import cn.iocoder.yudao.framework.common.exception.ErrorCode;
  */
 public interface ErrorCodeConstants {
     ErrorCode PATIENT_PROFILE_NOT_EXISTS = new ErrorCode(1_060_000_000, "患者不存在");
+    ErrorCode DIAGNOSTIC_NOT_EXISTS = new ErrorCode(1_060_000_001, "问诊记录不存在");
 }

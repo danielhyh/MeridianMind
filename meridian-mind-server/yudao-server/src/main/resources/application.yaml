@@ -266,5 +266,14 @@ yudao:
       kd100:
         key: pLXUGAwK5305
         customer: E77DF18BE109F454A5CD319E44BF5177
-
+    # 四诊服务配置
+    four-diagnosis:
+      # 四诊服务URL
+      service-url: http://localhost:8000
+      # 舌象分析端点
+      tongue-analysis-endpoint: /api/tongue/analyze
+      # 面色分析端点
+      face-analysis-endpoint: /api/face/analyze
+      # 语音分析端点
+      voice-analysis-endpoint: /api/voice/analyze
 debug: false

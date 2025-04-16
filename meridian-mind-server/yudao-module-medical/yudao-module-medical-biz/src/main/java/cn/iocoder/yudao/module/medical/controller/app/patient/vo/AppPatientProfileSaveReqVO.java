@@ -6,7 +6,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 
-@Schema(description = "管理后台 - 患者管理新增/修改 Request VO")
+@Schema(description = "APP 用户 - 患者管理新增/修改 Request VO")
 @Data
 public class AppPatientProfileSaveReqVO {
 

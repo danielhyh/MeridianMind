@@ -3,11 +3,16 @@ package cn.iocoder.yudao.module.member.service.user;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.lang.Assert;
-import cn.hutool.core.util.*;
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.enums.CommonStatusEnum;
 import cn.iocoder.yudao.framework.common.enums.UserTypeEnum;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
+import cn.iocoder.yudao.module.medical.api.patient.MedicalPatientApi;
+import cn.iocoder.yudao.module.medical.api.patient.dto.PatientProfileCreateReqDTO;
 import cn.iocoder.yudao.module.member.controller.admin.user.vo.MemberUserPageReqVO;
 import cn.iocoder.yudao.module.member.controller.admin.user.vo.MemberUserUpdateReqVO;
 import cn.iocoder.yudao.module.member.controller.app.user.vo.*;
@@ -22,6 +27,8 @@ import cn.iocoder.yudao.module.system.api.social.SocialClientApi;
 import cn.iocoder.yudao.module.system.api.social.dto.SocialWxPhoneNumberInfoRespDTO;
 import cn.iocoder.yudao.module.system.enums.sms.SmsSceneEnum;
 import com.google.common.annotations.VisibleForTesting;
+import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,8 +36,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import jakarta.annotation.Resource;
-import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -63,6 +68,9 @@ public class MemberUserServiceImpl implements MemberUserService {
 
     @Resource
     private MemberUserProducer memberUserProducer;
+
+    @Resource
+    private MedicalPatientApi medicalPatientApi;
 
     @Override
     public MemberUserDO getUserByMobile(String mobile) {
@@ -109,6 +117,10 @@ public class MemberUserServiceImpl implements MemberUserService {
         }
         memberUserMapper.insert(user);
 
+        // 初始化患者健康档案
+        PatientProfileCreateReqDTO patientProfileCreateReqDTO = new PatientProfileCreateReqDTO()
+                .setMemberUserId(user.getId());
+        medicalPatientApi.createPatientProfile(patientProfileCreateReqDTO);
         // 发送 MQ 消息：用户创建
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
 

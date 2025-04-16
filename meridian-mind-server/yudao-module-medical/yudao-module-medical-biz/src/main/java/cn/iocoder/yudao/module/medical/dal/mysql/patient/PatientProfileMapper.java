@@ -1,13 +1,11 @@
 package cn.iocoder.yudao.module.medical.dal.mysql.patient;
 
-import java.util.*;
-
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
-import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
+import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
+import cn.iocoder.yudao.module.medical.controller.admin.patient.vo.PatientProfilePageReqVO;
 import cn.iocoder.yudao.module.medical.dal.dataobject.patient.PatientProfileDO;
 import org.apache.ibatis.annotations.Mapper;
-import cn.iocoder.yudao.module.medical.controller.admin.patient.vo.*;
 
 /**
  * 患者管理 Mapper
@@ -31,4 +29,7 @@ public interface PatientProfileMapper extends BaseMapperX<PatientProfileDO> {
                 .orderByDesc(PatientProfileDO::getId));
     }
 
+    default PatientProfileDO selectByMemberId(Long memberId) {
+        return selectOne(new LambdaQueryWrapperX<PatientProfileDO>().eq(PatientProfileDO::getMemberUserId, memberId));
+    }
 }

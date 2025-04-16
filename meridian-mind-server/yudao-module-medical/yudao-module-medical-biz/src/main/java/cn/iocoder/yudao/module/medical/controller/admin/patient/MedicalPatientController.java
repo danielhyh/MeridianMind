@@ -3,10 +3,10 @@ package cn.iocoder.yudao.module.medical.controller.admin.patient;
 import cn.hutool.core.collection.CollUtil;
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
-import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
-import cn.iocoder.yudao.module.medical.controller.admin.patient.vo.PatientProfileRespVO;
+import cn.iocoder.yudao.module.medical.controller.admin.patient.vo.MedicalPatientRespVO;
+import cn.iocoder.yudao.module.medical.convert.patient.MedicalPatientConvert;
 import cn.iocoder.yudao.module.medical.dal.dataobject.patient.PatientProfileDO;
-import cn.iocoder.yudao.module.medical.service.patient.PatientService;
+import cn.iocoder.yudao.module.medical.service.patient.MermaidPatientService;
 import cn.iocoder.yudao.module.member.controller.admin.user.vo.MemberUserPageReqVO;
 import cn.iocoder.yudao.module.member.controller.admin.user.vo.MemberUserRespVO;
 import cn.iocoder.yudao.module.member.controller.admin.user.vo.MemberUserUpdateReqVO;
@@ -39,10 +39,10 @@ import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.
 @RestController
 @RequestMapping("/medical/patient")
 @Validated
-public class PatientController {
+public class  MedicalPatientController {
 
     @Resource
-    private PatientService patientProfileService;
+    private MermaidPatientService patientService;
     @Resource
     private MemberUserService memberUserService;
     @Resource
@@ -51,7 +51,7 @@ public class PatientController {
     private MemberGroupService memberGroupService;
 
     @PutMapping("/update")
-    @Operation(summary = "更新患者管理")
+    @Operation(summary = "更新患者基本信息")
     @PreAuthorize("@ss.hasPermission('medical:patient:update')")
     public CommonResult<Boolean> updatePatient(@Valid @RequestBody MemberUserUpdateReqVO updateReqVO) {
         memberUserService.updateUser(updateReqVO);
@@ -59,12 +59,13 @@ public class PatientController {
     }
 
     @GetMapping("/get")
-    @Operation(summary = "获得患者管理")
+    @Operation(summary = "获得患者信息")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
     @PreAuthorize("@ss.hasPermission('medical:patient:query')")
-    public CommonResult<MemberUserRespVO> getPatient(@RequestParam("id") Long id) {
+    public CommonResult<MedicalPatientRespVO> getPatient(@RequestParam("id") Long id) {
         MemberUserDO user = memberUserService.getUser(id);
-        return success(MemberUserConvert.INSTANCE.convert03(user));
+        PatientProfileDO profile = patientService.getPatientProfile(id);
+        return success(MedicalPatientConvert.INSTANCE.convert03(user, profile));
     }
 
     @GetMapping("/page")
@@ -89,12 +90,4 @@ public class PatientController {
         return success(MemberUserConvert.INSTANCE.convertPage(pageResult, tags, null, groups));
     }
 
-    @GetMapping("/profile/get")
-    @Operation(summary = "获得健康档案信息")
-    @Parameter(name = "id", description = "编号", required = true, example = "1024")
-    @PreAuthorize("@ss.hasPermission('medical:patient:query')")
-    public CommonResult<PatientProfileRespVO> getPatientProfile(@RequestParam("id") Long id) {
-        PatientProfileDO profile = patientProfileService.getPatientProfile(id);
-        return success(BeanUtils.toBean(profile, PatientProfileRespVO.class));
-    }
 }
