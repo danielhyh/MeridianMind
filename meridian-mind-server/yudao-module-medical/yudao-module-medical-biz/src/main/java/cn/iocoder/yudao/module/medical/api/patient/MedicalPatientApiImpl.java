@@ -6,7 +6,7 @@ import cn.iocoder.yudao.module.medical.api.patient.dto.PatientProfileDTO;
 import cn.iocoder.yudao.module.medical.api.patient.dto.PatientProfileUpdateReqDTO;
 import cn.iocoder.yudao.module.medical.controller.app.patient.vo.AppPatientProfileSaveReqVO;
 import cn.iocoder.yudao.module.medical.dal.dataobject.patient.PatientProfileDO;
-import cn.iocoder.yudao.module.medical.service.patient.MermaidPatientService;
+import cn.iocoder.yudao.module.medical.service.patient.PatientService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -19,7 +19,7 @@ import org.springframework.validation.annotation.Validated;
 public class MedicalPatientApiImpl implements MedicalPatientApi {
 
     @Resource
-    private MermaidPatientService patientService;
+    private PatientService patientService;
     
     @Override
     public PatientProfileDTO getPatientProfile(Long memberId) {

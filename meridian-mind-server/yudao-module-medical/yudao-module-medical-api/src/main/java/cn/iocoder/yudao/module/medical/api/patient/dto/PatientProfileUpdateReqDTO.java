@@ -11,7 +11,7 @@ public class PatientProfileUpdateReqDTO {
     private Long id;
 
     @NotNull(message = "会员用户ID不能为空")
-    private Long memberUserId;
+    private Long userId;
 
     private BigDecimal height;
 

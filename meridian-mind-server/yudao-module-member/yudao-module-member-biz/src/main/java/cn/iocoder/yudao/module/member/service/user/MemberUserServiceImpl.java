@@ -119,7 +119,7 @@ public class MemberUserServiceImpl implements MemberUserService {
 
         // 初始化患者健康档案
         PatientProfileCreateReqDTO patientProfileCreateReqDTO = new PatientProfileCreateReqDTO()
-                .setMemberUserId(user.getId());
+                .setUserId(user.getId());
         medicalPatientApi.createPatientProfile(patientProfileCreateReqDTO);
         // 发送 MQ 消息：用户创建
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {

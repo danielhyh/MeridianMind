@@ -6,7 +6,7 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.module.medical.controller.admin.patient.vo.MedicalPatientRespVO;
 import cn.iocoder.yudao.module.medical.convert.patient.MedicalPatientConvert;
 import cn.iocoder.yudao.module.medical.dal.dataobject.patient.PatientProfileDO;
-import cn.iocoder.yudao.module.medical.service.patient.MermaidPatientService;
+import cn.iocoder.yudao.module.medical.service.patient.PatientService;
 import cn.iocoder.yudao.module.member.controller.admin.user.vo.MemberUserPageReqVO;
 import cn.iocoder.yudao.module.member.controller.admin.user.vo.MemberUserRespVO;
 import cn.iocoder.yudao.module.member.controller.admin.user.vo.MemberUserUpdateReqVO;
@@ -42,7 +42,7 @@ import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.
 public class  MedicalPatientController {
 
     @Resource
-    private MermaidPatientService patientService;
+    private PatientService patientService;
     @Resource
     private MemberUserService memberUserService;
     @Resource

@@ -8,6 +8,7 @@ import cn.iocoder.yudao.module.medical.dal.dataobject.patient.PatientProfileDO;
 import cn.iocoder.yudao.module.medical.dal.mysql.patient.PatientProfileMapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
@@ -20,7 +21,7 @@ import static cn.iocoder.yudao.module.medical.enums.ErrorCodeConstants.PATIENT_P
  */
 @Service
 @Validated
-public class MermaidPatientServiceImpl implements MermaidPatientService {
+public class PatientServiceImpl implements PatientService {
 
     @Resource
     private PatientProfileMapper patientProfileMapper;
@@ -65,6 +66,17 @@ public class MermaidPatientServiceImpl implements MermaidPatientService {
     @Override
     public PageResult<PatientProfileDO> getPatientProfilePage(PatientProfilePageReqVO pageReqVO) {
         return patientProfileMapper.selectPage(pageReqVO);
+    }
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateConstitutionType(Long memberId, String constitutionType) {
+        // 查询用户健康档案
+        PatientProfileDO profile = patientProfileMapper.selectByMemberId(memberId);
+
+        // 更新体质类型
+        patientProfileMapper.updateById(new PatientProfileDO()
+                .setId(profile.getId())
+                .setConstitutionType(constitutionType));
     }
 
 }

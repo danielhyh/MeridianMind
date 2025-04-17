@@ -19,7 +19,7 @@ public class PatientProfileDTO implements Serializable {
     /**
      * 会员用户ID
      */
-    private Long memberUserId;
+    private Long userId;
     
     /**
      * 身高(cm)

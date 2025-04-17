@@ -15,7 +15,7 @@ public class AppPatientProfileSaveReqVO {
 
     @Schema(description = "会员用户ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "28025")
     @NotNull(message = "会员用户ID不能为空")
-    private Long memberUserId;
+    private Long userId;
 
     @Schema(description = "身高(cm)")
     private BigDecimal height;

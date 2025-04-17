@@ -11,7 +11,7 @@ import jakarta.validation.Valid;
  *
  * @author 芋道源码
  */
-public interface MermaidPatientService {
+public interface PatientService {
 
     /**
      * 创建患者管理
@@ -50,5 +50,12 @@ public interface MermaidPatientService {
      * @return 患者管理分页
      */
     PageResult<PatientProfileDO> getPatientProfilePage(PatientProfilePageReqVO pageReqVO);
+    /**
+     * 更新用户体质类型
+     *
+     * @param memberId 用户ID
+     * @param constitutionType 体质类型
+     */
+    void updateConstitutionType(Long memberId, String constitutionType);
 
 }

@@ -1,14 +1,14 @@
 package cn.iocoder.yudao.module.medical.controller.admin.patient.vo;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
-import java.util.*;
-import java.math.BigDecimal;
-import org.springframework.format.annotation.DateTimeFormat;
-import java.time.LocalDateTime;
-import com.alibaba.excel.annotation.*;
 import cn.iocoder.yudao.framework.excel.core.annotations.DictFormat;
 import cn.iocoder.yudao.framework.excel.core.convert.DictConvert;
+import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
+import com.alibaba.excel.annotation.ExcelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Schema(description = "管理后台 - 患者管理 Response VO")
 @Data
@@ -21,7 +21,7 @@ public class PatientProfileRespVO {
 
     @Schema(description = "会员用户ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "28025")
     @ExcelProperty("会员用户ID")
-    private Long memberUserId;
+    private Long userId;
 
     @Schema(description = "身高(cm)")
     @ExcelProperty("身高(cm)")

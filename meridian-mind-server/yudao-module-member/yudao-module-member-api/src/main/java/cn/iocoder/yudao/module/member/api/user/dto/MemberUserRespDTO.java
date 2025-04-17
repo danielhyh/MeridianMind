@@ -23,7 +23,7 @@ public class MemberUserRespDTO {
     private String nickname;
     /**
      * 帐号状态
-     *
+     * <p>
      * 枚举 {@link CommonStatusEnum}
      */
     private Integer status;
@@ -39,6 +39,15 @@ public class MemberUserRespDTO {
      * 创建时间（注册时间）
      */
     private LocalDateTime createTime;
+    /**
+     * 出生日期
+     */
+    private LocalDateTime birthday;
+    /**
+     * 性别
+     * <p>
+     */
+    private Integer sex;
 
     // ========== 其它信息 ==========
 

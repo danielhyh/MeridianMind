@@ -17,7 +17,7 @@ public interface PatientProfileMapper extends BaseMapperX<PatientProfileDO> {
 
     default PageResult<PatientProfileDO> selectPage(PatientProfilePageReqVO reqVO) {
         return selectPage(reqVO, new LambdaQueryWrapperX<PatientProfileDO>()
-                .eqIfPresent(PatientProfileDO::getMemberUserId, reqVO.getMemberUserId())
+                .eqIfPresent(PatientProfileDO::getUserId, reqVO.getUserId())
                 .eqIfPresent(PatientProfileDO::getHeight, reqVO.getHeight())
                 .eqIfPresent(PatientProfileDO::getWeight, reqVO.getWeight())
                 .eqIfPresent(PatientProfileDO::getBloodType, reqVO.getBloodType())
@@ -30,6 +30,6 @@ public interface PatientProfileMapper extends BaseMapperX<PatientProfileDO> {
     }
 
     default PatientProfileDO selectByMemberId(Long memberId) {
-        return selectOne(new LambdaQueryWrapperX<PatientProfileDO>().eq(PatientProfileDO::getMemberUserId, memberId));
+        return selectOne(new LambdaQueryWrapperX<PatientProfileDO>().eq(PatientProfileDO::getUserId, memberId));
     }
 }

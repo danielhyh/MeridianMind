@@ -1,13 +1,12 @@
 package cn.iocoder.yudao.module.medical.dal.dataobject.patient;
 
-import lombok.*;
-import java.util.*;
-import java.math.BigDecimal;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.LocalDateTime;
-import com.baomidou.mybatisplus.annotation.*;
 import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
+import com.baomidou.mybatisplus.annotation.KeySequence;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.*;
+
+import java.math.BigDecimal;
 
 /**
  * 患者管理 DO
@@ -32,7 +31,7 @@ public class PatientProfileDO extends BaseDO {
     /**
      * 会员用户ID
      */
-    private Long memberUserId;
+    private Long userId;
     /**
      * 身高(cm)
      */

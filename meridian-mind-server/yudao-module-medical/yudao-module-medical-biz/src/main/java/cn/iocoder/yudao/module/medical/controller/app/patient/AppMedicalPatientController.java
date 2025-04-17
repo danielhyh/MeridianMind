@@ -5,7 +5,7 @@ import cn.iocoder.yudao.module.medical.controller.app.patient.vo.AppMedicalPatie
 import cn.iocoder.yudao.module.medical.controller.app.patient.vo.AppPatientProfileSaveReqVO;
 import cn.iocoder.yudao.module.medical.convert.patient.MedicalPatientConvert;
 import cn.iocoder.yudao.module.medical.dal.dataobject.patient.PatientProfileDO;
-import cn.iocoder.yudao.module.medical.service.patient.MermaidPatientService;
+import cn.iocoder.yudao.module.medical.service.patient.PatientService;
 import cn.iocoder.yudao.module.member.controller.app.user.vo.*;
 import cn.iocoder.yudao.module.member.dal.dataobject.user.MemberUserDO;
 import cn.iocoder.yudao.module.member.service.user.MemberUserService;
@@ -27,7 +27,7 @@ import static cn.iocoder.yudao.framework.security.core.util.SecurityFrameworkUti
 public class AppMedicalPatientController {
 
     @Resource
-    private MermaidPatientService patientService;
+    private PatientService patientService;
     @Resource
     private MemberUserService userService;
 
