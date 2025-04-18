@@ -1,8 +1,10 @@
 package cn.iocoder.yudao.module.medical.service.fourdiagnosis;
 
+import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.json.JSONUtil;
 import cn.iocoder.yudao.framework.common.exception.ServiceException;
+import cn.iocoder.yudao.module.infra.api.file.FileApi;
 import cn.iocoder.yudao.module.medical.controller.app.fourdiagnosis.vo.AppFourDiagnosticRespVO;
 import cn.iocoder.yudao.module.medical.convert.fourdiagnosis.FourDiagnosticConvert;
 import cn.iocoder.yudao.module.medical.dal.dataobject.fourdiagnosis.FourDiagnosticDO;
@@ -18,6 +20,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+
+import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
+import static cn.iocoder.yudao.module.medical.enums.ErrorCodeConstants.ERROR_CODE_SAVE_FACE_IMAGE;
+import static cn.iocoder.yudao.module.medical.enums.ErrorCodeConstants.ERROR_CODE_SAVE_VOICE_AUDIO;
 
 /**
  * 四诊信息 Service 实现类
@@ -35,6 +43,8 @@ public class FourDiagnosticServiceImpl implements FourDiagnosticService {
     private FaceAnalysisAdapter faceAnalysisAdapter;
     @Resource
     private VoiceAnalysisAdapter voiceAnalysisAdapter;
+    @Resource
+    private FileApi fileApi;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -55,18 +65,23 @@ public class FourDiagnosticServiceImpl implements FourDiagnosticService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public AppFourDiagnosticRespVO saveTongueAnalysis(Long id, MultipartFile tongueImage) {
+    public AppFourDiagnosticRespVO saveTongueAnalysis(Long id, MultipartFile tongueImage) throws IOException {
         // 获取或创建四诊信息
         FourDiagnosticDO fourDiagnosticDO = createDiagnosticIfAbsent(id);
 
         // 调用舌象分析
         TongueFeatureDTO tongueFeature = tongueAnalysisAdapter.analyzeTongueImage(tongueImage);
 
+        // 分析成功后，再保存文件
+        String fileUrl = fileApi.createFile(tongueImage.getOriginalFilename(), "medical/tongue",
+                IoUtil.readBytes(tongueImage.getInputStream()));
+        tongueFeature.setImageUrl(fileUrl);
+
         // 更新数据
         fourDiagnosticDO.setInspection(JSONUtil.toJsonStr(
                 JSONUtil.createObj().set("tongue", tongueFeature)
         ));
-        fourDiagnosticDO.setTongueImage(tongueFeature.getImageUrl());
+        fourDiagnosticDO.setTongueImage(fileUrl);
 
         // 保存更新
         fourDiagnosticMapper.updateById(fourDiagnosticDO);
@@ -84,19 +99,31 @@ public class FourDiagnosticServiceImpl implements FourDiagnosticService {
         // 调用面色分析
         FacialFeatureDTO facialFeature = faceAnalysisAdapter.analyzeFacialImage(facialImage);
 
-        // 获取当前inspection数据，避免覆盖已有舌象数据
-        String inspectionJson = fourDiagnosticDO.getInspection();
-        Object inspection = ObjectUtil.isNotEmpty(inspectionJson) ?
-                JSONUtil.parseObj(inspectionJson) : JSONUtil.createObj();
+        // 分析成功后，保存文件
+        try {
+            String fileUrl = fileApi.createFile(facialImage.getOriginalFilename(),
+                    "medical/face/" + id, facialImage.getBytes());
 
-        // 更新数据
-        fourDiagnosticDO.setInspection(JSONUtil.toJsonStr(
-                JSONUtil.parseObj(inspection).set("face", facialFeature)
-        ));
-        fourDiagnosticDO.setFaceImage(facialFeature.getImageUrl());
+            // 设置图片URL
+            facialFeature.setImageUrl(fileUrl);
 
-        // 保存更新
-        fourDiagnosticMapper.updateById(fourDiagnosticDO);
+            // 获取当前inspection数据，避免覆盖已有舌象数据
+            String inspectionJson = fourDiagnosticDO.getInspection();
+            Object inspection = ObjectUtil.isNotEmpty(inspectionJson) ?
+                    JSONUtil.parseObj(inspectionJson) : JSONUtil.createObj();
+
+            // 更新数据
+            fourDiagnosticDO.setInspection(JSONUtil.toJsonStr(
+                    JSONUtil.parseObj(inspection).set("face", facialFeature)
+            ));
+            fourDiagnosticDO.setFaceImage(fileUrl);
+
+            // 保存更新
+            fourDiagnosticMapper.updateById(fourDiagnosticDO);
+        } catch (Exception e) {
+            log.error("[saveFaceAnalysis] 保存面色图像失败: {}", e.getMessage());
+            throw exception(ERROR_CODE_SAVE_FACE_IMAGE, "保存面色图像失败: " + e.getMessage());
+        }
 
         // 返回结果
         return FourDiagnosticConvert.INSTANCE.convert(fourDiagnosticDO);
@@ -111,13 +138,25 @@ public class FourDiagnosticServiceImpl implements FourDiagnosticService {
         // 调用语音分析
         VoiceFeatureDTO voiceFeature = voiceAnalysisAdapter.analyzeVoiceAudio(voiceAudio);
 
-        // 更新数据
-        fourDiagnosticDO.setAuscultation(JSONUtil.toJsonStr(
-                JSONUtil.createObj().set("voice", voiceFeature)
-        ));
+        // 分析成功后，保存文件
+        try {
+            String fileUrl = fileApi.createFile(voiceAudio.getOriginalFilename(),
+                    "medical/voice/" + id, voiceAudio.getBytes());
 
-        // 保存更新
-        fourDiagnosticMapper.updateById(fourDiagnosticDO);
+            // 设置音频URL
+            voiceFeature.setAudioUrl(fileUrl);
+
+            // 更新数据
+            fourDiagnosticDO.setAuscultation(JSONUtil.toJsonStr(
+                    JSONUtil.createObj().set("voice", voiceFeature)
+            ));
+
+            // 保存更新
+            fourDiagnosticMapper.updateById(fourDiagnosticDO);
+        } catch (Exception e) {
+            log.error("[saveVoiceAnalysis] 保存语音音频失败: {}", e.getMessage());
+            throw exception(ERROR_CODE_SAVE_VOICE_AUDIO, "保存语音音频失败: " + e.getMessage());
+        }
 
         // 返回结果
         return FourDiagnosticConvert.INSTANCE.convert(fourDiagnosticDO);
@@ -191,6 +230,7 @@ public class FourDiagnosticServiceImpl implements FourDiagnosticService {
 
         return fourDiagnosticDO;
     }
+
     /**
      * 验证并获取四诊信息
      *
@@ -203,5 +243,71 @@ public class FourDiagnosticServiceImpl implements FourDiagnosticService {
             throw new ServiceException(ERROR_CODE_NOT_FOUND, "四诊信息不存在");
         }
         return fourDiagnosticDO;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public AppFourDiagnosticRespVO updateTongueFeatures(Long id, TongueFeatureDTO tongueFeature) {
+        // 获取并校验四诊信息
+        FourDiagnosticDO fourDiagnosticDO = validateAndGet(id);
+
+        // 获取当前inspection数据
+        String inspectionJson = fourDiagnosticDO.getInspection();
+        Object inspection = ObjectUtil.isNotEmpty(inspectionJson) ?
+                JSONUtil.parseObj(inspectionJson) : JSONUtil.createObj();
+
+        // 更新舌象数据
+        fourDiagnosticDO.setInspection(JSONUtil.toJsonStr(
+                JSONUtil.parseObj(inspection).set("tongue", tongueFeature)
+        ));
+
+        // 保存更新
+        fourDiagnosticMapper.updateById(fourDiagnosticDO);
+
+        // 返回结果
+        return FourDiagnosticConvert.INSTANCE.convert(fourDiagnosticDO);
+    }
+
+    @Override
+    public AppFourDiagnosticRespVO updateFaceFeatures(Long id, FacialFeatureDTO facialFeature) {
+        // 获取并校验四诊信息
+        FourDiagnosticDO fourDiagnosticDO = validateAndGet(id);
+
+        // 获取当前inspection数据
+        String inspectionJson = fourDiagnosticDO.getInspection();
+        Object inspection = ObjectUtil.isNotEmpty(inspectionJson) ?
+                JSONUtil.parseObj(inspectionJson) : JSONUtil.createObj();
+
+        // 更新面相数据
+        fourDiagnosticDO.setInspection(JSONUtil.toJsonStr(
+                JSONUtil.parseObj(inspection).set("face", facialFeature)
+        ));
+
+        // 保存更新
+        fourDiagnosticMapper.updateById(fourDiagnosticDO);
+
+        // 返回结果
+        return FourDiagnosticConvert.INSTANCE.convert(fourDiagnosticDO);
+    }
+
+    @Override
+    public AppFourDiagnosticRespVO updateVoiceFeatures(Long id, VoiceFeatureDTO voiceFeature) {
+        // 获取并校验四诊信息
+        FourDiagnosticDO fourDiagnosticDO = validateAndGet(id);
+
+        // 获取当前inspection数据
+        String inspectionJson = fourDiagnosticDO.getInspection();
+        Object inspection = ObjectUtil.isNotEmpty(inspectionJson) ?
+                JSONUtil.parseObj(inspectionJson) : JSONUtil.createObj();
+
+        // 更新舌象数据
+        fourDiagnosticDO.setInspection(JSONUtil.toJsonStr(
+                JSONUtil.parseObj(inspection).set("voice", voiceFeature)
+        ));
+
+        // 保存更新
+        fourDiagnosticMapper.updateById(fourDiagnosticDO);
+
+        // 返回结果
+        return FourDiagnosticConvert.INSTANCE.convert(fourDiagnosticDO);
     }
 }

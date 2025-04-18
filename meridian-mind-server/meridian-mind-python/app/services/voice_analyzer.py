@@ -1,12 +1,10 @@
 # 修改 app/services/voice_analyzer.py 文件
 
-import os
-import librosa
-import numpy as np
-import soundfile as sf
 from typing import Dict, Any, Tuple
 
-from app.core.config import settings
+import librosa
+import numpy as np
+
 
 class VoiceAnalyzer:
     """语音分析服务"""
@@ -14,6 +12,59 @@ class VoiceAnalyzer:
     def __init__(self):
         """初始化语音分析服务"""
         pass
+
+    def analyze_audio_temp(self, temp_file_path: str) -> Dict[str, Any]:
+        """
+        分析临时音频文件
+
+        Args:
+            temp_file_path: 临时文件路径
+
+        Returns:
+            分析结果
+        """
+        try:
+            # 加载音频
+            audio, sr = librosa.load(temp_file_path, sr=22050)
+
+            # 提取音频特征
+            features = self._extract_audio_features(audio, sr)
+
+            # 基于音频特征的语音特性判断
+            strength = self._determine_strength(features)
+            tone = self._determine_tone(features)
+            rhythm = self._determine_rhythm(features)
+            breath_pattern = self._determine_breath_pattern(features)
+
+            # 构建结果（不包含audioUrl）
+            result = {
+                "strength": strength,
+                "tone": tone,
+                "rhythm": rhythm,
+                "breathPattern": breath_pattern,
+                "rawFeatures": features
+            }
+
+            return result
+        except Exception as e:
+            print(f"音频分析异常: {str(e)}")
+            # 返回默认结果而不是抛出异常
+            return {
+                "strength": "中等",
+                "tone": "中等",
+                "rhythm": "均匀",
+                "breathPattern": "正常",
+                "rawFeatures": {
+                    "rms_mean": 0.0,
+                    "rms_std": 0.0,
+                    "zcr_mean": 0.0,
+                    "zcr_std": 0.0,
+                    "spectral_centroid_mean": 0.0,
+                    "spectral_bandwidth_mean": 0.0,
+                    "mfcc_means": [0.0] * 13
+                },
+                "error": str(e)
+            }
 
     def analyze_audio(self, file_path: str, audio_url: str) -> Dict[str, Any]:
         """
@@ -25,7 +76,7 @@ class VoiceAnalyzer:
             # 只处理前10秒的音频以加快处理速度
             audio, sr = self._load_audio_safe(file_path, max_duration=10)
 
-            print(f"音频加载成功: {file_path}, 采样率: {sr}, 时长: {len(audio)/sr:.2f}秒")
+            print(f"音频加载成功: {file_path}, 采样率: {sr}, 时长: {len(audio) / sr:.2f}秒")
 
             # 提取音频特征
             features = self._extract_audio_features(audio, sr)

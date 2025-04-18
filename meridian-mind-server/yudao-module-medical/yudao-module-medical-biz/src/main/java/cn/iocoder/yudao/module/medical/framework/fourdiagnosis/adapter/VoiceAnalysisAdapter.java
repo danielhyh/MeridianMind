@@ -91,7 +91,7 @@ public class VoiceAnalysisAdapter {
                     return "audio" + extension;  // 确保文件名包含正确的扩展名
                 }
 
-                // 移除 @Override 注解
+                // 确保内容类型正确
                 public String getContentType() {
                     // 尝试根据扩展名推断MIME类型
                     if (".wav".equals(extension)) return "audio/wav";
@@ -123,7 +123,7 @@ public class VoiceAnalysisAdapter {
                 throw new ServiceException(ERROR_CODE_VOICE_SERVICE, StrUtil.isNotEmpty(errorMsg) ? errorMsg : "语音分析失败");
             }
 
-            // 返回结果
+            // 返回结果 - 这里不包含音频URL，由Service层负责设置
             VoiceFeatureDTO result = response.getData();
             log.info("[analyzeVoiceAudio] 语音分析成功: {}", result);
 

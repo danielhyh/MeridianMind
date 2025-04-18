@@ -1,10 +1,10 @@
 # app/services/face_analyzer.py
+from io import BytesIO
+from typing import Dict, Any
+
 import cv2
 import numpy as np
-from io import BytesIO
-from typing import Dict, Any, Tuple, List
 
-from app.core.config import settings
 
 class FaceAnalyzer:
     """面色分析服务"""
@@ -24,14 +24,11 @@ class FaceAnalyzer:
         # 加载人脸检测器 (可选)
         self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
-    def analyze_image(self, image_data: BytesIO, image_url: str) -> Dict[str, Any]:
+    def analyze_image(self, image_data: BytesIO) -> Dict[str, Any]:
         """
         分析面色图像
-
         Args:
             image_data: 图像二进制数据
-            image_url: 图像URL
-
         Returns:
             分析结果
         """
@@ -56,7 +53,6 @@ class FaceAnalyzer:
             "colorSaturation": float(color_features["saturation_mean"]),
             "colorBrightness": float(color_features["value_mean"]),
             "regionColors": region_features,
-            "imageUrl": image_url,
             "rawFeatures": color_features
         }
 

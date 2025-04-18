@@ -26,6 +26,8 @@ public interface ErrorCodeConstants {
     ErrorCode RECORD_NOT_EXISTS = new ErrorCode(1_060_102_000, "体质评估记录不存在");
     ErrorCode RECORD_ANSWER_INCOMPLETE = new ErrorCode(1_060_102_001, "体质评估答案不完整");
     ErrorCode RECORD_NOT_EXISTS_OR_NOT_COMPLETED = new ErrorCode(1_060_102_002, "评估记录不存在或未完成");
+    ErrorCode ERROR_CODE_SAVE_FACE_IMAGE = new ErrorCode(1_060_102_003, "保存面色图像失败");
+    ErrorCode ERROR_CODE_SAVE_VOICE_AUDIO = new ErrorCode(1_060_102_004, "保存声音音频失败");
 
     // 统计分析相关
     ErrorCode STATISTICS_DATA_EMPTY = new ErrorCode(1_060_103_000, "暂无统计数据");

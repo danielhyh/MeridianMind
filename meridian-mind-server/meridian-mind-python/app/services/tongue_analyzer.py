@@ -1,10 +1,10 @@
 # app/services/tongue_analyzer.py
-import cv2
-import numpy as np
 from io import BytesIO
 from typing import Dict, Any, Tuple, Optional
 
-from app.core.config import settings
+import cv2
+import numpy as np
+
 
 class TongueAnalyzer:
     """舌象分析服务"""
@@ -13,13 +13,12 @@ class TongueAnalyzer:
         """初始化舌象分析服务"""
         pass
 
-    def analyze_image(self, image_data: BytesIO, image_url: str) -> Dict[str, Any]:
+    def analyze_image(self, image_data: BytesIO) -> Dict[str, Any]:
         """
         分析舌象图像
 
         Args:
             image_data: 图像二进制数据
-            image_url: 图像URL
 
         Returns:
             分析结果
@@ -61,7 +60,6 @@ class TongueAnalyzer:
             "hasCrack": has_crack,
             "hasToothMark": has_tooth_mark,
             "moisture": moisture,
-            "imageUrl": image_url,
             "rawFeatures": color_features
         }
 
@@ -134,7 +132,7 @@ class TongueAnalyzer:
                 h = min(image.shape[0] - y, h + 2 * padding)
 
                 # 提取舌头区域
-                tongue_region = image[y:y+h, x:x+w]
+                tongue_region = image[y:y + h, x:x + w]
                 return self._preprocess_image(tongue_region)
 
         # 如果基于颜色的方法失败，尝试使用Haar级联分类器检测嘴部
@@ -153,7 +151,7 @@ class TongueAnalyzer:
 
                 for (x, y, w, h) in faces:
                     # 在面部区域内搜索嘴部
-                    roi_gray = gray[y:y+h, x:x+w]
+                    roi_gray = gray[y:y + h, x:x + w]
                     mouth_rects = mouth_cascade.detectMultiScale(roi_gray, 1.7, 11)
 
                     if len(mouth_rects) > 0:
@@ -173,7 +171,7 @@ class TongueAnalyzer:
                         mh = min(image.shape[0] - my, mh + padding_y)
 
                         # 提取舌头可能的区域
-                        tongue_region = image[my:my+mh, mx:mx+mw]
+                        tongue_region = image[my:my + mh, mx:mx + mw]
                         return self._preprocess_image(tongue_region)
         except Exception as e:
             print(f"使用级联分类器检测失败: {str(e)}")
@@ -215,7 +213,7 @@ class TongueAnalyzer:
         edges = cv2.Canny(enhanced, 50, 150)
 
         # 检测直线（裂纹通常呈现为直线）
-        lines = cv2.HoughLinesP(edges, 1, np.pi/180, threshold=50, minLineLength=30, maxLineGap=10)
+        lines = cv2.HoughLinesP(edges, 1, np.pi / 180, threshold=50, minLineLength=30, maxLineGap=10)
         has_crack = bool(lines is not None and len(lines) > 0)  # 转换为Python原生布尔类型
 
         # 检测齿痕 - 通常在舌头边缘呈现为规则的凹陷
@@ -224,7 +222,7 @@ class TongueAnalyzer:
         # 定义边缘区域
         border_width = int(w * 0.15)
         left_border = edges[:, :border_width]
-        right_border = edges[:, w-border_width:]
+        right_border = edges[:, w - border_width:]
 
         # 计算边缘密度
         left_density = np.sum(left_border > 0) / (left_border.shape[0] * left_border.shape[1])

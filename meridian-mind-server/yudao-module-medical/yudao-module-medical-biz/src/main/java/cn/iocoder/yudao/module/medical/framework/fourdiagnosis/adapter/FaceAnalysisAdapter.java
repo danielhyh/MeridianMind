@@ -82,7 +82,7 @@ public class FaceAnalysisAdapter {
                 throw new ServiceException(ERROR_CODE_FACE_SERVICE, StrUtil.isNotEmpty(errorMsg) ? errorMsg : "面色分析失败");
             }
 
-            // 返回结果
+            // 返回结果 - 这里不包含图片URL，由Service层负责设置
             FacialFeatureDTO result = response.getData();
             log.info("[analyzeFacialImage] 面色分析成功: {}", result);
 

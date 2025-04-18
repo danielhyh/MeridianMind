@@ -2,6 +2,9 @@ package cn.iocoder.yudao.module.medical.controller.app.fourdiagnosis;
 
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.module.medical.controller.app.fourdiagnosis.vo.AppFourDiagnosticRespVO;
+import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.dto.FacialFeatureDTO;
+import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.dto.TongueFeatureDTO;
+import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.dto.VoiceFeatureDTO;
 import cn.iocoder.yudao.module.medical.service.fourdiagnosis.FourDiagnosticService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -11,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 
@@ -35,7 +40,7 @@ public class AppFourDiagnosticController {
     @Operation(summary = "舌象分析")
     public CommonResult<AppFourDiagnosticRespVO> analyzeTongue(
             @RequestParam(value = "id", required = false) Long id,
-            @RequestParam("tongueImage") MultipartFile tongueImage) {
+            @RequestParam("tongueImage") MultipartFile tongueImage) throws IOException {
         return success(fourDiagnosticService.saveTongueAnalysis(id, tongueImage));
     }
 
@@ -53,6 +58,30 @@ public class AppFourDiagnosticController {
             @RequestParam("id") Long id,
             @RequestParam("voiceAudio") MultipartFile voiceAudio) {
         return success(fourDiagnosticService.saveVoiceAnalysis(id, voiceAudio));
+    }
+
+    @PostMapping("/update-tongue-features")
+    @Operation(summary = "更新舌象分析结果")
+    public CommonResult<AppFourDiagnosticRespVO> updateTongueFeatures(
+            @RequestParam("id") Long id,
+            @RequestBody TongueFeatureDTO tongueFeature) {
+        return success(fourDiagnosticService.updateTongueFeatures(id, tongueFeature));
+    }
+
+    @PostMapping("/update-face-features")
+    @Operation(summary = "更新面色分析结果")
+    public CommonResult<AppFourDiagnosticRespVO> updateFaceFeatures(
+            @RequestParam("id") Long id,
+            @RequestBody FacialFeatureDTO facialFeature) {
+        return success(fourDiagnosticService.updateFaceFeatures(id, facialFeature));
+    }
+
+    @PostMapping("/update-voice-features")
+    @Operation(summary = "更新语音分析结果")
+    public CommonResult<AppFourDiagnosticRespVO> updateVoiceFeatures(
+            @RequestParam("id") Long id,
+            @RequestBody VoiceFeatureDTO voiceFeature) {
+        return success(fourDiagnosticService.updateVoiceFeatures(id, voiceFeature));
     }
 
     @PostMapping("/save-inquiry")

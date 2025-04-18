@@ -1,7 +1,12 @@
 package cn.iocoder.yudao.module.medical.service.fourdiagnosis;
 
 import cn.iocoder.yudao.module.medical.controller.app.fourdiagnosis.vo.AppFourDiagnosticRespVO;
+import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.dto.FacialFeatureDTO;
+import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.dto.TongueFeatureDTO;
+import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.dto.VoiceFeatureDTO;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 /**
  * 四诊信息 Service 接口
@@ -23,7 +28,7 @@ public interface FourDiagnosticService {
      * @param tongueImage 舌象图像
      * @return 更新后的四诊信息
      */
-    AppFourDiagnosticRespVO saveTongueAnalysis(Long id, MultipartFile tongueImage);
+    AppFourDiagnosticRespVO saveTongueAnalysis(Long id, MultipartFile tongueImage) throws IOException;
 
     /**
      * 保存面色分析结果
@@ -77,4 +82,10 @@ public interface FourDiagnosticService {
      * @return 四诊信息
      */
     AppFourDiagnosticRespVO getFourDiagnosticByDiagnosticId(Long diagnosticId);
+
+    AppFourDiagnosticRespVO updateTongueFeatures(Long id, TongueFeatureDTO tongueFeature);
+
+    AppFourDiagnosticRespVO updateFaceFeatures(Long id, FacialFeatureDTO facialFeature);
+
+    AppFourDiagnosticRespVO updateVoiceFeatures(Long id, VoiceFeatureDTO voiceFeature);
 }
