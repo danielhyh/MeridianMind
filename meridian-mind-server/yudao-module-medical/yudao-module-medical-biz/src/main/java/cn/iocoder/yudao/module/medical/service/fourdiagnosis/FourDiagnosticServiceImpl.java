@@ -3,7 +3,7 @@ package cn.iocoder.yudao.module.medical.service.fourdiagnosis;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.json.JSONUtil;
 import cn.iocoder.yudao.framework.common.exception.ServiceException;
-import cn.iocoder.yudao.module.medical.controller.admin.fourdiagnosis.vo.FourDiagnosticRespVO;
+import cn.iocoder.yudao.module.medical.controller.app.fourdiagnosis.vo.AppFourDiagnosticRespVO;
 import cn.iocoder.yudao.module.medical.convert.fourdiagnosis.FourDiagnosticConvert;
 import cn.iocoder.yudao.module.medical.dal.dataobject.fourdiagnosis.FourDiagnosticDO;
 import cn.iocoder.yudao.module.medical.dal.mysql.fourdiagnosis.FourDiagnosticMapper;
@@ -55,7 +55,7 @@ public class FourDiagnosticServiceImpl implements FourDiagnosticService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public FourDiagnosticRespVO saveTongueAnalysis(Long id, MultipartFile tongueImage) {
+    public AppFourDiagnosticRespVO saveTongueAnalysis(Long id, MultipartFile tongueImage) {
         // 获取或创建四诊信息
         FourDiagnosticDO fourDiagnosticDO = createDiagnosticIfAbsent(id);
 
@@ -77,7 +77,7 @@ public class FourDiagnosticServiceImpl implements FourDiagnosticService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public FourDiagnosticRespVO saveFaceAnalysis(Long id, MultipartFile facialImage) {
+    public AppFourDiagnosticRespVO saveFaceAnalysis(Long id, MultipartFile facialImage) {
         // 获取或创建四诊信息
         FourDiagnosticDO fourDiagnosticDO = createDiagnosticIfAbsent(id);
 
@@ -104,7 +104,7 @@ public class FourDiagnosticServiceImpl implements FourDiagnosticService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public FourDiagnosticRespVO saveVoiceAnalysis(Long id, MultipartFile voiceAudio) {
+    public AppFourDiagnosticRespVO saveVoiceAnalysis(Long id, MultipartFile voiceAudio) {
         // 获取或创建四诊信息
         FourDiagnosticDO fourDiagnosticDO = createDiagnosticIfAbsent(id);
 
@@ -125,7 +125,7 @@ public class FourDiagnosticServiceImpl implements FourDiagnosticService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public FourDiagnosticRespVO saveInquiry(Long id, String inquiryData) {
+    public AppFourDiagnosticRespVO saveInquiry(Long id, String inquiryData) {
         // 获取或创建四诊信息
         FourDiagnosticDO fourDiagnosticDO = validateAndGet(id);
 
@@ -141,7 +141,7 @@ public class FourDiagnosticServiceImpl implements FourDiagnosticService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public FourDiagnosticRespVO savePalpation(Long id, String palpationData, String pulseDescription) {
+    public AppFourDiagnosticRespVO savePalpation(Long id, String palpationData, String pulseDescription) {
         // 获取并校验四诊信息
         FourDiagnosticDO fourDiagnosticDO = createDiagnosticIfAbsent(id);
 
@@ -157,13 +157,13 @@ public class FourDiagnosticServiceImpl implements FourDiagnosticService {
     }
 
     @Override
-    public FourDiagnosticRespVO getFourDiagnostic(Long id) {
+    public AppFourDiagnosticRespVO getFourDiagnostic(Long id) {
         FourDiagnosticDO fourDiagnosticDO = validateAndGet(id);
         return FourDiagnosticConvert.INSTANCE.convert(fourDiagnosticDO);
     }
 
     @Override
-    public FourDiagnosticRespVO getFourDiagnosticByDiagnosticId(Long diagnosticId) {
+    public AppFourDiagnosticRespVO getFourDiagnosticByDiagnosticId(Long diagnosticId) {
         FourDiagnosticDO fourDiagnosticDO = fourDiagnosticMapper.selectByDiagnosticId(diagnosticId);
         if (fourDiagnosticDO == null) {
             throw new ServiceException(ERROR_CODE_NOT_FOUND, "四诊信息不存在");

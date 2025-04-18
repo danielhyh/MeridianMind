@@ -64,6 +64,7 @@
       <el-table-column align="center" label="文件类型" prop="type" width="180px" />
       <el-table-column align="center" label="文件内容" prop="url" width="110px">
         <template #default="{ row }">
+          <!-- 图片预览 -->
           <el-image
             v-if="row.type.includes('image')"
             :preview-src-list="[row.url]"
@@ -73,17 +74,39 @@
             lazy
             preview-teleported
           />
+
+          <!-- 音频预览 -->
+          <div v-else-if="row.type.includes('audio')" class="audio-preview">
+            <el-button size="small" @click="openAudioDialog(row)">
+              <Icon class="mr-5px" icon="ep:headset" /> 播放音频
+            </el-button>
+          </div>
+
+          <!-- 视频预览 -->
+          <div v-else-if="row.type.includes('video')" class="video-preview">
+            <el-button size="small" @click="openVideoDialog(row)">
+              <Icon class="mr-5px" icon="ep:video-play" /> 播放视频
+            </el-button>
+          </div>
+
+          <!-- PDF预览 -->
           <el-link
             v-else-if="row.type.includes('pdf')"
             :href="row.url"
             :underline="false"
             target="_blank"
             type="primary"
-            >预览</el-link
-          >
-          <el-link v-else :href="row.url" :underline="false" download target="_blank" type="primary"
-            >下载</el-link
-          >
+          >预览</el-link>
+
+          <!-- 其他文件下载 -->
+          <el-link
+            v-else
+            :href="row.url"
+            :underline="false"
+            download
+            target="_blank"
+            type="primary"
+          >下载</el-link>
         </template>
       </el-table-column>
       <el-table-column
@@ -120,12 +143,35 @@
 
   <!-- 表单弹窗：添加/修改 -->
   <FileForm ref="formRef" @success="getList" />
+  <!-- 音频播放弹窗 -->
+  <el-dialog
+    v-model="audioDialogVisible"
+    title="音频播放"
+    width="400px"
+    :destroy-on-close="true"
+    center
+  >
+    <audio-player :src="currentAudioUrl" :title="currentAudioName" />
+  </el-dialog>
+
+  <!-- 视频播放弹窗 -->
+  <el-dialog
+    v-model="videoDialogVisible"
+    title="视频播放"
+    width="70%"
+    :destroy-on-close="true"
+    center
+  >
+    <video-player :src="currentVideoUrl" :type="currentVideoType" :autoplay="true" />
+  </el-dialog>
 </template>
 <script lang="ts" setup>
 import { fileSizeFormatter } from '@/utils'
 import { dateFormatter } from '@/utils/formatTime'
 import * as FileApi from '@/api/infra/file'
 import FileForm from './FileForm.vue'
+import { AudioPlayer } from '@/components/AudioPlayer'
+import { VideoPlayer } from '@/components/VideoPlayer'
 
 defineOptions({ name: 'InfraFile' })
 
@@ -145,6 +191,29 @@ const queryParams = reactive({
 })
 const queryFormRef = ref() // 搜索的表单
 
+// 音频预览相关
+const audioDialogVisible = ref(false)
+const currentAudioUrl = ref('')
+const currentAudioName = ref('')
+
+// 视频预览相关
+const videoDialogVisible = ref(false)
+const currentVideoUrl = ref('')
+const currentVideoType = ref('')
+
+// 打开音频预览弹窗
+const openAudioDialog = (row) => {
+  currentAudioUrl.value = row.url
+  currentAudioName.value = row.name
+  audioDialogVisible.value = true
+}
+
+// 打开视频预览弹窗
+const openVideoDialog = (row) => {
+  currentVideoUrl.value = row.url
+  currentVideoType.value = row.type
+  videoDialogVisible.value = true
+}
 /** 查询列表 */
 const getList = async () => {
   loading.value = true

@@ -1,6 +1,6 @@
 package cn.iocoder.yudao.module.medical.service.fourdiagnosis;
 
-import cn.iocoder.yudao.module.medical.controller.admin.fourdiagnosis.vo.FourDiagnosticRespVO;
+import cn.iocoder.yudao.module.medical.controller.app.fourdiagnosis.vo.AppFourDiagnosticRespVO;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -23,7 +23,7 @@ public interface FourDiagnosticService {
      * @param tongueImage 舌象图像
      * @return 更新后的四诊信息
      */
-    FourDiagnosticRespVO saveTongueAnalysis(Long id, MultipartFile tongueImage);
+    AppFourDiagnosticRespVO saveTongueAnalysis(Long id, MultipartFile tongueImage);
 
     /**
      * 保存面色分析结果
@@ -32,7 +32,7 @@ public interface FourDiagnosticService {
      * @param facialImage 面色图像
      * @return 更新后的四诊信息
      */
-    FourDiagnosticRespVO saveFaceAnalysis(Long id, MultipartFile facialImage);
+    AppFourDiagnosticRespVO saveFaceAnalysis(Long id, MultipartFile facialImage);
 
     /**
      * 保存语音分析结果
@@ -41,7 +41,7 @@ public interface FourDiagnosticService {
      * @param voiceAudio 语音音频
      * @return 更新后的四诊信息
      */
-    FourDiagnosticRespVO saveVoiceAnalysis(Long id, MultipartFile voiceAudio);
+    AppFourDiagnosticRespVO saveVoiceAnalysis(Long id, MultipartFile voiceAudio);
 
     /**
      * 保存问诊数据
@@ -50,7 +50,7 @@ public interface FourDiagnosticService {
      * @param inquiryData 问诊数据
      * @return 更新后的四诊信息
      */
-    FourDiagnosticRespVO saveInquiry(Long id, String inquiryData);
+    AppFourDiagnosticRespVO saveInquiry(Long id, String inquiryData);
 
     /**
      * 保存脉象数据
@@ -60,7 +60,7 @@ public interface FourDiagnosticService {
      * @param pulseDescription 脉象描述
      * @return 更新后的四诊信息
      */
-    FourDiagnosticRespVO savePalpation(Long id, String palpationData, String pulseDescription);
+    AppFourDiagnosticRespVO savePalpation(Long id, String palpationData, String pulseDescription);
 
     /**
      * 获取四诊信息
@@ -68,7 +68,7 @@ public interface FourDiagnosticService {
      * @param id 四诊信息ID
      * @return 四诊信息
      */
-    FourDiagnosticRespVO getFourDiagnostic(Long id);
+    AppFourDiagnosticRespVO getFourDiagnostic(Long id);
 
     /**
      * 根据问诊记录ID获取四诊信息
@@ -76,5 +76,5 @@ public interface FourDiagnosticService {
      * @param diagnosticId 问诊记录ID
      * @return 四诊信息
      */
-    FourDiagnosticRespVO getFourDiagnosticByDiagnosticId(Long diagnosticId);
+    AppFourDiagnosticRespVO getFourDiagnosticByDiagnosticId(Long diagnosticId);
 }

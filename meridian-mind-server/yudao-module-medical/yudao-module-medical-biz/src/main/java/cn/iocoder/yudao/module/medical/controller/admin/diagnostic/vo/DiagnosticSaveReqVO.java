@@ -11,14 +11,14 @@ import java.time.LocalDateTime;
 @Data
 public class DiagnosticSaveReqVO {
 
-    @Schema(description = "主键", requiredMode = Schema.RequiredMode.REQUIRED, example = "2926")
+    @Schema(description = "主键", requiredMode = Schema.RequiredMode.REQUIRED, example = "8655")
     private Long id;
 
-    @Schema(description = "患者ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "29521")
+    @Schema(description = "患者ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "12356")
     @NotNull(message = "患者ID不能为空")
     private Long userId;
 
-    @Schema(description = "医生ID（预留）", example = "10572")
+    @Schema(description = "医生ID（预留）", example = "13194")
     private Long doctorId;
 
     @Schema(description = "问诊时间", requiredMode = Schema.RequiredMode.REQUIRED)
@@ -29,13 +29,13 @@ public class DiagnosticSaveReqVO {
     @NotEmpty(message = "主诉不能为空")
     private String chiefComplaint;
 
-    @Schema(description = "现病史")
-    private String illnessHistory;
+    @Schema(description = "发病时间")
+    private String onsetTime;
 
-    @Schema(description = "既往史")
-    private String medicalHistory;
+    @Schema(description = "病程发展")
+    private String diseaseCourse;
 
-    @Schema(description = "状态：0进行中 1已完成 2已取消", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+    @Schema(description = "状态：0进行中 1已完成 2已取消", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
     @NotNull(message = "状态：0进行中 1已完成 2已取消不能为空")
     private Integer status;
 

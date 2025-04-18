@@ -20,7 +20,7 @@
       <div class="el-upload__text"> 将文件拖到此处，或 <em>点击上传</em></div>
       <template #tip>
         <div class="el-upload__tip" style="color: red">
-          提示：仅允许导入 jpg、png、gif 格式文件！
+          提示：支持上传图片(jpg、png、gif)、音频(mp3、wav、ogg)、视频(mp4、webm、mov)文件！
         </div>
       </template>
     </el-upload>

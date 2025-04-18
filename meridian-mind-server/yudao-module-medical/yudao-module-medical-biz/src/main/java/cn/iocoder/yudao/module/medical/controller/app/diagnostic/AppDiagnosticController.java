@@ -22,7 +22,7 @@ import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 /**
  * 医疗智能问诊 Controller
  */
-@Tag(name = "管理后台 - 问诊记录")
+@Tag(name = "用户 APP - 问诊记录")
 @RestController
 @RequestMapping("/medical/diagnostic")
 @Validated

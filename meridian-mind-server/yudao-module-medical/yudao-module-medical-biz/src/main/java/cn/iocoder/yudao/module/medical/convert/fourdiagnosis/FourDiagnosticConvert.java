@@ -1,6 +1,6 @@
 package cn.iocoder.yudao.module.medical.convert.fourdiagnosis;
 
-import cn.iocoder.yudao.module.medical.controller.admin.fourdiagnosis.vo.FourDiagnosticRespVO;
+import cn.iocoder.yudao.module.medical.controller.app.fourdiagnosis.vo.AppFourDiagnosticRespVO;
 import cn.iocoder.yudao.module.medical.dal.dataobject.fourdiagnosis.FourDiagnosticDO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -16,5 +16,5 @@ public interface FourDiagnosticConvert {
     /**
      * DO 转 RespVO
      */
-    FourDiagnosticRespVO convert(FourDiagnosticDO bean);
+    AppFourDiagnosticRespVO convert(FourDiagnosticDO bean);
 }

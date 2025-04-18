@@ -45,13 +45,13 @@ public class DiagnosticDO extends BaseDO {
      */
     private String chiefComplaint;
     /**
-     * 现病史
+     * 发病时间
      */
-    private String illnessHistory;
+    private String onsetTime;
     /**
-     * 既往史
+     * 病程发展
      */
-    private String medicalHistory;
+    private String diseaseCourse;
     /**
      * 状态：0进行中 1已完成 2已取消
      */

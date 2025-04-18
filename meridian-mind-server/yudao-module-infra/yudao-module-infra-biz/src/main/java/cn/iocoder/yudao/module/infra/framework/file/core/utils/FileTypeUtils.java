@@ -63,13 +63,16 @@ public class FileTypeUtils {
         response.setHeader("Content-Disposition", "attachment;filename=" + HttpUtils.encodeUtf8(filename));
         String contentType = getMineType(content, filename);
         response.setContentType(contentType);
-        // 针对 video 的特殊处理，解决视频地址在移动端播放的兼容性问题
-        if (StrUtil.containsIgnoreCase(contentType, "video")) {
-            response.setHeader("Content-Length", String.valueOf(content.length - 1));
-            response.setHeader("Content-Range", String.valueOf(content.length - 1));
+
+        // 针对音视频文件的处理
+        if (StrUtil.containsAnyIgnoreCase(contentType, "video", "audio")) {
+            response.setHeader("Content-Length", String.valueOf(content.length));
             response.setHeader("Accept-Ranges", "bytes");
+            // 移除Content-Disposition头，让浏览器直接播放而不是下载
+            response.setHeader("Content-Disposition", "inline");
         }
-        // 输出附件
+
+        // 输出内容
         IoUtil.write(response.getOutputStream(), false, content);
     }
 

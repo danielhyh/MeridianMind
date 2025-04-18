@@ -21,8 +21,8 @@ public interface DiagnosticMapper extends BaseMapperX<DiagnosticDO> {
                 .eqIfPresent(DiagnosticDO::getDoctorId, reqVO.getDoctorId())
                 .betweenIfPresent(DiagnosticDO::getDiagnosticTime, reqVO.getDiagnosticTime())
                 .eqIfPresent(DiagnosticDO::getChiefComplaint, reqVO.getChiefComplaint())
-                .eqIfPresent(DiagnosticDO::getIllnessHistory, reqVO.getIllnessHistory())
-                .eqIfPresent(DiagnosticDO::getMedicalHistory, reqVO.getMedicalHistory())
+                .betweenIfPresent(DiagnosticDO::getOnsetTime, reqVO.getOnsetTime())
+                .eqIfPresent(DiagnosticDO::getDiseaseCourse, reqVO.getDiseaseCourse())
                 .eqIfPresent(DiagnosticDO::getStatus, reqVO.getStatus())
                 .betweenIfPresent(DiagnosticDO::getCreateTime, reqVO.getCreateTime())
                 .orderByDesc(DiagnosticDO::getId));

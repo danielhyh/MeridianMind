@@ -21,8 +21,8 @@ public class FourDiagnosisConfig {
     @Bean
     public RestTemplate fourDiagnosisRestTemplate() {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setConnectTimeout(5000);
-        factory.setReadTimeout(10000);
+        factory.setConnectTimeout(10000);
+        factory.setReadTimeout(60000);
         return new RestTemplate(factory);
     }
 
