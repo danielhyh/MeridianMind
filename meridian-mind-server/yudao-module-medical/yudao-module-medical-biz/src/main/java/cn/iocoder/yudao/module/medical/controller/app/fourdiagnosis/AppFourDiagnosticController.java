@@ -2,9 +2,10 @@ package cn.iocoder.yudao.module.medical.controller.app.fourdiagnosis;
 
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.module.medical.controller.app.fourdiagnosis.vo.AppFourDiagnosticRespVO;
+import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.dto.AuscultationDTO;
 import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.dto.FacialFeatureDTO;
+import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.dto.InquiryDTO;
 import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.dto.TongueFeatureDTO;
-import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.dto.VoiceFeatureDTO;
 import cn.iocoder.yudao.module.medical.service.fourdiagnosis.FourDiagnosticService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -80,7 +81,7 @@ public class AppFourDiagnosticController {
     @Operation(summary = "更新语音分析结果")
     public CommonResult<AppFourDiagnosticRespVO> updateVoiceFeatures(
             @RequestParam("id") Long id,
-            @RequestBody VoiceFeatureDTO voiceFeature) {
+            @RequestBody AuscultationDTO voiceFeature) {
         return success(fourDiagnosticService.updateVoiceFeatures(id, voiceFeature));
     }
 
@@ -88,7 +89,7 @@ public class AppFourDiagnosticController {
     @Operation(summary = "保存问诊数据")
     public CommonResult<AppFourDiagnosticRespVO> saveInquiry(
             @RequestParam("id") Long id,
-            @RequestParam("inquiryData") String inquiryData) {
+            @RequestBody InquiryDTO inquiryData) {
         return success(fourDiagnosticService.saveInquiry(id, inquiryData));
     }
 
@@ -96,9 +97,8 @@ public class AppFourDiagnosticController {
     @Operation(summary = "保存脉象数据")
     public CommonResult<AppFourDiagnosticRespVO> savePalpation(
             @RequestParam("id") Long id,
-            @RequestParam("palpationData") String palpationData,
-            @RequestParam(value = "pulseDescription", required = false) String pulseDescription) {
-        return success(fourDiagnosticService.savePalpation(id, palpationData, pulseDescription));
+            @RequestParam("palpationData") String palpationData) {
+        return success(fourDiagnosticService.savePalpation(id, palpationData));
     }
 
     @GetMapping("/get")

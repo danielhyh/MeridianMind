@@ -6,6 +6,7 @@ import cn.iocoder.yudao.framework.common.exception.ServiceException;
 import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.config.FourDiagnosisConfig.FourDiagnosisProperties;
 import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.dto.ApiResponseDTO;
 import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.dto.FacialFeatureDTO;
+import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.utils.DiagnosticFeatureUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import jakarta.annotation.Resource;
@@ -21,6 +22,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 面色分析适配器
@@ -36,6 +39,9 @@ public class FaceAnalysisAdapter {
 
     @Resource
     private FourDiagnosisProperties fourDiagnosisProperties;
+
+    @Resource
+    private DiagnosticFeatureUtils diagnosticFeatureUtils;
 
     /**
      * 发送面色图像并获取分析结果
@@ -71,8 +77,8 @@ public class FaceAnalysisAdapter {
             String responseStr = fourDiagnosisRestTemplate.postForObject(url, requestEntity, String.class);
 
             // 解析响应
-            ApiResponseDTO<FacialFeatureDTO> response = JSON.parseObject(responseStr,
-                    new TypeReference<ApiResponseDTO<FacialFeatureDTO>>() {
+            ApiResponseDTO<Map<String, Object>> response = JSON.parseObject(responseStr,
+                    new TypeReference<ApiResponseDTO<Map<String, Object>>>() {
                     });
 
             // 处理响应
@@ -82,11 +88,66 @@ public class FaceAnalysisAdapter {
                 throw new ServiceException(ERROR_CODE_FACE_SERVICE, StrUtil.isNotEmpty(errorMsg) ? errorMsg : "面色分析失败");
             }
 
-            // 返回结果 - 这里不包含图片URL，由Service层负责设置
-            FacialFeatureDTO result = response.getData();
-            log.info("[analyzeFacialImage] 面色分析成功: {}", result);
+            // 获取原始特征数据
+            Map<String, Object> rawFeatures = response.getData();
 
-            return result;
+            // 提取基础特征值
+            double hueMean = getDoubleValue(rawFeatures, "hue_mean");
+            double saturationMean = getDoubleValue(rawFeatures, "saturation_mean");
+            double valueMean = getDoubleValue(rawFeatures, "value_mean");
+
+            // 使用工具类进行判断
+            String faceColorCode = diagnosticFeatureUtils.getDictCode("medical_face_color",
+                    diagnosticFeatureUtils.determineFaceColor(hueMean, saturationMean, valueMean));
+            String faceColor = diagnosticFeatureUtils.getDictValue("medical_face_color", faceColorCode);
+
+            // 处理区域颜色
+            Map<String, Object> regionColors = new HashMap<>();
+            Object rawRegionColors = rawFeatures.get("regionColors");
+            if (rawRegionColors instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> rawRegionMap = (Map<String, Object>) rawRegionColors;
+
+                for (Map.Entry<String, Object> entry : rawRegionMap.entrySet()) {
+                    String regionName = entry.getKey();
+                    if (entry.getValue() instanceof Map) {
+                        @SuppressWarnings("unchecked")
+                        Map<String, Object> regionData = (Map<String, Object>) entry.getValue();
+
+                        double regionHueMean = getDoubleValue(regionData, "hue_mean", 0.0);
+                        double regionSaturationMean = getDoubleValue(regionData, "saturation_mean", 0.0);
+                        double regionValueMean = getDoubleValue(regionData, "value_mean", 0.0);
+
+                        // 为每个区域判断面色
+                        String regionColorCode = diagnosticFeatureUtils.getDictCode("medical_face_color",
+                                diagnosticFeatureUtils.determineFaceColor(
+                                        regionHueMean, regionSaturationMean, regionValueMean));
+                        String regionColor = diagnosticFeatureUtils.getDictValue("medical_face_color", regionColorCode);
+
+                        // 更新区域颜色信息
+                        Map<String, Object> regionResult = new HashMap<>();
+                        regionResult.put("color", regionColor);
+                        regionResult.put("colorCode", regionColorCode);
+                        regionResult.put("saturation", getDoubleValue(regionData, "saturation", 0.0));
+                        regionResult.put("brightness", getDoubleValue(regionData, "brightness", 0.0));
+
+                        regionColors.put(regionName, regionResult);
+                    }
+                }
+            }
+
+            // 构建面色特征结果
+            FacialFeatureDTO facialFeature = new FacialFeatureDTO();
+            facialFeature.setFaceColor(faceColor);
+            facialFeature.setFaceColorCode(faceColorCode);
+            facialFeature.setColorSaturation(saturationMean);
+            facialFeature.setColorBrightness(valueMean);
+            facialFeature.setRegionColors(regionColors);
+            facialFeature.setRawFeatures(rawFeatures);
+
+            log.info("[analyzeFacialImage] 面色分析成功: {}", facialFeature);
+            return facialFeature;
+
         } catch (IOException e) {
             log.error("[analyzeFacialImage] 面色图像处理异常", e);
             throw new ServiceException(ERROR_CODE_FACE_SERVICE, "面色图像处理异常: " + e.getMessage());
@@ -94,5 +155,29 @@ public class FaceAnalysisAdapter {
             log.error("[analyzeFacialImage] 面色分析异常", e);
             throw new ServiceException(ERROR_CODE_FACE_SERVICE, "面色分析异常: " + e.getMessage());
         }
+    }
+
+    /**
+     * 安全获取Double值
+     */
+    private Double getDoubleValue(Map<String, Object> map, String key) {
+        return getDoubleValue(map, key, 0.0);
+    }
+
+    /**
+     * 安全获取Double值
+     */
+    private Double getDoubleValue(Map<String, Object> map, String key, Double defaultValue) {
+        Object value = map.get(key);
+        if (value instanceof Number) {
+            return ((Number) value).doubleValue();
+        } else if (value instanceof String) {
+            try {
+                return Double.parseDouble((String) value);
+            } catch (NumberFormatException e) {
+                return defaultValue;
+            }
+        }
+        return defaultValue;
     }
 }

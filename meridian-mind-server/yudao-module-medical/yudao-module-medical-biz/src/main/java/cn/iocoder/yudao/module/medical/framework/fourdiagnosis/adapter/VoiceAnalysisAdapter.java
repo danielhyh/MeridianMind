@@ -6,6 +6,7 @@ import cn.iocoder.yudao.framework.common.exception.ServiceException;
 import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.config.FourDiagnosisConfig.FourDiagnosisProperties;
 import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.dto.ApiResponseDTO;
 import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.dto.VoiceFeatureDTO;
+import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.utils.DiagnosticFeatureUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import jakarta.annotation.Resource;
@@ -56,6 +57,9 @@ public class VoiceAnalysisAdapter {
 
     @Resource
     private FourDiagnosisProperties fourDiagnosisProperties;
+
+    @Resource
+    private DiagnosticFeatureUtils diagnosticFeatureUtils;
 
     /**
      * 发送语音音频并获取分析结果
@@ -112,8 +116,8 @@ public class VoiceAnalysisAdapter {
             String responseStr = fourDiagnosisRestTemplate.postForObject(url, requestEntity, String.class);
 
             // 解析响应
-            ApiResponseDTO<VoiceFeatureDTO> response = JSON.parseObject(responseStr,
-                    new TypeReference<>() {
+            ApiResponseDTO<Map<String, Object>> response = JSON.parseObject(responseStr,
+                    new TypeReference<ApiResponseDTO<Map<String, Object>>>() {
                     });
 
             // 处理响应
@@ -123,11 +127,48 @@ public class VoiceAnalysisAdapter {
                 throw new ServiceException(ERROR_CODE_VOICE_SERVICE, StrUtil.isNotEmpty(errorMsg) ? errorMsg : "语音分析失败");
             }
 
-            // 返回结果 - 这里不包含音频URL，由Service层负责设置
-            VoiceFeatureDTO result = response.getData();
-            log.info("[analyzeVoiceAudio] 语音分析成功: {}", result);
+            // 获取原始特征数据
+            Map<String, Object> rawFeatures = response.getData();
 
-            return result;
+            // 提取基础特征值
+            double rmsMean = getDoubleValue(rawFeatures, "rms_mean");
+            double zcrMean = getDoubleValue(rawFeatures, "zcr_mean");
+            double spectralCentroidMean = getDoubleValue(rawFeatures, "spectral_centroid_mean");
+
+            // 使用工具类进行判断
+            String strengthCode = diagnosticFeatureUtils.getDictCode("medical_voice_strength",
+                    diagnosticFeatureUtils.determineVoiceStrength(rmsMean));
+            String strength = diagnosticFeatureUtils.getDictValue("medical_voice_strength", strengthCode);
+
+            String toneCode = diagnosticFeatureUtils.getDictCode("medical_voice_tone",
+                    diagnosticFeatureUtils.determineVoiceTone(spectralCentroidMean));
+            String tone = diagnosticFeatureUtils.getDictValue("medical_voice_tone", toneCode);
+
+            String breathPatternCode = diagnosticFeatureUtils.getDictCode("medical_breath_pattern",
+                    diagnosticFeatureUtils.determineBreathPattern(rmsMean, zcrMean));
+            String breathPattern = diagnosticFeatureUtils.getDictValue("medical_breath_pattern", breathPatternCode);
+
+            // 语音节律判断 - 基于RMS标准差
+            double rmsStd = getDoubleValue(rawFeatures, "rms_std");
+            String rhythm = "均匀"; // 默认为均匀
+            if (rmsStd > 0.1) {
+                rhythm = "不均匀";
+            }
+
+            // 构建语音特征结果
+            VoiceFeatureDTO voiceFeature = new VoiceFeatureDTO();
+            voiceFeature.setStrength(strength);
+            voiceFeature.setStrengthCode(strengthCode);
+            voiceFeature.setTone(tone);
+            voiceFeature.setToneCode(toneCode);
+            voiceFeature.setRhythm(rhythm);
+            voiceFeature.setBreathPattern(breathPattern);
+            voiceFeature.setBreathPatternCode(breathPatternCode);
+            voiceFeature.setRawFeatures(rawFeatures);
+
+            log.info("[analyzeVoiceAudio] 语音分析成功: {}", voiceFeature);
+            return voiceFeature;
+
         } catch (IOException e) {
             log.error("[analyzeVoiceAudio] 语音音频处理异常", e);
             throw new ServiceException(ERROR_CODE_VOICE_SERVICE, "语音音频处理异常: " + e.getMessage());
@@ -135,5 +176,36 @@ public class VoiceAnalysisAdapter {
             log.error("[analyzeVoiceAudio] 语音分析异常", e);
             throw new ServiceException(ERROR_CODE_VOICE_SERVICE, "语音分析异常: " + e.getMessage());
         }
+    }
+
+    /**
+     * 安全获取Double值
+     */
+    private Double getDoubleValue(Map<String, Object> map, String key) {
+        return getDoubleValue(map, key, 0.0);
+    }
+
+    /**
+     * 安全获取Double值
+     */
+    private Double getDoubleValue(Map<String, Object> map, String key, Double defaultValue) {
+        Object value = map.get(key);
+        if (value instanceof Number) {
+            return ((Number) value).doubleValue();
+        } else if (value instanceof String) {
+            try {
+                return Double.parseDouble((String) value);
+            } catch (NumberFormatException e) {
+                return defaultValue;
+            }
+        } else if (value instanceof Map) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> subMap = (Map<String, Object>) value;
+            // 处理嵌套值，例如可能存在的结构 { "feature": { "value": 0.5 } }
+            if (subMap.containsKey("value")) {
+                return getDoubleValue(subMap, "value", defaultValue);
+            }
+        }
+        return defaultValue;
     }
 }

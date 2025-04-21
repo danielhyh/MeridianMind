@@ -42,7 +42,7 @@ public interface DictDataApi {
      * @param value 字典数据值
      * @return 字典标签
      */
-    default String getDictDataLabel(String type, Integer value) {
+    default String getDictDataLabel(String type, String value) {
         DictDataRespDTO dictData = getDictData(type, String.valueOf(value));
         if (ObjUtil.isNull(dictData)) {
             return StrUtil.EMPTY;
@@ -58,6 +58,21 @@ public interface DictDataApi {
      * @return 字典数据
      */
     DictDataRespDTO parseDictData(String type, String label);
+
+    /**
+     * 获得指定的字典code，从缓存中
+     *
+     * @param type  字典类型
+     * @param label 字典数据标签
+     * @return 字典code
+     */
+    default String getDictDataValue(String type, String label) {
+        DictDataRespDTO dictData = parseDictData(type, label);
+        if (ObjUtil.isNull(dictData)) {
+            return StrUtil.EMPTY;
+        }
+        return dictData.getValue();
+    }
 
     /**
      * 获得指定字典类型的字典数据列表

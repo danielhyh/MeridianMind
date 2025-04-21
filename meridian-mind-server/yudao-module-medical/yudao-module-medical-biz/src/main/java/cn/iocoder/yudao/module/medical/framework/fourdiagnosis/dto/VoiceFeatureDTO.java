@@ -39,4 +39,16 @@ public class VoiceFeatureDTO {
      * 原始特征数据
      */
     private Map<String, Object> rawFeatures;
+    /**
+     * 声音强度代码
+     */
+    private String strengthCode;
+    /**
+     * 音调代码
+     */
+    private String toneCode;
+    /**
+     * 节奏代码
+     */
+    private String breathPatternCode;
 }

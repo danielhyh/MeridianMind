@@ -13,15 +13,11 @@ class TongueAnalyzer:
         """初始化舌象分析服务"""
         pass
 
+    # app/services/tongue_analyzer.py 修改
+
     def analyze_image(self, image_data: BytesIO) -> Dict[str, Any]:
         """
-        分析舌象图像
-
-        Args:
-            image_data: 图像二进制数据
-
-        Returns:
-            分析结果
+        分析舌象图像，只返回原始特征参数
         """
         # 加载图像
         image = self._load_image(image_data)
@@ -40,27 +36,20 @@ class TongueAnalyzer:
         # 提取颜色特征
         color_features = self._extract_color_features(processed_image)
 
-        # 确定舌质颜色
-        tongue_color = self._determine_tongue_color(color_features)
-
-        # 确定舌苔特征
-        tongue_coating = self._determine_tongue_coating(color_features)
-
         # 检测裂纹和齿痕
         has_crack, has_tooth_mark = self._detect_cracks_and_marks(processed_image)
 
-        # 估计湿润度（基于亮度）
-        moisture = float(color_features["value_mean"] / 255.0)
-
-        # 构建结果
+        # 构建结果 - 只返回原始参数，不做判断
         result = {
-            "tongueColor": tongue_color,
-            "tongueCoating": tongue_coating,
-            "tongueShape": "正常",  # 简化处理
+            "hue_mean": float(color_features["hue_mean"]),
+            "saturation_mean": float(color_features["saturation_mean"]),
+            "value_mean": float(color_features["value_mean"]),
+            "hue_std": float(color_features["hue_std"]),
+            "saturation_std": float(color_features["saturation_std"]),
+            "value_std": float(color_features["value_std"]),
             "hasCrack": has_crack,
             "hasToothMark": has_tooth_mark,
-            "moisture": moisture,
-            "rawFeatures": color_features
+            "moisture": float(color_features["value_mean"] / 255.0)
         }
 
         return result
@@ -232,48 +221,3 @@ class TongueAnalyzer:
         has_tooth_mark = bool(left_density > 0.1 or right_density > 0.1)  # 转换为Python原生布尔类型
 
         return has_crack, has_tooth_mark
-
-    def _determine_tongue_color(self, color_features: Dict[str, Any]) -> str:
-        """确定舌质颜色"""
-        # 简化版规则判断
-        hue_mean = color_features["hue_mean"]
-        saturation_mean = color_features["saturation_mean"]
-        value_mean = color_features["value_mean"]
-
-        if value_mean < 100:
-            return "紫舌"  # 紫舌
-        elif hue_mean < 10 or hue_mean > 170:
-            if saturation_mean > 150:
-                return "绛舌"  # 绛舌
-            else:
-                return "红舌"  # 红舌
-        elif 10 <= hue_mean <= 30:
-            if value_mean < 150:
-                return "红舌"  # 红舌
-            else:
-                return "淡红舌"  # 淡红舌
-        else:
-            return "淡白舌"  # 淡白舌
-
-    def _determine_tongue_coating(self, color_features: Dict[str, Any]) -> str:
-        """确定舌苔特征"""
-        # 简化版规则判断
-        saturation_mean = color_features["saturation_mean"]
-        value_mean = color_features["value_mean"]
-
-        if value_mean < 80:
-            return "黑苔"  # 黑苔
-        elif value_mean < 120:
-            return "灰苔"  # 灰苔
-        elif saturation_mean < 50:
-            if value_mean > 180:
-                return "薄白苔"  # 薄白苔
-            else:
-                return "厚白苔"  # 厚白苔
-        elif 50 <= saturation_mean <= 100:
-            if value_mean > 180:
-                return "薄黄苔"  # 薄黄苔
-            else:
-                return "厚黄苔"  # 厚黄苔
-        else:
-            return "腻苔"  # 腻苔

@@ -39,4 +39,9 @@ public class FacialFeatureDTO {
      * 原始特征数据
      */
     private Map<String, Object> rawFeatures;
+    /**
+     * 面色代码
+     */
+    private String faceColorCode;
+
 }

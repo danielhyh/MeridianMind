@@ -139,10 +139,10 @@ public class AiWriteServiceImpl implements AiWriteService {
     }
 
     private String buildUserMessage(AiWriteGenerateReqVO generateReqVO) {
-        String format = dictDataApi.getDictDataLabel(DictTypeConstants.AI_WRITE_FORMAT, generateReqVO.getFormat());
-        String tone = dictDataApi.getDictDataLabel(DictTypeConstants.AI_WRITE_TONE, generateReqVO.getTone());
-        String language = dictDataApi.getDictDataLabel(DictTypeConstants.AI_WRITE_LANGUAGE, generateReqVO.getLanguage());
-        String length = dictDataApi.getDictDataLabel(DictTypeConstants.AI_WRITE_LENGTH, generateReqVO.getLength());
+        String format = dictDataApi.getDictDataLabel(DictTypeConstants.AI_WRITE_FORMAT, String.valueOf(generateReqVO.getFormat()));
+        String tone = dictDataApi.getDictDataLabel(DictTypeConstants.AI_WRITE_TONE, String.valueOf(generateReqVO.getTone()));
+        String language = dictDataApi.getDictDataLabel(DictTypeConstants.AI_WRITE_LANGUAGE, String.valueOf(generateReqVO.getLanguage()));
+        String length = dictDataApi.getDictDataLabel(DictTypeConstants.AI_WRITE_LENGTH, String.valueOf(generateReqVO.getLength()));
         // 格式化 prompt
         String prompt = generateReqVO.getPrompt();
         if (Objects.equals(generateReqVO.getType(), AiWriteTypeEnum.WRITING.getType())) {

@@ -24,13 +24,11 @@ class FaceAnalyzer:
         # 加载人脸检测器 (可选)
         self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
+    # app/services/face_analyzer.py 修改
+
     def analyze_image(self, image_data: BytesIO) -> Dict[str, Any]:
         """
-        分析面色图像
-        Args:
-            image_data: 图像二进制数据
-        Returns:
-            分析结果
+        分析面色图像，只返回原始特征参数
         """
         # 加载图像
         image = self._load_image(image_data)
@@ -41,19 +39,18 @@ class FaceAnalyzer:
         # 提取颜色特征
         color_features = self._extract_color_features(processed_image)
 
-        # 提取各区域颜色特征
+        # 提取各区域颜色特征 - 区域特征仍保留
         region_features = self._extract_region_features(processed_image)
 
-        # 确定整体面色
-        face_color = self._determine_face_color(color_features)
-
-        # 构建结果
+        # 构建结果 - 只包含原始参数
         result = {
-            "faceColor": face_color,
-            "colorSaturation": float(color_features["saturation_mean"]),
-            "colorBrightness": float(color_features["value_mean"]),
-            "regionColors": region_features,
-            "rawFeatures": color_features
+            "hue_mean": float(color_features["hue_mean"]),
+            "saturation_mean": float(color_features["saturation_mean"]),
+            "value_mean": float(color_features["value_mean"]),
+            "hue_std": float(color_features["hue_std"]),
+            "saturation_std": float(color_features["saturation_std"]),
+            "value_std": float(color_features["value_std"]),
+            "regionColors": region_features  # 区域特征保留原始数据
         }
 
         return result

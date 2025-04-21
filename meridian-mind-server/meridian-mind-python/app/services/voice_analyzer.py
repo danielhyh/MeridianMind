@@ -13,56 +13,64 @@ class VoiceAnalyzer:
         """初始化语音分析服务"""
         pass
 
+    # app/services/voice_analyzer.py 修改
+
+    # app/services/voice_analyzer.py 修改示例
+
     def analyze_audio_temp(self, temp_file_path: str) -> Dict[str, Any]:
         """
-        分析临时音频文件
-
-        Args:
-            temp_file_path: 临时文件路径
-
-        Returns:
-            分析结果
+        分析临时音频文件，只返回原始特征参数
         """
         try:
             # 加载音频
             audio, sr = librosa.load(temp_file_path, sr=22050)
 
             # 提取音频特征
-            features = self._extract_audio_features(audio, sr)
+            rms = librosa.feature.rms(y=audio)[0]
+            rms_mean = float(np.mean(rms))
+            rms_std = float(np.std(rms))
 
-            # 基于音频特征的语音特性判断
-            strength = self._determine_strength(features)
-            tone = self._determine_tone(features)
-            rhythm = self._determine_rhythm(features)
-            breath_pattern = self._determine_breath_pattern(features)
+            # 过零率
+            zcr = librosa.feature.zero_crossing_rate(audio)[0]
+            zcr_mean = float(np.mean(zcr))
+            zcr_std = float(np.std(zcr))
 
-            # 构建结果（不包含audioUrl）
+            # 谱质心
+            spectral_centroid = librosa.feature.spectral_centroid(y=audio, sr=sr)[0]
+            spectral_centroid_mean = float(np.mean(spectral_centroid))
+
+            # 谱带宽
+            spectral_bandwidth = librosa.feature.spectral_bandwidth(y=audio, sr=sr)[0]
+            spectral_bandwidth_mean = float(np.mean(spectral_bandwidth))
+
+            # 梅尔频率倒谱系数(MFCC)
+            mfccs = librosa.feature.mfcc(y=audio, sr=sr, n_mfcc=13)
+            mfcc_means = np.mean(mfccs, axis=1).tolist()
+
+            # 构建结果 - 只返回原始参数，不做判断
             result = {
-                "strength": strength,
-                "tone": tone,
-                "rhythm": rhythm,
-                "breathPattern": breath_pattern,
-                "rawFeatures": features
+                "rms_mean": rms_mean,
+                "rms_std": rms_std,
+                "zcr_mean": zcr_mean,
+                "zcr_std": zcr_std,
+                "spectral_centroid_mean": spectral_centroid_mean,
+                "spectral_bandwidth_mean": spectral_bandwidth_mean,
+                "mfcc_means": mfcc_means
             }
 
             return result
+
         except Exception as e:
             print(f"音频分析异常: {str(e)}")
             # 返回默认结果而不是抛出异常
             return {
-                "strength": "中等",
-                "tone": "中等",
-                "rhythm": "均匀",
-                "breathPattern": "正常",
-                "rawFeatures": {
-                    "rms_mean": 0.0,
-                    "rms_std": 0.0,
-                    "zcr_mean": 0.0,
-                    "zcr_std": 0.0,
-                    "spectral_centroid_mean": 0.0,
-                    "spectral_bandwidth_mean": 0.0,
-                    "mfcc_means": [0.0] * 13
-                },
+                "rms_mean": 0.0,
+                "rms_std": 0.0,
+                "zcr_mean": 0.0,
+                "zcr_std": 0.0,
+                "spectral_centroid_mean": 0.0,
+                "spectral_bandwidth_mean": 0.0,
+                "mfcc_means": [0.0] * 13,
                 "error": str(e)
             }
 

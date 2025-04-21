@@ -16,9 +16,19 @@ public class TongueFeatureDTO {
     private String tongueColor;
 
     /**
+     * 舌质颜色代码
+     */
+    private String tongueColorCode;
+
+    /**
      * 舌苔特征
      */
     private String tongueCoating;
+
+    /**
+     * 舌苔特征代码
+     */
+    private String tongueCoatingCode;
 
     /**
      * 舌形特征

@@ -12,9 +12,7 @@ import cn.iocoder.yudao.module.medical.dal.mysql.fourdiagnosis.FourDiagnosticMap
 import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.adapter.FaceAnalysisAdapter;
 import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.adapter.TongueAnalysisAdapter;
 import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.adapter.VoiceAnalysisAdapter;
-import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.dto.FacialFeatureDTO;
-import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.dto.TongueFeatureDTO;
-import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.dto.VoiceFeatureDTO;
+import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.dto.*;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -163,30 +161,36 @@ public class FourDiagnosticServiceImpl implements FourDiagnosticService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public AppFourDiagnosticRespVO saveInquiry(Long id, String inquiryData) {
-        // 获取或创建四诊信息
+    public AppFourDiagnosticRespVO saveInquiry(Long id, InquiryDTO inquiryData) {
+        // 获取并校验四诊信息
         FourDiagnosticDO fourDiagnosticDO = validateAndGet(id);
 
-        // 更新数据
-        fourDiagnosticDO.setInquiry(inquiryData);
+        // 获取当前inquiry数据，如果为空则创建新对象
+        String inquiryJson = fourDiagnosticDO.getInquiry();
+        Object inquiry = ObjectUtil.isNotEmpty(inquiryJson) ?
+                JSONUtil.parseObj(inquiryJson) : JSONUtil.createObj();
 
-        // 保存更新
+        // 将DTO转换为JSON并保存
+        fourDiagnosticDO.setInquiry(JSONUtil.toJsonStr(
+                JSONUtil.parseObj(inquiry)
+        ));
+
+        // 保存更新到数据库
         fourDiagnosticMapper.updateById(fourDiagnosticDO);
 
-        // 返回结果
+        // 返回更新后的结果
         return FourDiagnosticConvert.INSTANCE.convert(fourDiagnosticDO);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public AppFourDiagnosticRespVO savePalpation(Long id, String palpationData, String pulseDescription) {
+    public AppFourDiagnosticRespVO savePalpation(Long id, String palpationData) {
         // 获取并校验四诊信息
         FourDiagnosticDO fourDiagnosticDO = createDiagnosticIfAbsent(id);
 
         // 更新数据
-        fourDiagnosticDO.setPalpation(palpationData);
-        fourDiagnosticDO.setPulseDescription(pulseDescription);
+        fourDiagnosticDO.setPalpation(JSONUtil.toJsonStr(
+                JSONUtil.createObj()));
 
         // 保存更新
         fourDiagnosticMapper.updateById(fourDiagnosticDO);
@@ -290,7 +294,7 @@ public class FourDiagnosticServiceImpl implements FourDiagnosticService {
     }
 
     @Override
-    public AppFourDiagnosticRespVO updateVoiceFeatures(Long id, VoiceFeatureDTO voiceFeature) {
+    public AppFourDiagnosticRespVO updateVoiceFeatures(Long id, AuscultationDTO voiceFeature) {
         // 获取并校验四诊信息
         FourDiagnosticDO fourDiagnosticDO = validateAndGet(id);
 
@@ -299,10 +303,14 @@ public class FourDiagnosticServiceImpl implements FourDiagnosticService {
         Object inspection = ObjectUtil.isNotEmpty(inspectionJson) ?
                 JSONUtil.parseObj(inspectionJson) : JSONUtil.createObj();
 
-        // 更新舌象数据
+        // 更新嗓音数据
         fourDiagnosticDO.setInspection(JSONUtil.toJsonStr(
-                JSONUtil.parseObj(inspection).set("voice", voiceFeature)
+                JSONUtil.parseObj(inspection).set("voice", voiceFeature.getVoiceFeature())
         ));
+        // 更新气味数据
+        fourDiagnosticDO.setInspection(JSONUtil.toJsonStr(
+                JSONUtil.parseObj(inspection).set("odor", voiceFeature.getOdorFeature()
+                )));
 
         // 保存更新
         fourDiagnosticMapper.updateById(fourDiagnosticDO);
