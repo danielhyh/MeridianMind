@@ -5,10 +5,10 @@
     <el-text tag="p">建议使用“形容词 + 动词 + 风格”的格式，使用“，”隔开</el-text>
     <el-input
       v-model="prompt"
+      maxlength="1024"
       :rows="5"
       class="w-100% mt-15px"
       input-style="border-radius: 7px;"
-      maxlength="1024"
       placeholder="例如：童话里的小屋应该是什么样子？"
       show-word-limit
       type="textarea"
@@ -18,13 +18,13 @@
     <div>
       <el-text tag="b">随机热词</el-text>
     </div>
-    <el-space class="word-list" wrap>
+    <el-space wrap class="word-list">
       <el-button
+        round
+        class="btn"
+        :type="selectHotWord === hotWord ? 'primary' : 'default'"
         v-for="hotWord in ImageHotWords"
         :key="hotWord"
-        :type="selectHotWord === hotWord ? 'primary' : 'default'"
-        class="btn"
-        round
         @click="handleHotWordClick(hotWord)"
       >
         {{ hotWord }}
@@ -35,12 +35,12 @@
     <div>
       <el-text tag="b">平台</el-text>
     </div>
-    <el-space class="group-item-body" wrap>
+    <el-space wrap class="group-item-body">
       <el-select
         v-model="otherPlatform"
-        class="!w-350px"
         placeholder="Select"
         size="large"
+        class="!w-350px"
         @change="handlerPlatformChange"
       >
         <el-option
@@ -56,8 +56,8 @@
     <div>
       <el-text tag="b">模型</el-text>
     </div>
-    <el-space class="group-item-body" wrap>
-      <el-select v-model="modelId" class="!w-350px" placeholder="Select" size="large">
+    <el-space wrap class="group-item-body">
+      <el-select v-model="modelId" placeholder="Select" size="large" class="!w-350px">
         <el-option
           v-for="item in platformModels"
           :key="item.id"
@@ -71,25 +71,25 @@
     <div>
       <el-text tag="b">图片尺寸</el-text>
     </div>
-    <el-space class="group-item-body" wrap>
-      <el-input v-model="width" class="w-170px" placeholder="图片宽度" type="number" />
-      <el-input v-model="height" class="w-170px" placeholder="图片高度" type="number" />
+    <el-space wrap class="group-item-body">
+      <el-input v-model="width" type="number" class="w-170px" placeholder="图片宽度" />
+      <el-input v-model="height" type="number" class="w-170px" placeholder="图片高度" />
     </el-space>
   </div>
   <div class="btns">
     <el-button
-      :disabled="prompt.length === 0"
-      :loading="drawIn"
-      round
-      size="large"
       type="primary"
+      size="large"
+      round
+      :loading="drawIn"
+      :disabled="prompt.length === 0"
       @click="handleGenerateImage"
     >
       {{ drawIn ? '生成中' : '生成内容' }}
     </el-button>
   </div>
 </template>
-<script lang="ts" setup>
+<script setup lang="ts">
 import { ImageApi, ImageDrawReqVO, ImageVO } from '@/api/ai/image'
 import { AiPlatformEnum, ImageHotWords, OtherPlatformEnum } from '@/views/ai/utils/constants'
 import { ModelVO } from '@/api/ai/model/model'
@@ -187,7 +187,7 @@ watch(
 /** 暴露组件方法 */
 defineExpose({ settingValues })
 </script>
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .hot-words {
   display: flex;
   flex-direction: column;

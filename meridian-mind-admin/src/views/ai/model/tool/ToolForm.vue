@@ -1,17 +1,17 @@
 <template>
-  <Dialog v-model="dialogVisible" :title="dialogTitle">
+  <Dialog :title="dialogTitle" v-model="dialogVisible">
     <el-form
       ref="formRef"
-      v-loading="formLoading"
       :model="formData"
       :rules="formRules"
       label-width="100px"
+      v-loading="formLoading"
     >
       <el-form-item label="工具名称" prop="name">
         <el-input v-model="formData.name" placeholder="请输入工具名称" />
       </el-form-item>
       <el-form-item label="工具描述" prop="description">
-        <el-input v-model="formData.description" placeholder="请输入工具描述" type="textarea" />
+        <el-input type="textarea" v-model="formData.description" placeholder="请输入工具描述" />
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-radio-group v-model="formData.status">
@@ -26,12 +26,12 @@
       </el-form-item>
     </el-form>
     <template #footer>
-      <el-button :disabled="formLoading" type="primary" @click="submitForm">确 定</el-button>
+      <el-button @click="submitForm" type="primary" :disabled="formLoading">确 定</el-button>
       <el-button @click="dialogVisible = false">取 消</el-button>
     </template>
   </Dialog>
 </template>
-<script lang="ts" setup>
+<script setup lang="ts">
 import { getIntDictOptions, DICT_TYPE } from '@/utils/dict'
 import { ToolApi, ToolVO } from '@/api/ai/model/tool'
 import { CommonStatusEnum } from '@/utils/constants'

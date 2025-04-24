@@ -9,11 +9,11 @@
             content="系统会自动将文档内容分割成多个段落，您可以根据需要调整分段方式和内容。"
             placement="top"
           >
-            <Icon class="ml-5px text-gray-400" icon="ep:warning" />
+            <Icon icon="ep:warning" class="ml-5px text-gray-400" />
           </el-tooltip>
         </div>
         <div>
-          <el-button plain size="small" type="primary" @click="handleAutoSegment">
+          <el-button type="primary" plain size="small" @click="handleAutoSegment">
             预览分段
           </el-button>
         </div>
@@ -22,7 +22,7 @@
       <div class="segment-settings mb-20px">
         <el-form label-width="120px">
           <el-form-item label="最大 Token 数">
-            <el-input-number v-model="modelData.segmentMaxTokens" :max="2048" :min="1" />
+            <el-input-number v-model="modelData.segmentMaxTokens" :min="1" :max="2048" />
           </el-form-item>
         </el-form>
       </div>
@@ -36,12 +36,12 @@
       <div class="file-selector mb-10px">
         <el-dropdown v-if="modelData.list && modelData.list.length > 0" trigger="click">
           <div class="flex items-center cursor-pointer">
-            <Icon class="text-danger mr-5px" icon="ep:document" />
+            <Icon icon="ep:document" class="text-danger mr-5px" />
             <span>{{ currentFile?.name || '请选择文件' }}</span>
             <span v-if="currentFile?.segments" class="ml-5px text-gray-500 text-12px">
               ({{ currentFile.segments.length }}个分片)
             </span>
-            <Icon class="ml-5px" icon="ep:arrow-down" />
+            <Icon icon="ep:arrow-down" class="ml-5px" />
           </div>
           <template #dropdown>
             <el-dropdown-menu>
@@ -64,7 +64,7 @@
       <!-- 文件内容预览 -->
       <div class="file-preview bg-gray-50 p-15px rounded-md max-h-600px overflow-y-auto">
         <div v-if="splitLoading" class="flex justify-center items-center py-20px">
-          <Icon class="is-loading" icon="ep:loading" />
+          <Icon icon="ep:loading" class="is-loading" />
           <span class="ml-10px">正在加载分段内容...</span>
         </div>
         <template
@@ -88,7 +88,7 @@
         <el-button v-if="!modelData.id" @click="handlePrevStep">上一步</el-button>
       </div>
       <div>
-        <el-button :loading="submitLoading" type="primary" @click="handleSave">
+        <el-button type="primary" :loading="submitLoading" @click="handleSave">
           保存并处理
         </el-button>
       </div>

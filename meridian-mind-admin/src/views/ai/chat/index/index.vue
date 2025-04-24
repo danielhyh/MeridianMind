@@ -2,8 +2,8 @@
   <el-container class="ai-layout">
     <!-- 左侧：对话列表 -->
     <ConversationList
-      ref="conversationListRef"
       :active-id="activeConversationId"
+      ref="conversationListRef"
       @on-conversation-create="handleConversationCreateSuccess"
       @on-conversation-click="handleConversationClick"
       @on-conversation-clear="handleConversationClear"
@@ -16,19 +16,19 @@
           {{ activeConversation?.title ? activeConversation?.title : '对话' }}
           <span v-if="activeMessageList.length">({{ activeMessageList.length }})</span>
         </div>
-        <div v-if="activeConversation" class="btns">
-          <el-button bg plain size="small" type="primary" @click="openChatConversationUpdateForm">
+        <div class="btns" v-if="activeConversation">
+          <el-button type="primary" bg plain size="small" @click="openChatConversationUpdateForm">
             <span v-html="activeConversation?.modelName"></span>
-            <Icon class="ml-10px" icon="ep:setting" />
+            <Icon icon="ep:setting" class="ml-10px" />
           </el-button>
-          <el-button class="btn" size="small" @click="handlerMessageClear">
-            <Icon color="#787878" icon="heroicons-outline:archive-box-x-mark" />
+          <el-button size="small" class="btn" @click="handlerMessageClear">
+            <Icon icon="heroicons-outline:archive-box-x-mark" color="#787878" />
           </el-button>
-          <el-button class="btn" size="small">
-            <Icon color="#787878" icon="ep:download" />
+          <el-button size="small" class="btn">
+            <Icon icon="ep:download" color="#787878" />
           </el-button>
-          <el-button class="btn" size="small" @click="handleGoTopMessage">
-            <Icon color="#787878" icon="ep:top" />
+          <el-button size="small" class="btn" @click="handleGoTopMessage">
+            <Icon icon="ep:top" color="#787878" />
           </el-button>
         </div>
       </el-header>
@@ -67,13 +67,13 @@
       <el-footer class="footer-container">
         <form class="prompt-from">
           <textarea
-            v-model="prompt"
             class="prompt-input"
-            placeholder="问我任何问题...（Shift+Enter 换行，按下 Enter 发送）"
-            @compositionend="onCompositionend"
-            @compositionstart="onCompositionstart"
-            @input="handlePromptInput"
+            v-model="prompt"
             @keydown="handleSendByKeydown"
+            @input="handlePromptInput"
+            @compositionstart="onCompositionstart"
+            @compositionend="onCompositionend"
+            placeholder="问我任何问题...（Shift+Enter 换行，按下 Enter 发送）"
           ></textarea>
           <div class="prompt-btns">
             <div>
@@ -81,19 +81,19 @@
               <span class="ml-5px text-14px text-#8f8f8f">上下文</span>
             </div>
             <el-button
-              v-if="conversationInProgress == false"
-              :loading="conversationInProgress"
-              size="default"
               type="primary"
+              size="default"
               @click="handleSendByButton"
+              :loading="conversationInProgress"
+              v-if="conversationInProgress == false"
             >
               {{ conversationInProgress ? '进行中' : '发送' }}
             </el-button>
             <el-button
-              v-if="conversationInProgress == true"
-              size="default"
               type="danger"
+              size="default"
               @click="stopStream()"
+              v-if="conversationInProgress == true"
             >
               停止
             </el-button>
@@ -110,7 +110,7 @@
   </el-container>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { ChatMessageApi, ChatMessageVO } from '@/api/ai/chat/message'
 import { ChatConversationApi, ChatConversationVO } from '@/api/ai/chat/conversation'
 import ConversationList from './components/conversation/ConversationList.vue'

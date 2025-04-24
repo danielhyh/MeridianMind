@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,7 +37,6 @@ public class AppDiagnosticController {
 
     @PutMapping("/update")
     @Operation(summary = "更新问诊记录")
-    @PreAuthorize("@ss.hasPermission('medical:diagnostic:update')")
     public CommonResult<Boolean> updateDiagnostic(@Valid @RequestBody AppDiagnosticSaveReqVO updateReqVO) {
         diagnosticService.updateDiagnostic(updateReqVO);
         return success(true);
@@ -47,7 +45,6 @@ public class AppDiagnosticController {
     @DeleteMapping("/delete")
     @Operation(summary = "删除问诊记录")
     @Parameter(name = "id", description = "编号", required = true)
-    @PreAuthorize("@ss.hasPermission('medical:diagnostic:delete')")
     public CommonResult<Boolean> deleteDiagnostic(@RequestParam("id") Long id) {
         diagnosticService.deleteDiagnostic(id);
         return success(true);
@@ -56,7 +53,6 @@ public class AppDiagnosticController {
     @GetMapping("/get")
     @Operation(summary = "获得问诊记录")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
-    @PreAuthorize("@ss.hasPermission('medical:diagnostic:query')")
     public CommonResult<AppDiagnosticRespVO> getDiagnostic(@RequestParam("id") Long id) {
         DiagnosticDO diagnostic = diagnosticService.getDiagnostic(id);
         return success(BeanUtils.toBean(diagnostic, AppDiagnosticRespVO.class));
@@ -64,7 +60,6 @@ public class AppDiagnosticController {
 
     @GetMapping("/page")
     @Operation(summary = "获得问诊记录分页")
-    @PreAuthorize("@ss.hasPermission('medical:diagnostic:query')")
     public CommonResult<PageResult<AppDiagnosticRespVO>> getDiagnosticPage(@Valid AppDiagnosticPageReqVO pageReqVO) {
         PageResult<DiagnosticDO> pageResult = diagnosticService.getDiagnosticPage(pageReqVO);
         return success(BeanUtils.toBean(pageResult, AppDiagnosticRespVO.class));

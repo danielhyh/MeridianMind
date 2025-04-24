@@ -2,27 +2,27 @@
   <ContentWrap>
     <!-- 搜索工作栏 -->
     <el-form
+      class="-mb-15px"
+      :model="queryParams"
       ref="queryFormRef"
       :inline="true"
-      :model="queryParams"
-      class="-mb-15px"
       label-width="68px"
     >
       <el-form-item label="文件名称" prop="name">
         <el-input
           v-model="queryParams.name"
-          class="!w-240px"
-          clearable
           placeholder="请输入文件名称"
+          clearable
           @keyup.enter="handleQuery"
+          class="!w-240px"
         />
       </el-form-item>
       <el-form-item label="是否启用" prop="status">
         <el-select
           v-model="queryParams.status"
-          class="!w-240px"
-          clearable
           placeholder="请选择是否启用"
+          clearable
+          class="!w-240px"
         >
           <el-option
             v-for="dict in getIntDictOptions(DICT_TYPE.COMMON_STATUS)"
@@ -33,10 +33,10 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button @click="handleQuery"><Icon class="mr-5px" icon="ep:search" /> 搜索</el-button>
-        <el-button @click="resetQuery"><Icon class="mr-5px" icon="ep:refresh" /> 重置</el-button>
-        <el-button v-hasPermi="['ai:knowledge:create']" plain type="primary" @click="handleCreate">
-          <Icon class="mr-5px" icon="ep:plus" /> 新增
+        <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
+        <el-button @click="resetQuery"><Icon icon="ep:refresh" class="mr-5px" /> 重置</el-button>
+        <el-button type="primary" plain @click="handleCreate" v-hasPermi="['ai:knowledge:create']">
+          <Icon icon="ep:plus" class="mr-5px" /> 新增
         </el-button>
       </el-form-item>
     </el-form>
@@ -44,54 +44,54 @@
 
   <!-- 列表 -->
   <ContentWrap>
-    <el-table v-loading="loading" :data="list" :show-overflow-tooltip="true" :stripe="true">
-      <el-table-column align="center" label="文档编号" prop="id" />
-      <el-table-column align="center" label="文件名称" prop="name" />
-      <el-table-column align="center" label="字符数" prop="contentLength" />
-      <el-table-column align="center" label="Token 数" prop="tokens" />
-      <el-table-column align="center" label="分片最大 Token 数" prop="segmentMaxTokens" />
-      <el-table-column align="center" label="召回次数" prop="retrievalCount" />
-      <el-table-column align="center" label="是否启用" prop="status">
+    <el-table v-loading="loading" :data="list" :stripe="true" :show-overflow-tooltip="true">
+      <el-table-column label="文档编号" align="center" prop="id" />
+      <el-table-column label="文件名称" align="center" prop="name" />
+      <el-table-column label="字符数" align="center" prop="contentLength" />
+      <el-table-column label="Token 数" align="center" prop="tokens" />
+      <el-table-column label="分片最大 Token 数" align="center" prop="segmentMaxTokens" />
+      <el-table-column label="召回次数" align="center" prop="retrievalCount" />
+      <el-table-column label="是否启用" align="center" prop="status">
         <template #default="scope">
           <el-switch
             v-model="scope.row.status"
             :active-value="0"
-            :disabled="!checkPermi(['ai:knowledge:update'])"
             :inactive-value="1"
             @change="handleStatusChange(scope.row)"
+            :disabled="!checkPermi(['ai:knowledge:update'])"
           />
         </template>
       </el-table-column>
       <el-table-column
-        :formatter="dateFormatter"
-        align="center"
         label="上传时间"
+        align="center"
         prop="createTime"
+        :formatter="dateFormatter"
         width="180px"
       />
-      <el-table-column align="center" label="操作" min-width="120px">
+      <el-table-column label="操作" align="center" min-width="120px">
         <template #default="scope">
           <el-button
-            v-hasPermi="['ai:knowledge:update']"
             link
             type="primary"
             @click="handleUpdate(scope.row.id)"
+            v-hasPermi="['ai:knowledge:update']"
           >
             编辑
           </el-button>
           <el-button
-            v-hasPermi="['ai:knowledge:query']"
             link
             type="primary"
             @click="handleSegment(scope.row.id)"
+            v-hasPermi="['ai:knowledge:query']"
           >
             分段
           </el-button>
           <el-button
-            v-hasPermi="['ai:knowledge:delete']"
             link
             type="danger"
             @click="handleDelete(scope.row.id)"
+            v-hasPermi="['ai:knowledge:delete']"
           >
             删除
           </el-button>
@@ -100,9 +100,9 @@
     </el-table>
     <!-- 分页 -->
     <Pagination
-      v-model:limit="queryParams.pageSize"
-      v-model:page="queryParams.pageNo"
       :total="total"
+      v-model:page="queryParams.pageNo"
+      v-model:limit="queryParams.pageSize"
       @pagination="getList"
     />
   </ContentWrap>
@@ -111,7 +111,7 @@
   <!-- <KnowledgeDocumentForm ref="formRef" @success="getList" /> -->
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { getIntDictOptions, DICT_TYPE } from '@/utils/dict'
 import { dateFormatter } from '@/utils/formatTime'
 import { KnowledgeDocumentApi, KnowledgeDocumentVO } from '@/api/ai/knowledge/document'

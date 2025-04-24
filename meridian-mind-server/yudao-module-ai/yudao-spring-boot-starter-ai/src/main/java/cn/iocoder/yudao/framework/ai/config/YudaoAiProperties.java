@@ -33,6 +33,29 @@ public class YudaoAiProperties {
      */
     private SunoProperties suno;
 
+    /**
+     * MaxKB配置
+     */
+    private MaxKBConfig maxkb;
+
+    @Data
+    public static class MaxKBConfig {
+        /**
+         * 是否启用
+         */
+        private boolean enabled = true;
+
+        /**
+         * API基础URL
+         */
+        private String baseUrl;
+
+        /**
+         * API 认证Token
+         */
+        private String apiKey;
+    }
+
     @Data
     public static class XingHuoProperties {
 

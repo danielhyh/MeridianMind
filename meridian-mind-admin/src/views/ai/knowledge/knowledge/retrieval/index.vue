@@ -10,9 +10,9 @@
         <div class="relative mb-10px">
           <el-input
             v-model="queryParams.content"
+            type="textarea"
             :rows="8"
             placeholder="请输入文本"
-            type="textarea"
           />
           <div class="absolute bottom-10px right-10px text-gray-400 text-12px">
             {{ queryParams.content?.length }} / 200
@@ -20,20 +20,20 @@
         </div>
         <div class="flex items-center mb-10px">
           <span class="w-60px text-gray-500">topK:</span>
-          <el-input-number v-model="queryParams.topK" :max="20" :min="1" />
+          <el-input-number v-model="queryParams.topK" :min="1" :max="20" />
         </div>
         <div class="flex items-center mb-15px">
           <span class="w-60px text-gray-500">相似度:</span>
           <el-input-number
             v-model="queryParams.similarityThreshold"
-            :max="1"
             :min="0"
+            :max="1"
             :precision="2"
             :step="0.01"
           />
         </div>
         <div class="flex justify-end">
-          <el-button :loading="loading" type="primary" @click="getRetrievalResult">测试</el-button>
+          <el-button type="primary" @click="getRetrievalResult" :loading="loading">测试</el-button>
         </div>
       </div>
     </ContentWrap>
@@ -61,17 +61,17 @@
             </span>
           </div>
           <div
+            class="bg-gray-50 p-10px rounded mb-10px whitespace-pre-wrap overflow-hidden transition-all duration-100 text-13px"
             :class="{
               'line-clamp-2 max-h-50px': !segment.expanded,
               'max-h-500px': segment.expanded
             }"
-            class="bg-gray-50 p-10px rounded mb-10px whitespace-pre-wrap overflow-hidden transition-all duration-100 text-13px"
           >
             {{ segment.content }}
           </div>
           <div class="flex justify-between items-center">
             <div class="flex items-center text-gray-500 text-13px">
-              <Icon class="mr-5px" icon="ep:document" />
+              <Icon icon="ep:document" class="mr-5px" />
               <span>{{ segment.documentName || '未知文档' }}</span>
             </div>
             <el-button size="small" @click="toggleExpand(segment)">
@@ -85,7 +85,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { useMessage } from '@/hooks/web/useMessage'
 import { KnowledgeSegmentApi } from '@/api/ai/knowledge/segment'
 import { KnowledgeApi } from '@/api/ai/knowledge/knowledge'

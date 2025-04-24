@@ -5,10 +5,10 @@
     <el-text tag="p">建议使用"形容词 + 动词 + 风格"的格式，使用"，"隔开</el-text>
     <el-input
       v-model="prompt"
+      maxlength="1024"
       :rows="5"
       class="w-100% mt-15px"
       input-style="border-radius: 7px;"
-      maxlength="1024"
       placeholder="例如：童话里的小屋应该是什么样子？"
       show-word-limit
       type="textarea"
@@ -18,13 +18,13 @@
     <div>
       <el-text tag="b">随机热词</el-text>
     </div>
-    <el-space class="word-list" wrap>
+    <el-space wrap class="word-list">
       <el-button
+        round
+        class="btn"
+        :type="selectHotWord === hotWord ? 'primary' : 'default'"
         v-for="hotWord in ImageHotWords"
         :key="hotWord"
-        :type="selectHotWord === hotWord ? 'primary' : 'default'"
-        class="btn"
-        round
         @click="handleHotWordClick(hotWord)"
       >
         {{ hotWord }}
@@ -35,11 +35,11 @@
     <div>
       <el-text tag="b">模型选择</el-text>
     </div>
-    <el-space class="model-list" wrap>
+    <el-space wrap class="model-list">
       <div
+        :class="selectModel === model.key ? 'modal-item selectModel' : 'modal-item'"
         v-for="model in Dall3Models"
         :key="model.key"
-        :class="selectModel === model.key ? 'modal-item selectModel' : 'modal-item'"
       >
         <el-image :src="model.image" fit="contain" @click="handleModelClick(model)" />
         <div class="model-font">{{ model.name }}</div>
@@ -50,11 +50,11 @@
     <div>
       <el-text tag="b">风格选择</el-text>
     </div>
-    <el-space class="image-style-list" wrap>
+    <el-space wrap class="image-style-list">
       <div
+        :class="style === imageStyle.key ? 'image-style-item selectImageStyle' : 'image-style-item'"
         v-for="imageStyle in Dall3StyleList"
         :key="imageStyle.key"
-        :class="style === imageStyle.key ? 'image-style-item selectImageStyle' : 'image-style-item'"
       >
         <el-image :src="imageStyle.image" fit="contain" @click="handleStyleClick(imageStyle)" />
         <div class="style-font">{{ imageStyle.name }}</div>
@@ -65,11 +65,11 @@
     <div>
       <el-text tag="b">画面比例</el-text>
     </div>
-    <el-space class="size-list" wrap>
+    <el-space wrap class="size-list">
       <div
+        class="size-item"
         v-for="imageSize in Dall3SizeList"
         :key="imageSize.key"
-        class="size-item"
         @click="handleSizeClick(imageSize)"
       >
         <div
@@ -83,18 +83,18 @@
   </div>
   <div class="btns">
     <el-button
-      :disabled="prompt.length === 0"
-      :loading="drawIn"
-      round
-      size="large"
       type="primary"
+      size="large"
+      round
+      :loading="drawIn"
+      :disabled="prompt.length === 0"
       @click="handleGenerateImage"
     >
       {{ drawIn ? '生成中' : '生成内容' }}
     </el-button>
   </div>
 </template>
-<script lang="ts" setup>
+<script setup lang="ts">
 import { ImageApi, ImageDrawReqVO, ImageVO } from '@/api/ai/image'
 import {
   Dall3Models,
@@ -229,7 +229,7 @@ const settingValues = async (detail: ImageVO) => {
 /** 暴露组件方法 */
 defineExpose({ settingValues })
 </script>
-<style lang="scss" scoped>
+<style scoped lang="scss">
 // 热词
 .hot-words {
   display: flex;

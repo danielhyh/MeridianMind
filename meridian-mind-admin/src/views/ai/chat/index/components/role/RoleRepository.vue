@@ -3,25 +3,25 @@
   <el-container class="role-container">
     <ChatRoleForm ref="formRef" @success="handlerAddRoleSuccess" />
     <!-- header  -->
-    <RoleHeader class="relative" title="角色仓库" />
+    <RoleHeader title="角色仓库" class="relative" />
     <!--  main  -->
     <el-main class="role-main">
       <div class="search-container">
         <!-- 搜索按钮 -->
         <el-input
-          v-model="search"
           :loading="loading"
-          :suffix-icon="Search"
+          v-model="search"
           class="search-input"
-          placeholder="请输入搜索的内容"
           size="default"
+          placeholder="请输入搜索的内容"
+          :suffix-icon="Search"
           @change="getActiveTabsRole"
         />
         <el-button
           v-if="activeTab == 'my-role'"
-          class="ml-20px"
           type="primary"
           @click="handlerAddRole"
+          class="ml-20px"
         >
           <Icon icon="ep:user" style="margin-right: 5px;" />
           添加角色
@@ -34,28 +34,28 @@
             :loading="loading"
             :role-list="myRoleList"
             :show-more="true"
-            class="mt-20px"
             @on-delete="handlerCardDelete"
             @on-edit="handlerCardEdit"
             @on-use="handlerCardUse"
             @on-page="handlerCardPage('my')"
+            class="mt-20px"
           />
         </el-tab-pane>
         <el-tab-pane label="公共角色" name="public-role">
           <RoleCategoryList
-            :active="activeCategory"
-            :category-list="categoryList"
             class="role-category-list"
+            :category-list="categoryList"
+            :active="activeCategory"
             @on-category-click="handlerCategoryClick"
           />
           <RoleList
             :role-list="publicRoleList"
-            class="mt-20px"
-            loading
             @on-delete="handlerCardDelete"
             @on-edit="handlerCardEdit"
             @on-use="handlerCardUse"
             @on-page="handlerCardPage('public')"
+            class="mt-20px"
+            loading
           />
         </el-tab-pane>
       </el-tabs>
@@ -63,7 +63,7 @@
   </el-container>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import {ref} from 'vue'
 import RoleHeader from './RoleHeader.vue'
 import RoleList from './RoleList.vue'
@@ -232,7 +232,7 @@ onMounted(async () => {
 }
 </style>
 <!-- 样式 -->
-<style lang="scss" scoped>
+<style scoped lang="scss">
 // 跟容器
 .role-container {
   position: absolute;

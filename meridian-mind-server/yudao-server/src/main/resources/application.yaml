@@ -203,6 +203,10 @@ yudao:
       enable: true
   #    base-url: https://suno-55ishh05u-status2xxs-projects.vercel.app
       base-url: http://127.0.0.1:3001
+    maxkb:
+      enabled: true
+      api-key: application-1e9f226c75997921948974afcd81a167
+      base-url: http://maxkb.sxdqysd.com/api
 
 --- #################### 芋道相关配置 ####################
 

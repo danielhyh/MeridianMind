@@ -4,12 +4,12 @@
     <div class="box-center">
       <div class="tip">点击下方按钮，开始你的对话吧</div>
       <div class="btns">
-        <el-button round type="primary" @click="handlerNewChat">新建对话</el-button>
+        <el-button type="primary" round @click="handlerNewChat">新建对话</el-button>
       </div>
     </div>
   </div>
 </template>
-<script lang="ts" setup>
+<script setup lang="ts">
 const emits = defineEmits(['onNewConversation'])
 
 /** 新建 conversation 聊天对话 */
@@ -17,7 +17,7 @@ const handlerNewChat = () => {
   emits('onNewConversation')
 }
 </script>
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .new-chat {
   display: flex;
   flex-direction: row;

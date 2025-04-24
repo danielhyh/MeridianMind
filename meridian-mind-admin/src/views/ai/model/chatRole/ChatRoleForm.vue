@@ -1,11 +1,11 @@
 <template>
-  <Dialog v-model="dialogVisible" :title="dialogTitle">
+  <Dialog :title="dialogTitle" v-model="dialogVisible">
     <el-form
       ref="formRef"
-      v-loading="formLoading"
       :model="formData"
       :rules="formRules"
       label-width="100px"
+      v-loading="formLoading"
     >
       <el-form-item label="角色名称" prop="name">
         <el-input v-model="formData.name" placeholder="请输入角色名称" />
@@ -13,8 +13,8 @@
       <el-form-item label="角色头像" prop="avatar">
         <UploadImg v-model="formData.avatar" height="60px" width="60px" />
       </el-form-item>
-      <el-form-item v-if="!isUser" label="绑定模型" prop="modelId">
-        <el-select v-model="formData.modelId" clearable placeholder="请选择模型">
+      <el-form-item label="绑定模型" prop="modelId" v-if="!isUser">
+        <el-select v-model="formData.modelId" placeholder="请选择模型" clearable>
           <el-option
             v-for="model in models"
             :key="model.id"
@@ -23,17 +23,17 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item v-if="!isUser" label="角色类别" prop="category">
+      <el-form-item label="角色类别" prop="category" v-if="!isUser">
         <el-input v-model="formData.category" placeholder="请输入角色类别" />
       </el-form-item>
       <el-form-item label="角色描述" prop="description">
-        <el-input v-model="formData.description" placeholder="请输入角色描述" type="textarea" />
+        <el-input type="textarea" v-model="formData.description" placeholder="请输入角色描述" />
       </el-form-item>
       <el-form-item label="角色设定" prop="systemMessage">
-        <el-input v-model="formData.systemMessage" placeholder="请输入角色设定" type="textarea" />
+        <el-input type="textarea" v-model="formData.systemMessage" placeholder="请输入角色设定" />
       </el-form-item>
       <el-form-item label="引用知识库" prop="knowledgeIds">
-        <el-select v-model="formData.knowledgeIds" clearable multiple placeholder="请选择知识库">
+        <el-select v-model="formData.knowledgeIds" placeholder="请选择知识库" clearable multiple>
           <el-option
             v-for="item in knowledgeList"
             :key="item.id"
@@ -43,11 +43,11 @@
         </el-select>
       </el-form-item>
       <el-form-item label="引用工具" prop="toolIds">
-        <el-select v-model="formData.toolIds" clearable multiple placeholder="请选择工具">
+        <el-select v-model="formData.toolIds" placeholder="请选择工具" clearable multiple>
           <el-option v-for="item in toolList" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
       </el-form-item>
-      <el-form-item v-if="!isUser" label="是否公开" prop="publicStatus">
+      <el-form-item label="是否公开" prop="publicStatus" v-if="!isUser">
         <el-radio-group v-model="formData.publicStatus">
           <el-radio
             v-for="dict in getBoolDictOptions(DICT_TYPE.INFRA_BOOLEAN_STRING)"
@@ -58,10 +58,10 @@
           </el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item v-if="!isUser" label="角色排序" prop="sort">
-        <el-input-number v-model="formData.sort" class="!w-1/1" placeholder="请输入角色排序" />
+      <el-form-item label="角色排序" prop="sort" v-if="!isUser">
+        <el-input-number v-model="formData.sort" placeholder="请输入角色排序" class="!w-1/1" />
       </el-form-item>
-      <el-form-item v-if="!isUser" label="开启状态" prop="status">
+      <el-form-item label="开启状态" prop="status" v-if="!isUser">
         <el-radio-group v-model="formData.status">
           <el-radio
             v-for="dict in getIntDictOptions(DICT_TYPE.COMMON_STATUS)"
@@ -74,12 +74,12 @@
       </el-form-item>
     </el-form>
     <template #footer>
-      <el-button :disabled="formLoading" type="primary" @click="submitForm">确 定</el-button>
+      <el-button @click="submitForm" type="primary" :disabled="formLoading">确 定</el-button>
       <el-button @click="dialogVisible = false">取 消</el-button>
     </template>
   </Dialog>
 </template>
-<script lang="ts" setup>
+<script setup lang="ts">
 import { getIntDictOptions, getBoolDictOptions, DICT_TYPE } from '@/utils/dict'
 import { ChatRoleApi, ChatRoleVO } from '@/api/ai/model/chatRole'
 import { CommonStatusEnum } from '@/utils/constants'

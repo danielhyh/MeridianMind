@@ -8,7 +8,6 @@ import cn.iocoder.yudao.module.ai.controller.admin.model.vo.chatModel.AiChatMode
 import cn.iocoder.yudao.module.ai.dal.dataobject.model.AiChatModelDO;
 import org.apache.ibatis.annotations.Mapper;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -34,9 +33,9 @@ public interface AiChatModelMapper extends BaseMapperX<AiChatModelDO> {
                 .orderByAsc(AiChatModelDO::getSort));
     }
 
-    default List<AiChatModelDO> selectList(Integer status) {
+    default List<AiChatModelDO> selectList(Integer type) {
         return selectList(new LambdaQueryWrapperX<AiChatModelDO>()
-                .eq(AiChatModelDO::getStatus, status)
+                .eq(AiChatModelDO::getType, type)
                 .orderByAsc(AiChatModelDO::getSort));
     }
 

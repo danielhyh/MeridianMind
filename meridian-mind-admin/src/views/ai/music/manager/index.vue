@@ -4,18 +4,18 @@
   <ContentWrap>
     <!-- 搜索工作栏 -->
     <el-form
+      class="-mb-15px"
+      :model="queryParams"
       ref="queryFormRef"
       :inline="true"
-      :model="queryParams"
-      class="-mb-15px"
       label-width="68px"
     >
       <el-form-item label="用户编号" prop="userId">
         <el-select
           v-model="queryParams.userId"
-          class="!w-240px"
           clearable
           placeholder="请输入用户编号"
+          class="!w-240px"
         >
           <el-option
             v-for="item in userList"
@@ -28,18 +28,18 @@
       <el-form-item label="音乐名称" prop="title">
         <el-input
           v-model="queryParams.title"
-          class="!w-240px"
-          clearable
           placeholder="请输入音乐名称"
+          clearable
           @keyup.enter="handleQuery"
+          class="!w-240px"
         />
       </el-form-item>
       <el-form-item label="音乐状态" prop="status">
         <el-select
           v-model="queryParams.status"
-          class="!w-240px"
-          clearable
           placeholder="请选择音乐状态"
+          clearable
+          class="!w-240px"
         >
           <el-option
             v-for="dict in getIntDictOptions(DICT_TYPE.AI_MUSIC_STATUS)"
@@ -52,9 +52,9 @@
       <el-form-item label="生成模式" prop="generateMode">
         <el-select
           v-model="queryParams.generateMode"
-          class="!w-240px"
-          clearable
           placeholder="请选择生成模式"
+          clearable
+          class="!w-240px"
         >
           <el-option
             v-for="dict in getIntDictOptions(DICT_TYPE.AI_GENERATE_MODE)"
@@ -67,20 +67,20 @@
       <el-form-item label="创建时间" prop="createTime">
         <el-date-picker
           v-model="queryParams.createTime"
+          value-format="YYYY-MM-DD HH:mm:ss"
+          type="daterange"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
           :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
           class="!w-240px"
-          end-placeholder="结束日期"
-          start-placeholder="开始日期"
-          type="daterange"
-          value-format="YYYY-MM-DD HH:mm:ss"
         />
       </el-form-item>
       <el-form-item label="是否发布" prop="publicStatus">
         <el-select
           v-model="queryParams.publicStatus"
-          class="!w-240px"
-          clearable
           placeholder="请选择是否发布"
+          clearable
+          class="!w-240px"
         >
           <el-option
             v-for="dict in getBoolDictOptions(DICT_TYPE.INFRA_BOOLEAN_STRING)"
@@ -91,101 +91,101 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button @click="handleQuery"><Icon class="mr-5px" icon="ep:search" /> 搜索</el-button>
-        <el-button @click="resetQuery"><Icon class="mr-5px" icon="ep:refresh" /> 重置</el-button>
+        <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
+        <el-button @click="resetQuery"><Icon icon="ep:refresh" class="mr-5px" /> 重置</el-button>
       </el-form-item>
     </el-form>
   </ContentWrap>
 
   <!-- 列表 -->
   <ContentWrap>
-    <el-table v-loading="loading" :data="list" :show-overflow-tooltip="true" :stripe="true">
-      <el-table-column align="center" fixed="left" label="编号" prop="id" width="180" />
-      <el-table-column align="center" fixed="left" label="音乐名称" prop="title" width="180px" />
-      <el-table-column align="center" label="用户" prop="userId" width="180">
+    <el-table v-loading="loading" :data="list" :stripe="true" :show-overflow-tooltip="true">
+      <el-table-column label="编号" align="center" prop="id" width="180" fixed="left" />
+      <el-table-column label="音乐名称" align="center" prop="title" width="180px" fixed="left" />
+      <el-table-column label="用户" align="center" prop="userId" width="180">
         <template #default="scope">
           <span>{{ userList.find((item) => item.id === scope.row.userId)?.nickname }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="音乐状态" prop="status" width="100">
+      <el-table-column label="音乐状态" align="center" prop="status" width="100">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.AI_MUSIC_STATUS" :value="scope.row.status" />
         </template>
       </el-table-column>
-      <el-table-column align="center" label="模型" prop="model" width="180" />
-      <el-table-column align="center" label="内容" width="180">
+      <el-table-column label="模型" align="center" prop="model" width="180" />
+      <el-table-column label="内容" align="center" width="180">
         <template #default="{ row }">
           <el-link
             v-if="row.audioUrl?.length > 0"
+            type="primary"
             :href="row.audioUrl"
             target="_blank"
-            type="primary"
           >
             音乐
           </el-link>
           <el-link
             v-if="row.videoUrl?.length > 0"
-            :href="row.videoUrl"
-            class="!pl-5px"
-            target="_blank"
             type="primary"
+            :href="row.videoUrl"
+            target="_blank"
+            class="!pl-5px"
           >
             视频
           </el-link>
           <el-link
             v-if="row.imageUrl?.length > 0"
-            :href="row.imageUrl"
-            class="!pl-5px"
-            target="_blank"
             type="primary"
+            :href="row.imageUrl"
+            target="_blank"
+            class="!pl-5px"
           >
             封面
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="时长（秒）" prop="duration" width="100" />
-      <el-table-column align="center" label="提示词" prop="prompt" width="180" />
-      <el-table-column align="center" label="歌词" prop="lyric" width="180" />
-      <el-table-column align="center" label="描述" prop="gptDescriptionPrompt" width="180" />
-      <el-table-column align="center" label="生成模式" prop="generateMode" width="100">
+      <el-table-column label="时长（秒）" align="center" prop="duration" width="100" />
+      <el-table-column label="提示词" align="center" prop="prompt" width="180" />
+      <el-table-column label="歌词" align="center" prop="lyric" width="180" />
+      <el-table-column label="描述" align="center" prop="gptDescriptionPrompt" width="180" />
+      <el-table-column label="生成模式" align="center" prop="generateMode" width="100">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.AI_GENERATE_MODE" :value="scope.row.generateMode" />
         </template>
       </el-table-column>
-      <el-table-column align="center" label="风格标签" prop="tags" width="180">
+      <el-table-column label="风格标签" align="center" prop="tags" width="180">
         <template #default="scope">
-          <el-tag v-for="tag in scope.row.tags" :key="tag" class="ml-2px" round>
+          <el-tag v-for="tag in scope.row.tags" :key="tag" round class="ml-2px">
             {{ tag }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="是否发布" prop="publicStatus">
+      <el-table-column label="是否发布" align="center" prop="publicStatus">
         <template #default="scope">
           <el-switch
             v-model="scope.row.publicStatus"
             :active-value="true"
-            :disabled="scope.row.status !== AiMusicStatusEnum.SUCCESS"
             :inactive-value="false"
             @change="handleUpdatePublicStatusChange(scope.row)"
+            :disabled="scope.row.status !== AiMusicStatusEnum.SUCCESS"
           />
         </template>
       </el-table-column>
-      <el-table-column align="center" label="任务编号" prop="taskId" width="180" />
-      <el-table-column align="center" label="错误信息" prop="errorMessage" />
+      <el-table-column label="任务编号" align="center" prop="taskId" width="180" />
+      <el-table-column label="错误信息" align="center" prop="errorMessage" />
       <el-table-column
-        :formatter="dateFormatter"
-        align="center"
         label="创建时间"
+        align="center"
         prop="createTime"
+        :formatter="dateFormatter"
         width="180px"
       />
-      <el-table-column align="center" fixed="right" label="操作" width="100">
+      <el-table-column label="操作" align="center" width="100" fixed="right">
         <template #default="scope">
           <el-button
-            v-hasPermi="['ai:music:delete']"
             link
             type="danger"
             @click="handleDelete(scope.row.id)"
+            v-hasPermi="['ai:music:delete']"
           >
             删除
           </el-button>
@@ -194,15 +194,15 @@
     </el-table>
     <!-- 分页 -->
     <Pagination
-      v-model:limit="queryParams.pageSize"
-      v-model:page="queryParams.pageNo"
       :total="total"
+      v-model:page="queryParams.pageNo"
+      v-model:limit="queryParams.pageSize"
       @pagination="getList"
     />
   </ContentWrap>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { getIntDictOptions, getBoolDictOptions, DICT_TYPE } from '@/utils/dict'
 import { dateFormatter } from '@/utils/formatTime'
 import { MusicApi, MusicVO } from '@/api/ai/music'

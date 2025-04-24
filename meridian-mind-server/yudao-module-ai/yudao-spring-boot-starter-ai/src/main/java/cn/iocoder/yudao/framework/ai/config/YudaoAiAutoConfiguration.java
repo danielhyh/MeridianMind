@@ -4,6 +4,7 @@ import cn.iocoder.yudao.framework.ai.core.factory.AiModelFactory;
 import cn.iocoder.yudao.framework.ai.core.factory.AiModelFactoryImpl;
 import cn.iocoder.yudao.framework.ai.core.model.deepseek.DeepSeekChatModel;
 import cn.iocoder.yudao.framework.ai.core.model.deepseek.DeepSeekChatOptions;
+import cn.iocoder.yudao.framework.ai.core.model.maxkb.MaxKBClient;
 import cn.iocoder.yudao.framework.ai.core.model.midjourney.api.MidjourneyApi;
 import cn.iocoder.yudao.framework.ai.core.model.suno.api.SunoApi;
 import cn.iocoder.yudao.framework.ai.core.model.xinghuo.XingHuoChatModel;
@@ -14,11 +15,14 @@ import org.springframework.ai.tokenizer.JTokkitTokenCountEstimator;
 import org.springframework.ai.tokenizer.TokenCountEstimator;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * 芋道 AI 自动配置
@@ -76,6 +80,22 @@ public class YudaoAiAutoConfiguration {
     @ConditionalOnProperty(value = "yudao.ai.suno.enable", havingValue = "true")
     public SunoApi sunoApi(YudaoAiProperties yudaoAiProperties) {
         return new SunoApi(yudaoAiProperties.getSuno().getBaseUrl());
+    }
+    @Configuration
+    @ConditionalOnProperty(prefix = "yudao.ai.maxkb", name = "enabled", havingValue = "true")
+    public class MaxKBConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean
+        public MaxKBClient maxKBClient(YudaoAiProperties properties, RestTemplate restTemplate) {
+            return new MaxKBClient(restTemplate, properties.getMaxkb());
+        }
+
+        @Bean
+        @ConditionalOnMissingBean
+        public RestTemplate restTemplate() {
+            return new RestTemplate();
+        }
     }
 
     // ========== rag 相关 ==========

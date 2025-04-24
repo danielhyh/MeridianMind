@@ -1,19 +1,19 @@
 <!--  AI 对话  -->
 <template>
-  <el-aside class="conversation-container h-100%" width="260px">
+  <el-aside width="260px" class="conversation-container h-100%">
     <!-- 左顶部：对话 -->
     <div class="h-100%">
       <el-button class="w-1/1 btn-new-conversation" type="primary" @click="createConversation">
-        <Icon class="mr-5px" icon="ep:plus" />
+        <Icon icon="ep:plus" class="mr-5px" />
         新建对话
       </el-button>
 
       <!-- 左顶部：搜索对话 -->
       <el-input
         v-model="searchName"
+        size="large"
         class="mt-10px search-input"
         placeholder="搜索历史记录"
-        size="large"
         @keyup="searchConversation"
       >
         <template #prefix>
@@ -24,22 +24,22 @@
       <!-- 左中间：对话列表 -->
       <div class="conversation-list">
         <!-- 情况一：加载中 -->
-        <el-empty v-if="loading" :v-loading="loading" description="." />
+        <el-empty v-if="loading" description="." :v-loading="loading" />
         <!-- 情况二：按照 group 分组，展示聊天会话 list 列表 -->
         <div v-for="conversationKey in Object.keys(conversationMap)" :key="conversationKey">
           <div
-            v-if="conversationMap[conversationKey].length"
             class="conversation-item classify-title"
+            v-if="conversationMap[conversationKey].length"
           >
             <el-text class="mx-1" size="small" tag="b">{{ conversationKey }}</el-text>
           </div>
           <div
+            class="conversation-item"
             v-for="conversation in conversationMap[conversationKey]"
             :key="conversation.id"
-            class="conversation-item"
             @click="handleConversationClick(conversation.id)"
-            @mouseout="hoverConversationId = ''"
             @mouseover="hoverConversationId = conversation.id"
+            @mouseout="hoverConversationId = ''"
           >
             <div
               :class="
@@ -47,13 +47,13 @@
               "
             >
               <div class="title-wrapper">
-                <img :src="conversation.roleAvatar || roleAvatarDefaultImg" class="avatar" />
+                <img class="avatar" :src="conversation.roleAvatar || roleAvatarDefaultImg" />
                 <span class="title">{{ conversation.title }}</span>
               </div>
-              <div v-show="hoverConversationId === conversation.id" class="button-wrapper">
+              <div class="button-wrapper" v-show="hoverConversationId === conversation.id">
                 <el-button class="btn" link @click.stop="handleTop(conversation)">
-                  <el-icon v-if="!conversation.pinned" title="置顶"><Top /></el-icon>
-                  <el-icon v-if="conversation.pinned" title="置顶"><Bottom /></el-icon>
+                  <el-icon title="置顶" v-if="!conversation.pinned"><Top /></el-icon>
+                  <el-icon title="置顶" v-if="conversation.pinned"><Bottom /></el-icon>
                 </el-button>
                 <el-button class="btn" link @click.stop="updateConversationTitle(conversation)">
                   <el-icon title="编辑">
@@ -87,13 +87,13 @@
     </div>
 
     <!-- 角色仓库抽屉 -->
-    <el-drawer v-model="roleRepositoryOpen" size="754px" title="角色仓库">
+    <el-drawer v-model="roleRepositoryOpen" title="角色仓库" size="754px">
       <RoleRepository />
     </el-drawer>
   </el-aside>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { ChatConversationApi, ChatConversationVO } from '@/api/ai/chat/conversation'
 import RoleRepository from '../role/RoleRepository.vue'
 import { Bottom, Top } from '@element-plus/icons-vue'
@@ -350,7 +350,7 @@ onMounted(async () => {
 })
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .conversation-container {
   position: relative;
   display: flex;

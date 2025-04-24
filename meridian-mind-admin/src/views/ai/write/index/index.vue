@@ -3,21 +3,21 @@
     <Left
       :is-writing="isWriting"
       class="h-full"
-      @example="handleExampleClick"
-      @reset="reset"
       @submit="submit"
+      @reset="reset"
+      @example="handleExampleClick"
     />
     <Right
-      ref="rightRef"
-      v-model:content="writeResult"
       :is-writing="isWriting"
-      class="flex-grow"
       @stop-stream="stopStream"
+      ref="rightRef"
+      class="flex-grow"
+      v-model:content="writeResult"
     />
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import Left from './components/Left.vue'
 import Right from './components/Right.vue'
 import { WriteApi, WriteVO } from '@/api/ai/write'

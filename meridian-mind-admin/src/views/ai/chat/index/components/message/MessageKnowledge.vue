@@ -3,7 +3,7 @@
   <!-- 知识引用列表 -->
   <div v-if="segments && segments.length > 0" class="mt-10px p-10px rounded-8px bg-[#f5f5f5]">
     <div class="text-14px text-[#666] mb-8px flex items-center">
-      <Icon class="mr-5px" icon="ep:document" /> 知识引用
+      <Icon icon="ep:document" class="mr-5px" /> 知识引用
     </div>
     <div class="flex flex-wrap gap-8px">
       <div
@@ -23,11 +23,11 @@
   <!-- 知识引用详情弹窗 -->
   <el-popover
     v-model:visible="dialogVisible"
-    :offset="55"
     :width="600"
-    placement="top-start"
-    popper-class="knowledge-popover"
     trigger="click"
+    placement="top-start"
+    :offset="55"
+    popper-class="knowledge-popover"
   >
     <template #reference>
       <div ref="documentRef"></div>
@@ -54,7 +54,7 @@
   </el-popover>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 const props = defineProps<{
   segments: {
     id: number

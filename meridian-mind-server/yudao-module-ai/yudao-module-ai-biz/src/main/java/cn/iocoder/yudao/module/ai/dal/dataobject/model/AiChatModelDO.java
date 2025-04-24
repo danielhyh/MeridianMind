@@ -61,6 +61,7 @@ public class AiChatModelDO extends BaseDO {
      * 枚举 {@link CommonStatusEnum}
      */
     private Integer status;
+    private Integer type;
 
     // ========== 对话配置 ==========
 

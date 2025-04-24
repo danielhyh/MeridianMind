@@ -1,14 +1,14 @@
 <template>
-  <Dialog v-model="dialogVisible" :title="dialogTitle">
+  <Dialog :title="dialogTitle" v-model="dialogVisible">
     <el-form
       ref="formRef"
-      v-loading="formLoading"
       :model="formData"
       :rules="formRules"
       label-width="120px"
+      v-loading="formLoading"
     >
       <el-form-item label="所属平台" prop="platform">
-        <el-select v-model="formData.platform" clearable placeholder="请输入平台">
+        <el-select v-model="formData.platform" placeholder="请输入平台" clearable>
           <el-option
             v-for="dict in getStrDictOptions(DICT_TYPE.AI_PLATFORM)"
             :key="dict.value"
@@ -39,12 +39,12 @@
       </el-form-item>
     </el-form>
     <template #footer>
-      <el-button :disabled="formLoading" type="primary" @click="submitForm">确 定</el-button>
+      <el-button @click="submitForm" type="primary" :disabled="formLoading">确 定</el-button>
       <el-button @click="dialogVisible = false">取 消</el-button>
     </template>
   </Dialog>
 </template>
-<script lang="ts" setup>
+<script setup lang="ts">
 import { getIntDictOptions, DICT_TYPE, getStrDictOptions } from '@/utils/dict'
 import { ApiKeyApi, ApiKeyVO } from '@/api/ai/model/apiKey'
 import { CommonStatusEnum } from '@/utils/constants'

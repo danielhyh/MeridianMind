@@ -1,12 +1,12 @@
 <template>
-  <el-card body-class="task-card" class="dr-task" shadow="never">
+  <el-card class="dr-task" body-class="task-card" shadow="never">
     <template #header>
       绘画任务
       <!-- TODO @fan：看看，怎么优化下这个样子哈。 -->
       <el-button @click="handleViewPublic">绘画作品</el-button>
     </template>
     <!-- 图片列表 -->
-    <div ref="imageListRef" class="task-image-list">
+    <div class="task-image-list" ref="imageListRef">
       <ImageCard
         v-for="image in imageList"
         :key="image.id"
@@ -17,9 +17,9 @@
     </div>
     <div class="task-image-pagination">
       <Pagination
-        v-model:limit="queryParams.pageSize"
-        v-model:page="queryParams.pageNo"
         :total="pageTotal"
+        v-model:page="queryParams.pageNo"
+        v-model:limit="queryParams.pageSize"
         @pagination="getImageList"
       />
     </div>
@@ -27,12 +27,12 @@
 
   <!-- 图片详情 -->
   <ImageDetail
-    :id="showImageDetailId"
     :show="isShowImageDetail"
+    :id="showImageDetailId"
     @handle-drawer-close="handleDetailClose"
   />
 </template>
-<script lang="ts" setup>
+<script setup lang="ts">
 import {
   ImageApi,
   ImageVO,

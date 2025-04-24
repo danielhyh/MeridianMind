@@ -4,18 +4,18 @@
   <ContentWrap>
     <!-- 搜索工作栏 -->
     <el-form
+      class="-mb-15px"
+      :model="queryParams"
       ref="queryFormRef"
       :inline="true"
-      :model="queryParams"
-      class="-mb-15px"
       label-width="68px"
     >
       <el-form-item label="用户编号" prop="userId">
         <el-select
           v-model="queryParams.userId"
-          class="!w-240px"
           clearable
           placeholder="请输入用户编号"
+          class="!w-240px"
         >
           <el-option
             v-for="item in userList"
@@ -28,9 +28,9 @@
       <el-form-item label="写作类型" prop="type">
         <el-select
           v-model="queryParams.type"
-          class="!w-240px"
-          clearable
           placeholder="请选择写作类型"
+          clearable
+          class="!w-240px"
         >
           <el-option
             v-for="dict in getIntDictOptions(DICT_TYPE.AI_WRITE_TYPE)"
@@ -43,9 +43,9 @@
       <el-form-item label="平台" prop="platform">
         <el-select
           v-model="queryParams.platform"
-          class="!w-240px"
-          clearable
           placeholder="请选择平台"
+          clearable
+          class="!w-240px"
         >
           <el-option
             v-for="dict in getStrDictOptions(DICT_TYPE.AI_PLATFORM)"
@@ -58,85 +58,85 @@
       <el-form-item label="创建时间" prop="createTime">
         <el-date-picker
           v-model="queryParams.createTime"
+          value-format="YYYY-MM-DD HH:mm:ss"
+          type="daterange"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
           :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
           class="!w-240px"
-          end-placeholder="结束日期"
-          start-placeholder="开始日期"
-          type="daterange"
-          value-format="YYYY-MM-DD HH:mm:ss"
         />
       </el-form-item>
       <el-form-item>
-        <el-button @click="handleQuery"><Icon class="mr-5px" icon="ep:search" /> 搜索</el-button>
-        <el-button @click="resetQuery"><Icon class="mr-5px" icon="ep:refresh" /> 重置</el-button>
+        <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
+        <el-button @click="resetQuery"><Icon icon="ep:refresh" class="mr-5px" /> 重置</el-button>
       </el-form-item>
     </el-form>
   </ContentWrap>
 
   <!-- 列表 -->
   <ContentWrap>
-    <el-table v-loading="loading" :data="list" :show-overflow-tooltip="true" :stripe="true">
-      <el-table-column align="center" fixed="left" label="编号" prop="id" width="120" />
-      <el-table-column align="center" label="用户" prop="userId" width="180">
+    <el-table v-loading="loading" :data="list" :stripe="true" :show-overflow-tooltip="true">
+      <el-table-column label="编号" align="center" prop="id" width="120" fixed="left" />
+      <el-table-column label="用户" align="center" prop="userId" width="180">
         <template #default="scope">
           <span>{{ userList.find((item) => item.id === scope.row.userId)?.nickname }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="写作类型" prop="type">
+      <el-table-column label="写作类型" align="center" prop="type">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.AI_WRITE_TYPE" :value="scope.row.type" />
         </template>
       </el-table-column>
-      <el-table-column align="center" label="平台" prop="platform" width="120">
+      <el-table-column label="平台" align="center" prop="platform" width="120">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.AI_PLATFORM" :value="scope.row.platform" />
         </template>
       </el-table-column>
-      <el-table-column align="center" label="模型" prop="model" width="180" />
+      <el-table-column label="模型" align="center" prop="model" width="180" />
       <el-table-column
-        align="center"
         label="生成内容提示"
+        align="center"
         prop="prompt"
-        show-overflow-tooltip
         width="180"
+        show-overflow-tooltip
       />
-      <el-table-column align="center" label="生成的内容" prop="generatedContent" width="180" />
-      <el-table-column align="center" label="原文" prop="originalContent" width="180" />
-      <el-table-column align="center" label="长度" prop="length">
+      <el-table-column label="生成的内容" align="center" prop="generatedContent" width="180" />
+      <el-table-column label="原文" align="center" prop="originalContent" width="180" />
+      <el-table-column label="长度" align="center" prop="length">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.AI_WRITE_LENGTH" :value="scope.row.length" />
         </template>
       </el-table-column>
-      <el-table-column align="center" label="格式" prop="format">
+      <el-table-column label="格式" align="center" prop="format">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.AI_WRITE_FORMAT" :value="scope.row.format" />
         </template>
       </el-table-column>
-      <el-table-column align="center" label="语气" prop="tone">
+      <el-table-column label="语气" align="center" prop="tone">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.AI_WRITE_TONE" :value="scope.row.tone" />
         </template>
       </el-table-column>
-      <el-table-column align="center" label="语言" prop="language">
+      <el-table-column label="语言" align="center" prop="language">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.AI_WRITE_LANGUAGE" :value="scope.row.language" />
         </template>
       </el-table-column>
       <el-table-column
-        :formatter="dateFormatter"
-        align="center"
         label="创建时间"
+        align="center"
         prop="createTime"
+        :formatter="dateFormatter"
         width="180px"
       />
-      <el-table-column align="center" label="错误信息" prop="errorMessage" />
-      <el-table-column align="center" label="操作">
+      <el-table-column label="错误信息" align="center" prop="errorMessage" />
+      <el-table-column label="操作" align="center">
         <template #default="scope">
           <el-button
-            v-hasPermi="['ai:write:delete']"
             link
             type="danger"
             @click="handleDelete(scope.row.id)"
+            v-hasPermi="['ai:write:delete']"
           >
             删除
           </el-button>
@@ -145,15 +145,15 @@
     </el-table>
     <!-- 分页 -->
     <Pagination
-      v-model:limit="queryParams.pageSize"
-      v-model:page="queryParams.pageNo"
       :total="total"
+      v-model:page="queryParams.pageNo"
+      v-model:limit="queryParams.pageSize"
       @pagination="getList"
     />
   </ContentWrap>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { DICT_TYPE, getIntDictOptions, getStrDictOptions } from '@/utils/dict'
 import { dateFormatter } from '@/utils/formatTime'
 import { useRouter } from 'vue-router'

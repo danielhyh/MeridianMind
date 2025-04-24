@@ -10,7 +10,7 @@
   </el-header>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 // 设置组件属性
 defineProps({
   title: {
@@ -20,7 +20,7 @@ defineProps({
 })
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .chat-header {
   display: flex;
   flex-direction: row;

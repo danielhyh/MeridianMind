@@ -1,11 +1,11 @@
 <template>
-  <Dialog v-model="dialogVisible" :title="dialogTitle">
+  <Dialog :title="dialogTitle" v-model="dialogVisible">
     <el-form
       ref="formRef"
-      v-loading="formLoading"
       :model="formData"
       :rules="formRules"
       label-width="130px"
+      v-loading="formLoading"
     >
       <el-form-item label="知识库名称" prop="name">
         <el-input v-model="formData.name" placeholder="请输入知识库名称" />
@@ -13,17 +13,17 @@
       <el-form-item label="知识库描述" prop="description">
         <el-input
           v-model="formData.description"
+          type="textarea"
           :rows="3"
           placeholder="请输入知识库描述"
-          type="textarea"
         />
       </el-form-item>
       <el-form-item label="向量模型" prop="embeddingModelId">
         <el-select
           v-model="formData.embeddingModelId"
-          class="!w-full"
-          clearable
           placeholder="请选择向量模型"
+          clearable
+          class="!w-full"
         >
           <el-option v-for="item in modelList" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
@@ -31,21 +31,21 @@
       <el-form-item label="检索 topK" prop="topK">
         <el-input-number
           v-model="formData.topK"
-          :max="10"
-          :min="0"
-          class="!w-1/1"
           placeholder="请输入检索 topK"
+          :min="0"
+          :max="10"
+          class="!w-1/1"
         />
       </el-form-item>
       <el-form-item label="检索相似度阈值" prop="similarityThreshold">
         <el-input-number
           v-model="formData.similarityThreshold"
-          :max="1"
-          :min="0"
-          :precision="2"
-          :step="0.01"
-          class="!w-1/1"
           placeholder="请输入检索相似度阈值"
+          :min="0"
+          :max="1"
+          :step="0.01"
+          :precision="2"
+          class="!w-1/1"
         />
       </el-form-item>
       <el-form-item label="是否启用" prop="status">
@@ -61,12 +61,12 @@
       </el-form-item>
     </el-form>
     <template #footer>
-      <el-button :disabled="formLoading" type="primary" @click="submitForm">确 定</el-button>
+      <el-button @click="submitForm" type="primary" :disabled="formLoading">确 定</el-button>
       <el-button @click="dialogVisible = false">取 消</el-button>
     </template>
   </Dialog>
 </template>
-<script lang="ts" setup>
+<script setup lang="ts">
 import { getIntDictOptions, DICT_TYPE } from '@/utils/dict'
 import { KnowledgeApi, KnowledgeVO } from '@/api/ai/knowledge/knowledge'
 import { CommonStatusEnum } from '@/utils/constants'

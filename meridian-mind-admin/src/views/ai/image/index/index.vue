@@ -38,7 +38,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import ImageList from './components/ImageList.vue'
 import { AiPlatformEnum } from '@/views/ai/utils/constants'
 import { ImageVO } from '@/api/ai/image'
@@ -109,7 +109,7 @@ onMounted(async () => {
 })
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .ai-image {
   position: absolute;
   left: 0;

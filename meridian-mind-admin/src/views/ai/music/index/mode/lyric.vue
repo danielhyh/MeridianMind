@@ -1,41 +1,41 @@
 <template>
   <div class="">
-    <Title desc="自己编写歌词或使用Ai生成歌词，两节/8行效果最佳" title="歌词">
+    <Title title="歌词" desc="自己编写歌词或使用Ai生成歌词，两节/8行效果最佳">
       <el-input
         v-model="formData.lyric"
         :autosize="{ minRows: 6, maxRows: 6}"
-        maxlength="1200"
-        placeholder="请输入您自己的歌词"
         resize="none"
-        show-word-limit
         type="textarea"
+        maxlength="1200"
+        show-word-limit
+        placeholder="请输入您自己的歌词"
       />
     </Title>
 
     <Title title="音乐风格">
       <el-space class="flex-wrap">
-        <el-tag v-for="tag in tags" :key="tag" class="mb-8px" round>{{tag}}</el-tag>
+        <el-tag v-for="tag in tags" :key="tag" round class="mb-8px">{{tag}}</el-tag>
       </el-space>
 
       <el-button
         :type="showCustom ? 'primary': 'default'" 
+        round 
+        size="small" 
         class="mb-6px"
-        round
-        size="small"
         @click="showCustom = !showCustom"
       >自定义风格
       </el-button>
     </Title>
 
-    <Title v-show="showCustom" class="-mt-12px" desc="描述您想要的音乐风格，Suno无法识别艺术家的名字，但可以理解流派和氛围">
+    <Title v-show="showCustom" desc="描述您想要的音乐风格，Suno无法识别艺术家的名字，但可以理解流派和氛围" class="-mt-12px">
       <el-input
         v-model="formData.style"
         :autosize="{ minRows: 4, maxRows: 4}"
-        maxlength="256"
-        placeholder="输入音乐风格(英文)"
         resize="none"
-        show-word-limit
         type="textarea"
+        maxlength="256"
+        show-word-limit
+        placeholder="输入音乐风格(英文)"
       />
     </Title>
 

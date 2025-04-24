@@ -9,8 +9,6 @@ import jakarta.validation.Valid;
 import java.util.Collection;
 import java.util.List;
 
-import java.util.Set;
-
 /**
  * AI 聊天模型 Service 接口
  *
@@ -80,7 +78,7 @@ public interface AiChatModelService {
      * @param status 状态
      * @return 聊天模型列表
      */
-    List<AiChatModelDO> getChatModelListByStatus(Integer status);
+    List<AiChatModelDO> getChatModelListByStatus(Integer type);
 
     /**
      * 获得聊天模型列表

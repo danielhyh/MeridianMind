@@ -7,18 +7,18 @@
         <el-text tag="b">您的需求？</el-text>
         <el-input
           v-model="formData.prompt"
+          maxlength="1024"
           :rows="5"
           class="w-100% mt-15px"
           input-style="border-radius: 7px;"
-          maxlength="1024"
           placeholder="请输入提示词，让AI帮你完善"
           show-word-limit
           type="textarea"
         />
         <el-button
-          :loading="isGenerating"
           class="!w-full mt-[15px]"
           type="primary"
+          :loading="isGenerating"
           @click="emits('submit', formData)"
         >
           智能生成思维导图
@@ -28,19 +28,19 @@
         <el-text tag="b">使用已有内容生成？</el-text>
         <el-input
           v-model="generatedContent"
+          maxlength="1024"
           :rows="5"
           class="w-100% mt-15px"
           input-style="border-radius: 7px;"
-          maxlength="1024"
           placeholder="例如：童话里的小屋应该是什么样子？"
           show-word-limit
           type="textarea"
         />
         <el-button
-          :disabled="isGenerating"
           class="!w-full mt-[15px]"
           type="primary"
           @click="emits('directGenerate', generatedContent)"
+          :disabled="isGenerating"
         >
           直接生成
         </el-button>
@@ -49,7 +49,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { MindMapContentExample } from '@/views/ai/utils/constants'
 
 const emits = defineEmits(['submit', 'directGenerate'])

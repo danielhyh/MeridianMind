@@ -13,7 +13,7 @@
   </ContentWrap>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import ChatConversationList from './ChatConversationList.vue'
 import ChatMessageList from './ChatMessageList.vue'
 

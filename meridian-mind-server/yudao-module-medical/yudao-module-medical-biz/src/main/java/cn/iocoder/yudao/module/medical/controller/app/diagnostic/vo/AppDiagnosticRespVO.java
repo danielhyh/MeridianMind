@@ -7,7 +7,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@Schema(description = "管理后台 - 问诊记录 Response VO")
+@Schema(description = "用户APP - 问诊记录 Response VO")
 @Data
 @ExcelIgnoreUnannotated
 public class AppDiagnosticRespVO {

@@ -1,14 +1,14 @@
 <template>
-  <Dialog v-model="dialogVisible" :title="dialogTitle">
+  <Dialog :title="dialogTitle" v-model="dialogVisible">
     <el-form
       ref="formRef"
-      v-loading="formLoading"
       :model="formData"
       :rules="formRules"
       label-width="120px"
+      v-loading="formLoading"
     >
       <el-form-item label="所属平台" prop="platform">
-        <el-select v-model="formData.platform" clearable placeholder="请输入平台">
+        <el-select v-model="formData.platform" placeholder="请输入平台" clearable>
           <el-option
             v-for="dict in getStrDictOptions(DICT_TYPE.AI_PLATFORM)"
             :key="dict.value"
@@ -20,9 +20,9 @@
       <el-form-item label="模型类型" prop="type">
         <el-select
           v-model="formData.type"
-          :disabled="formData.id"
-          clearable
           placeholder="请输入模型类型"
+          clearable
+          :disabled="formData.id"
         >
           <el-option
             v-for="dict in getIntDictOptions(DICT_TYPE.AI_MODEL_TYPE)"
@@ -33,7 +33,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="API 秘钥" prop="keyId">
-        <el-select v-model="formData.keyId" clearable placeholder="请选择 API 秘钥">
+        <el-select v-model="formData.keyId" placeholder="请选择 API 秘钥" clearable>
           <el-option
             v-for="apiKey in apiKeyList"
             :key="apiKey.id"
@@ -49,7 +49,7 @@
         <el-input v-model="formData.model" placeholder="请输入模型标识" />
       </el-form-item>
       <el-form-item label="模型排序" prop="sort">
-        <el-input-number v-model="formData.sort" class="!w-1/1" placeholder="请输入模型排序" />
+        <el-input-number v-model="formData.sort" placeholder="请输入模型排序" class="!w-1/1" />
       </el-form-item>
       <el-form-item label="开启状态" prop="status">
         <el-radio-group v-model="formData.status">
@@ -63,53 +63,53 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item
-        v-if="formData.type === AiModelTypeEnum.CHAT"
         label="温度参数"
         prop="temperature"
+        v-if="formData.type === AiModelTypeEnum.CHAT"
       >
         <el-input-number
           v-model="formData.temperature"
-          :max="2"
+          placeholder="请输入温度参数"
           :min="0"
+          :max="2"
           :precision="2"
           class="!w-1/1"
-          placeholder="请输入温度参数"
         />
       </el-form-item>
       <el-form-item
-        v-if="formData.type === AiModelTypeEnum.CHAT"
         label="回复数 Token 数"
         prop="maxTokens"
+        v-if="formData.type === AiModelTypeEnum.CHAT"
       >
         <el-input-number
           v-model="formData.maxTokens"
-          :max="8192"
-          :min="0"
-          class="!w-1/1"
           placeholder="请输入回复数 Token 数"
+          :min="0"
+          :max="8192"
+          class="!w-1/1"
         />
       </el-form-item>
       <el-form-item
-        v-if="formData.type === AiModelTypeEnum.CHAT"
         label="上下文数量"
         prop="maxContexts"
+        v-if="formData.type === AiModelTypeEnum.CHAT"
       >
         <el-input-number
           v-model="formData.maxContexts"
-          :max="20"
-          :min="0"
-          class="!w-1/1"
           placeholder="请输入上下文数量"
+          :min="0"
+          :max="20"
+          class="!w-1/1"
         />
       </el-form-item>
     </el-form>
     <template #footer>
-      <el-button :disabled="formLoading" type="primary" @click="submitForm">确 定</el-button>
+      <el-button @click="submitForm" type="primary" :disabled="formLoading">确 定</el-button>
       <el-button @click="dialogVisible = false">取 消</el-button>
     </template>
   </Dialog>
 </template>
-<script lang="ts" setup>
+<script setup lang="ts">
 import { ModelApi, ModelVO } from '@/api/ai/model/model'
 import { ApiKeyApi, ApiKeyVO } from '@/api/ai/model/apiKey'
 import { CommonStatusEnum } from '@/utils/constants'

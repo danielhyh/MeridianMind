@@ -5,10 +5,10 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 
 </script>
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .message-loading {
   padding: 30px 30px;
 }

@@ -1,17 +1,17 @@
 <template>
   <el-drawer
     v-model="showDrawer"
-    custom-class="drawer-class"
     title="图片详细"
     @close="handleDrawerClose"
+    custom-class="drawer-class"
   >
     <!-- 图片 -->
     <div class="item">
       <div class="body">
         <el-image
-          :preview-src-list="[detail.picUrl]"
-          :src="detail?.picUrl"
           class="image"
+          :src="detail?.picUrl"
+          :preview-src-list="[detail.picUrl]"
           preview-teleported
         />
       </div>
@@ -45,8 +45,8 @@
     </div>
     <!-- StableDiffusion 专属区域 -->
     <div
-      v-if="detail.platform === AiPlatformEnum.STABLE_DIFFUSION && detail?.options?.sampler"
       class="item"
+      v-if="detail.platform === AiPlatformEnum.STABLE_DIFFUSION && detail?.options?.sampler"
     >
       <div class="tip">采样方法</div>
       <div class="body">
@@ -58,10 +58,10 @@
       </div>
     </div>
     <div
+      class="item"
       v-if="
         detail.platform === AiPlatformEnum.STABLE_DIFFUSION && detail?.options?.clipGuidancePreset
       "
-      class="item"
     >
       <div class="tip">CLIP</div>
       <div class="body">
@@ -73,8 +73,8 @@
       </div>
     </div>
     <div
-      v-if="detail.platform === AiPlatformEnum.STABLE_DIFFUSION && detail?.options?.stylePreset"
       class="item"
+      v-if="detail.platform === AiPlatformEnum.STABLE_DIFFUSION && detail?.options?.stylePreset"
     >
       <div class="tip">风格</div>
       <div class="body">
@@ -86,8 +86,8 @@
       </div>
     </div>
     <div
-      v-if="detail.platform === AiPlatformEnum.STABLE_DIFFUSION && detail?.options?.steps"
       class="item"
+      v-if="detail.platform === AiPlatformEnum.STABLE_DIFFUSION && detail?.options?.steps"
     >
       <div class="tip">迭代步数</div>
       <div class="body">
@@ -95,8 +95,8 @@
       </div>
     </div>
     <div
-      v-if="detail.platform === AiPlatformEnum.STABLE_DIFFUSION && detail?.options?.scale"
       class="item"
+      v-if="detail.platform === AiPlatformEnum.STABLE_DIFFUSION && detail?.options?.scale"
     >
       <div class="tip">引导系数</div>
       <div class="body">
@@ -104,8 +104,8 @@
       </div>
     </div>
     <div
-      v-if="detail.platform === AiPlatformEnum.STABLE_DIFFUSION && detail?.options?.seed"
       class="item"
+      v-if="detail.platform === AiPlatformEnum.STABLE_DIFFUSION && detail?.options?.seed"
     >
       <div class="tip">随机因子</div>
       <div class="body">
@@ -113,7 +113,7 @@
       </div>
     </div>
     <!-- Dall3 专属区域 -->
-    <div v-if="detail.platform === AiPlatformEnum.OPENAI && detail?.options?.style" class="item">
+    <div class="item" v-if="detail.platform === AiPlatformEnum.OPENAI && detail?.options?.style">
       <div class="tip">风格选择</div>
       <div class="body">
         {{ Dall3StyleList.find((item: ImageModelVO) => item.key === detail?.options?.style)?.name }}
@@ -121,8 +121,8 @@
     </div>
     <!-- Midjourney 专属区域 -->
     <div
-      v-if="detail.platform === AiPlatformEnum.MIDJOURNEY && detail?.options?.version"
       class="item"
+      v-if="detail.platform === AiPlatformEnum.MIDJOURNEY && detail?.options?.version"
     >
       <div class="tip">模型版本</div>
       <div class="body">
@@ -130,8 +130,8 @@
       </div>
     </div>
     <div
-      v-if="detail.platform === AiPlatformEnum.MIDJOURNEY && detail?.options?.referImageUrl"
       class="item"
+      v-if="detail.platform === AiPlatformEnum.MIDJOURNEY && detail?.options?.referImageUrl"
     >
       <div class="tip">参考图</div>
       <div class="body">
@@ -141,7 +141,7 @@
   </el-drawer>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { ImageApi, ImageVO } from '@/api/ai/image'
 import {
   AiPlatformEnum,
@@ -194,7 +194,7 @@ watch(id, async (newVal, oldVal) => {
 
 const emits = defineEmits(['handleDrawerClose'])
 </script>
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .item {
   margin-bottom: 20px;
   width: 100%;

@@ -4,49 +4,49 @@
   <ContentWrap>
     <!-- 搜索工作栏 -->
     <el-form
+      class="-mb-15px"
+      :model="queryParams"
       ref="queryFormRef"
       :inline="true"
-      :model="queryParams"
-      class="-mb-15px"
       label-width="68px"
     >
       <el-form-item label="模型名字" prop="name">
         <el-input
           v-model="queryParams.name"
-          class="!w-240px"
-          clearable
           placeholder="请输入模型名字"
+          clearable
           @keyup.enter="handleQuery"
+          class="!w-240px"
         />
       </el-form-item>
       <el-form-item label="模型标识" prop="model">
         <el-input
           v-model="queryParams.model"
-          class="!w-240px"
-          clearable
           placeholder="请输入模型标识"
+          clearable
           @keyup.enter="handleQuery"
+          class="!w-240px"
         />
       </el-form-item>
       <el-form-item label="模型平台" prop="platform">
         <el-input
           v-model="queryParams.platform"
-          class="!w-240px"
-          clearable
           placeholder="请输入模型平台"
+          clearable
           @keyup.enter="handleQuery"
+          class="!w-240px"
         />
       </el-form-item>
       <el-form-item>
-        <el-button @click="handleQuery"><Icon class="mr-5px" icon="ep:search" /> 搜索</el-button>
-        <el-button @click="resetQuery"><Icon class="mr-5px" icon="ep:refresh" /> 重置</el-button>
+        <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
+        <el-button @click="resetQuery"><Icon icon="ep:refresh" class="mr-5px" /> 重置</el-button>
         <el-button
-          v-hasPermi="['ai:model:create']"
-          plain
           type="primary"
+          plain
           @click="openForm('create')"
+          v-hasPermi="['ai:model:create']"
         >
-          <Icon class="mr-5px" icon="ep:plus" /> 新增
+          <Icon icon="ep:plus" class="mr-5px" /> 新增
         </el-button>
       </el-form-item>
     </el-form>
@@ -54,48 +54,48 @@
 
   <!-- 列表 -->
   <ContentWrap>
-    <el-table v-loading="loading" :data="list" :show-overflow-tooltip="true" :stripe="true">
-      <el-table-column align="center" label="所属平台" min-width="100" prop="platform">
+    <el-table v-loading="loading" :data="list" :stripe="true" :show-overflow-tooltip="true">
+      <el-table-column label="所属平台" align="center" prop="platform" min-width="100">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.AI_PLATFORM" :value="scope.row.platform" />
         </template>
       </el-table-column>
-      <el-table-column align="center" label="模型类型" min-width="100" prop="platform">
+      <el-table-column label="模型类型" align="center" prop="platform" min-width="100">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.AI_MODEL_TYPE" :value="scope.row.type" />
         </template>
       </el-table-column>
-      <el-table-column align="center" label="模型名字" min-width="180" prop="name" />
-      <el-table-column align="center" label="模型标识" min-width="180" prop="model" />
-      <el-table-column align="center" label="API 秘钥" min-width="140" prop="keyId">
+      <el-table-column label="模型名字" align="center" prop="name" min-width="180" />
+      <el-table-column label="模型标识" align="center" prop="model" min-width="180" />
+      <el-table-column label="API 秘钥" align="center" prop="keyId" min-width="140">
         <template #default="scope">
           <span>{{ apiKeyList.find((item) => item.id === scope.row.keyId)?.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="排序" min-width="80" prop="sort" />
-      <el-table-column align="center" label="状态" min-width="80" prop="status">
+      <el-table-column label="排序" align="center" prop="sort" min-width="80" />
+      <el-table-column label="状态" align="center" prop="status" min-width="80">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.COMMON_STATUS" :value="scope.row.status" />
         </template>
       </el-table-column>
-      <el-table-column align="center" label="温度参数" min-width="80" prop="temperature" />
-      <el-table-column align="center" label="回复数 Token 数" min-width="140" prop="maxTokens" />
-      <el-table-column align="center" label="上下文数量" min-width="100" prop="maxContexts" />
-      <el-table-column align="center" fixed="right" label="操作" width="180">
+      <el-table-column label="温度参数" align="center" prop="temperature" min-width="80" />
+      <el-table-column label="回复数 Token 数" align="center" prop="maxTokens" min-width="140" />
+      <el-table-column label="上下文数量" align="center" prop="maxContexts" min-width="100" />
+      <el-table-column label="操作" align="center" width="180" fixed="right">
         <template #default="scope">
           <el-button
-            v-hasPermi="['ai:model:update']"
             link
             type="primary"
             @click="openForm('update', scope.row.id)"
+            v-hasPermi="['ai:model:update']"
           >
             编辑
           </el-button>
           <el-button
-            v-hasPermi="['ai:model:delete']"
             link
             type="danger"
             @click="handleDelete(scope.row.id)"
+            v-hasPermi="['ai:model:delete']"
           >
             删除
           </el-button>
@@ -104,9 +104,9 @@
     </el-table>
     <!-- 分页 -->
     <Pagination
-      v-model:limit="queryParams.pageSize"
-      v-model:page="queryParams.pageNo"
       :total="total"
+      v-model:page="queryParams.pageNo"
+      v-model:limit="queryParams.pageSize"
       @pagination="getList"
     />
   </ContentWrap>
@@ -115,7 +115,7 @@
   <ModelForm ref="formRef" @success="getList" />
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { ModelApi, ModelVO } from '@/api/ai/model/model'
 import ModelForm from './ModelForm.vue'
 import { DICT_TYPE } from '@/utils/dict'

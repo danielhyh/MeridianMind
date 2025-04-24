@@ -24,7 +24,7 @@ import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.
 
 @Tag(name = "管理后台 - AI 聊天模型")
 @RestController
-@RequestMapping("/ai/chat-model")
+@RequestMapping("/ai/model")
 @Validated
 public class AiChatModelController {
 
@@ -75,8 +75,9 @@ public class AiChatModelController {
     @GetMapping("/simple-list")
     @Operation(summary = "获得聊天模型列表")
     @Parameter(name = "status", description = "状态", required = true, example = "1")
-    public CommonResult<List<AiChatModelRespVO>> getChatModelSimpleList(@RequestParam("status") Integer status) {
-        List<AiChatModelDO> list = chatModelService.getChatModelListByStatus(status);
+    public CommonResult<List<AiChatModelRespVO>> getChatModelSimpleList(@RequestParam(value = "type",
+            required = false) Integer type) {
+        List<AiChatModelDO> list = chatModelService.getChatModelListByStatus(type);
         return success(convertList(list, model -> new AiChatModelRespVO().setId(model.getId())
                 .setName(model.getName()).setModel(model.getModel())));
     }

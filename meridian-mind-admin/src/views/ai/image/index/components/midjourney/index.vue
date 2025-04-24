@@ -5,10 +5,10 @@
     <el-text tag="p">建议使用“形容词+动词+风格”的格式，使用“，”隔开.</el-text>
     <el-input
       v-model="prompt"
+      maxlength="1024"
       :rows="5"
       class="w-100% mt-15px"
       input-style="border-radius: 7px;"
-      maxlength="1024"
       placeholder="例如：童话里的小屋应该是什么样子？"
       show-word-limit
       type="textarea"
@@ -18,13 +18,13 @@
     <div>
       <el-text tag="b">随机热词</el-text>
     </div>
-    <el-space class="word-list" wrap>
+    <el-space wrap class="word-list">
       <el-button
+        round
+        class="btn"
+        :type="selectHotWord === hotWord ? 'primary' : 'default'"
         v-for="hotWord in ImageHotWords"
         :key="hotWord"
-        :type="selectHotWord === hotWord ? 'primary' : 'default'"
-        class="btn"
-        round
         @click="handleHotWordClick(hotWord)"
       >
         {{ hotWord }}
@@ -35,11 +35,11 @@
     <div>
       <el-text tag="b">尺寸</el-text>
     </div>
-    <el-space class="size-list" wrap>
+    <el-space wrap class="size-list">
       <div
+        class="size-item"
         v-for="imageSize in MidjourneySizeList"
         :key="imageSize.key"
-        class="size-item"
         @click="handleSizeClick(imageSize)"
       >
         <div
@@ -55,11 +55,11 @@
     <div>
       <el-text tag="b">模型</el-text>
     </div>
-    <el-space class="model-list" wrap>
+    <el-space wrap class="model-list">
       <div
+        :class="selectModel === model.key ? 'modal-item selectModel' : 'modal-item'"
         v-for="model in MidjourneyModels"
         :key="model.key"
-        :class="selectModel === model.key ? 'modal-item selectModel' : 'modal-item'"
       >
         <el-image :src="model.image" fit="contain" @click="handleModelClick(model)" />
         <div class="model-font">{{ model.name }}</div>
@@ -70,7 +70,7 @@
     <div>
       <el-text tag="b">版本</el-text>
     </div>
-    <el-space class="version-list" wrap>
+    <el-space wrap class="version-list">
       <el-select
         v-model="selectVersion"
         class="version-select !w-350px"
@@ -90,23 +90,23 @@
     <div>
       <el-text tag="b">参考图</el-text>
     </div>
-    <el-space class="model-list" wrap>
+    <el-space wrap class="model-list">
       <UploadImg v-model="referImageUrl" height="120px" width="120px" />
     </el-space>
   </div>
   <div class="btns">
     <el-button
-      :disabled="prompt.length === 0"
-      round
-      size="large"
       type="primary"
+      size="large"
+      round
+      :disabled="prompt.length === 0"
       @click="handleGenerateImage"
     >
       {{ drawIn ? '生成中' : '生成内容' }}
     </el-button>
   </div>
 </template>
-<script lang="ts" setup>
+<script setup lang="ts">
 import { ImageApi, ImageMidjourneyImagineReqVO, ImageVO } from '@/api/ai/image'
 import {
   AiPlatformEnum,
@@ -233,7 +233,7 @@ const settingValues = async (detail: ImageVO) => {
 /** 暴露组件方法 */
 defineExpose({ settingValues })
 </script>
-<style lang="scss" scoped>
+<style scoped lang="scss">
 // 提示词
 .prompt {
 }

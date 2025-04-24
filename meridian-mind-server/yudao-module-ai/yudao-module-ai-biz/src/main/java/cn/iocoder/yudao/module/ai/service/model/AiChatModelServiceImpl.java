@@ -102,8 +102,8 @@ public class AiChatModelServiceImpl implements AiChatModelService {
     }
 
     @Override
-    public List<AiChatModelDO> getChatModelListByStatus(Integer status) {
-        return chatModelMapper.selectList(status);
+    public List<AiChatModelDO> getChatModelListByStatus(Integer type) {
+        return chatModelMapper.selectList(type);
     }
 
     @Override

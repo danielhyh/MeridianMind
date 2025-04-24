@@ -1,5 +1,5 @@
 <template>
-  <el-form ref="formRef" :model="modelData" class="mt-20px" label-width="0">
+  <el-form ref="formRef" :model="modelData" label-width="0" class="mt-20px">
     <el-form-item class="mb-20px">
       <div class="w-full">
         <div
@@ -7,23 +7,23 @@
         >
           <el-upload
             ref="uploadRef"
-            :accept="acceptedFileTypes"
-            :action="uploadUrl"
-            :auto-upload="true"
-            :before-upload="beforeUpload"
-            :file-list="fileList"
-            :http-request="httpRequest"
-            :multiple="true"
-            :on-change="handleFileChange"
-            :on-error="handleUploadError"
-            :on-remove="handleFileRemove"
-            :on-success="handleUploadSuccess"
-            :show-file-list="false"
             class="upload-demo"
             drag
+            :action="uploadUrl"
+            :auto-upload="true"
+            :on-success="handleUploadSuccess"
+            :on-error="handleUploadError"
+            :on-change="handleFileChange"
+            :on-remove="handleFileRemove"
+            :before-upload="beforeUpload"
+            :http-request="httpRequest"
+            :file-list="fileList"
+            :multiple="true"
+            :show-file-list="false"
+            :accept="acceptedFileTypes"
           >
             <div class="flex flex-col items-center justify-center py-20px">
-              <Icon class="text-[48px] text-[#c0c4cc] mb-10px" icon="ep:upload-filled" />
+              <Icon icon="ep:upload-filled" class="text-[48px] text-[#c0c4cc] mb-10px" />
               <div class="el-upload__text text-[16px] text-[#606266]">
                 拖拽文件至此，或者
                 <em class="text-[#409eff] not-italic cursor-pointer">选择文件</em>
@@ -45,10 +45,10 @@
             class="flex justify-between items-center py-4px px-12px border-l-4 border-l-[#409eff] rounded-sm shadow-sm hover:bg-[#ecf5ff] transition-all duration-300"
           >
             <div class="flex items-center">
-              <Icon class="mr-8px text-[#409eff]" icon="ep:document" />
+              <Icon icon="ep:document" class="mr-8px text-[#409eff]" />
               <span class="text-[13px] text-[#303133] break-all">{{ file.name }}</span>
             </div>
-            <el-button class="ml-2" link type="danger" @click="removeFile(index)">
+            <el-button type="danger" link @click="removeFile(index)" class="ml-2">
               <Icon icon="ep:delete" />
             </el-button>
           </div>
@@ -59,7 +59,7 @@
     <!-- 添加下一步按钮 -->
     <el-form-item>
       <div class="flex justify-end w-full">
-        <el-button :disabled="!isAllUploaded" type="primary" @click="handleNextStep">
+        <el-button type="primary" @click="handleNextStep" :disabled="!isAllUploaded">
           下一步
         </el-button>
       </div>

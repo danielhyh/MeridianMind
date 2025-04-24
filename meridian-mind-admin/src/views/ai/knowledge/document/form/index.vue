@@ -7,7 +7,7 @@
       >
         <!-- 左侧标题 -->
         <div class="w-200px flex items-center overflow-hidden">
-          <Icon class="cursor-pointer flex-shrink-0" icon="ep:arrow-left" @click="handleBack" />
+          <Icon icon="ep:arrow-left" class="cursor-pointer flex-shrink-0" @click="handleBack" />
           <span class="ml-10px text-16px truncate">
             {{ formData.id ? '编辑知识库文档' : '创建知识库文档' }}
           </span>
@@ -19,20 +19,20 @@
             <div
               v-for="(step, index) in steps"
               :key="index"
+              class="flex items-center mx-15px relative h-full"
               :class="[
                 currentStep === index
                   ? 'text-[#3473ff] border-[#3473ff] border-b-2 border-b-solid'
                   : 'text-gray-500'
               ]"
-              class="flex items-center mx-15px relative h-full"
             >
               <div
+                class="w-28px h-28px rounded-full flex items-center justify-center mr-8px border-2 border-solid text-15px"
                 :class="[
                   currentStep === index
                     ? 'bg-[#3473ff] text-white border-[#3473ff]'
                     : 'border-gray-300 bg-white text-gray-500'
                 ]"
-                class="w-28px h-28px rounded-full flex items-center justify-center mr-8px border-2 border-solid text-15px"
               >
                 {{ index + 1 }}
               </div>
@@ -49,17 +49,17 @@
       <div class="mt-50px">
         <!-- 第一步：上传文档 -->
         <div v-if="currentStep === 0" class="mx-auto w-560px">
-          <UploadStep ref="uploadDocumentRef" v-model="formData" />
+          <UploadStep v-model="formData" ref="uploadDocumentRef" />
         </div>
 
         <!-- 第二步：文档分段 -->
         <div v-if="currentStep === 1" class="mx-auto w-560px">
-          <SplitStep ref="documentSegmentRef" v-model="formData" />
+          <SplitStep v-model="formData" ref="documentSegmentRef" />
         </div>
 
         <!-- 第三步：处理并完成 -->
         <div v-if="currentStep === 2" class="mx-auto w-560px">
-          <ProcessStep ref="processCompleteRef" v-model="formData" />
+          <ProcessStep v-model="formData" ref="processCompleteRef" />
         </div>
       </div>
     </div>

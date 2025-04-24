@@ -2,39 +2,39 @@
   <el-card body-class="" class="image-card">
     <div class="image-operation">
       <div>
-        <el-button v-if="detail?.status === AiImageStatusEnum.IN_PROGRESS" bg text type="primary">
+        <el-button type="primary" text bg v-if="detail?.status === AiImageStatusEnum.IN_PROGRESS">
           生成中
         </el-button>
-        <el-button v-else-if="detail?.status === AiImageStatusEnum.SUCCESS" bg text>
+        <el-button text bg v-else-if="detail?.status === AiImageStatusEnum.SUCCESS">
           已完成
         </el-button>
-        <el-button v-else-if="detail?.status === AiImageStatusEnum.FAIL" bg text type="danger">
+        <el-button type="danger" text bg v-else-if="detail?.status === AiImageStatusEnum.FAIL">
           异常
         </el-button>
       </div>
       <!-- 操作区 -->
       <div>
         <el-button
-          :icon="Download"
           class="btn"
           text
+          :icon="Download"
           @click="handleButtonClick('download', detail)"
         />
         <el-button
-          :icon="RefreshRight"
           class="btn"
           text
+          :icon="RefreshRight"
           @click="handleButtonClick('regeneration', detail)"
         />
-        <el-button :icon="Delete" class="btn" text @click="handleButtonClick('delete', detail)" />
-        <el-button :icon="More" class="btn" text @click="handleButtonClick('more', detail)" />
+        <el-button class="btn" text :icon="Delete" @click="handleButtonClick('delete', detail)" />
+        <el-button class="btn" text :icon="More" @click="handleButtonClick('more', detail)" />
       </div>
     </div>
-    <div ref="cardImageRef" class="image-wrapper">
+    <div class="image-wrapper" ref="cardImageRef">
       <el-image
-        :preview-src-list="[detail.picUrl]"
-        :src="detail?.picUrl"
         class="image"
+        :src="detail?.picUrl"
+        :preview-src-list="[detail.picUrl]"
         preview-teleported
       />
       <div v-if="detail?.status === AiImageStatusEnum.FAIL">
@@ -44,10 +44,10 @@
     <!-- Midjourney 专属操作 -->
     <div class="image-mj-btns">
       <el-button
+        size="small"
         v-for="button in detail?.buttons"
         :key="button"
         class="min-w-40px ml-0 mr-10px mt-5px"
-        size="small"
         @click="handleMidjourneyBtnClick(button)"
       >
         {{ button.label }}{{ button.emoji }}
@@ -55,7 +55,7 @@
     </div>
   </el-card>
 </template>
-<script lang="ts" setup>
+<script setup lang="ts">
 import { Delete, Download, More, RefreshRight } from '@element-plus/icons-vue'
 import { ImageVO, ImageMidjourneyButtonsVO } from '@/api/ai/image'
 import { PropType } from 'vue'
@@ -117,7 +117,7 @@ onMounted(async () => {
 })
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .image-card {
   width: 320px;
   height: auto;

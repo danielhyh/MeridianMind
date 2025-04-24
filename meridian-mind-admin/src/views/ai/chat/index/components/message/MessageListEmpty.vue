@@ -6,9 +6,9 @@
       <div class="title">芋道 AI</div>
       <div class="role-list">
         <div
+          class="role-item"
           v-for="prompt in promptList"
           :key="prompt.prompt"
-          class="role-item"
           @click="handlerPromptClick(prompt)"
         >
           {{ prompt.prompt }}
@@ -17,7 +17,7 @@
     </div>
   </div>
 </template>
-<script lang="ts" setup>
+<script setup lang="ts">
 const promptList = [
   {
     prompt: '今天气怎么样?'
@@ -34,7 +34,7 @@ const handlerPromptClick = async ({ prompt }) => {
   emits('onPrompt', prompt)
 }
 </script>
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .chat-empty {
   position: relative;
   display: flex;

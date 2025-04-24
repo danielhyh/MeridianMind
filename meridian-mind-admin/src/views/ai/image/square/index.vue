@@ -4,10 +4,10 @@
     <!-- TODO @fan：Search 可以换成 Icon 组件么？ -->
     <el-input
       v-model="queryParams.prompt"
-      :suffix-icon="Search"
-      placeholder="请输入要搜索的内容"
-      size="large"
       style="width: 100%; margin-bottom: 20px"
+      size="large"
+      placeholder="请输入要搜索的内容"
+      :suffix-icon="Search"
       @keyup.enter="handleQuery"
     />
     <div class="gallery">
@@ -19,14 +19,14 @@
     <!-- TODO @fan：缺少翻页 -->
     <!-- 分页 -->
     <Pagination
-      v-model:limit="queryParams.pageSize"
-      v-model:page="queryParams.pageNo"
       :total="total"
+      v-model:page="queryParams.pageNo"
+      v-model:limit="queryParams.pageSize"
       @pagination="getList"
     />
   </div>
 </template>
-<script lang="ts" setup>
+<script setup lang="ts">
 import { ImageApi, ImageVO } from '@/api/ai/image'
 import { Search } from '@element-plus/icons-vue'
 
@@ -64,7 +64,7 @@ onMounted(async () => {
   await getList()
 })
 </script>
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .square-container {
   background-color: #fff;
   padding: 20px;

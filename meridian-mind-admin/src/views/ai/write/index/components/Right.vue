@@ -4,7 +4,7 @@
       <h3 class="m-0 px-7 shrink-0 flex items-center justify-between">
         <span>预览</span>
         <!-- 展示在右上角 -->
-        <el-button v-show="showCopy" color="#846af7" size="small" @click="copyContent">
+        <el-button color="#846af7" v-show="showCopy" @click="copyContent" size="small">
           <template #icon>
             <Icon icon="ph:copy-bold" />
           </template>
@@ -19,8 +19,8 @@
         <el-button
           v-show="isWriting"
           class="absolute bottom-2 sm:bottom-5 left-1/2 -translate-x-1/2 z-36"
-          size="small"
           @click="emits('stopStream')"
+          size="small"
         >
           <template #icon>
             <Icon icon="material-symbols:stop" />
@@ -29,19 +29,19 @@
         </el-button>
         <el-input
           id="inputId"
-          v-model="compContent"
-          :input-style="{ boxShadow: 'none' }"
-          autosize
-          placeholder="生成的内容……"
-          resize="none"
           type="textarea"
+          v-model="compContent"
+          autosize
+          :input-style="{ boxShadow: 'none' }"
+          resize="none"
+          placeholder="生成的内容……"
         />
       </div>
     </div>
   </el-card>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { useClipboard } from '@vueuse/core'
 
 const message = useMessage() // 消息弹窗

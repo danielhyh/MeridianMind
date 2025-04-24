@@ -1,11 +1,11 @@
 <template>
   <div class="category-list">
-    <div v-for="category in categoryList" :key="category" class="category">
+    <div class="category" v-for="category in categoryList" :key="category">
       <el-button
-        :type="category === active ? 'primary' : ''"
         plain
         round
         size="small"
+        :type="category === active ? 'primary' : ''"
         @click="handleCategoryClick(category)"
       >
         {{ category }}
@@ -13,7 +13,7 @@
     </div>
   </div>
 </template>
-<script lang="ts" setup>
+<script setup lang="ts">
 import { PropType } from 'vue'
 
 // 定义属性
@@ -37,7 +37,7 @@ const handleCategoryClick = async (category: string) => {
   emits('onCategoryClick', category)
 }
 </script>
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .category-list {
   display: flex;
   flex-direction: row;

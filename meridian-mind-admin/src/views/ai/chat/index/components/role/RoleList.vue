@@ -1,9 +1,9 @@
 <template>
-  <div ref="tabsRef" class="card-list" @scroll="handleTabsScroll">
-    <div v-for="role in roleList" :key="role.id" class="card-item">
-      <el-card body-class="card-body" class="card">
+  <div class="card-list" ref="tabsRef" @scroll="handleTabsScroll">
+    <div class="card-item" v-for="role in roleList" :key="role.id">
+      <el-card class="card" body-class="card-body">
         <!-- 更多操作 -->
-        <div v-if="showMore" class="more-container">
+        <div class="more-container" v-if="showMore">
           <el-dropdown @command="handleMoreClick">
             <span class="el-dropdown-link">
               <el-button type="text">
@@ -13,10 +13,10 @@
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item :command="['edit', role]">
-                  <Icon color="#787878" icon="ep:edit" />编辑
+                  <Icon icon="ep:edit" color="#787878" />编辑
                 </el-dropdown-item>
                 <el-dropdown-item :command="['delete', role]" style="color: red">
-                  <Icon color="red" icon="ep:delete" />删除
+                  <Icon icon="ep:delete" color="red" />删除
                 </el-dropdown-item>
               </el-dropdown-menu>
             </template>
@@ -24,7 +24,7 @@
         </div>
         <!-- 角色信息 -->
         <div>
-          <img :src="role.avatar" class="avatar" />
+          <img class="avatar" :src="role.avatar" />
         </div>
         <div class="right-container">
           <div class="content-container">
@@ -32,7 +32,7 @@
             <div class="description">{{ role.description }}</div>
           </div>
           <div class="btn-container">
-            <el-button size="small" type="primary" @click="handleUseClick(role)">使用</el-button>
+            <el-button type="primary" size="small" @click="handleUseClick(role)">使用</el-button>
           </div>
         </div>
       </el-card>
@@ -40,7 +40,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { ChatRoleVO } from '@/api/ai/model/chatRole'
 import { PropType, ref } from 'vue'
 import { More } from '@element-plus/icons-vue'
@@ -107,7 +107,7 @@ const handleTabsScroll = async () => {
   position: relative;
 }
 </style>
-<style lang="scss" scoped>
+<style scoped lang="scss">
 // 卡片列表
 .card-list {
   display: flex;

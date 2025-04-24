@@ -9,7 +9,7 @@
       >
         <!-- 文件图标和名称 -->
         <div class="flex items-center min-w-[200px] mr-10px">
-          <Icon class="mr-8px text-[#409eff]" icon="ep:document" />
+          <Icon icon="ep:document" class="mr-8px text-[#409eff]" />
           <span class="text-[13px] text-[#303133] break-all">{{ file.name }}</span>
         </div>
 
@@ -17,8 +17,8 @@
         <div class="flex-1">
           <el-progress
             :percentage="file.progress || 0"
-            :status="isProcessComplete(file) ? 'success' : ''"
             :stroke-width="10"
+            :status="isProcessComplete(file) ? 'success' : ''"
           />
         </div>
 
@@ -32,8 +32,8 @@
     <!-- 底部完成按钮 -->
     <div class="flex justify-end mt-20px">
       <el-button
-        :disabled="!allProcessComplete"
         :type="allProcessComplete ? 'success' : 'primary'"
+        :disabled="!allProcessComplete"
         @click="handleComplete"
       >
         完成
@@ -42,7 +42,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { KnowledgeSegmentApi } from '@/api/ai/knowledge/segment'
 
 const props = defineProps({

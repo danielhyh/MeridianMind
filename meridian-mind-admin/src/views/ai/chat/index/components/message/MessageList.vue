@@ -1,8 +1,8 @@
 <template>
   <div ref="messageContainer" class="h-100% overflow-y-auto relative">
-    <div v-for="(item, index) in list" :key="index" class="chat-list">
+    <div class="chat-list" v-for="(item, index) in list" :key="index">
       <!-- 靠左 message：system、assistant 类型 -->
-      <div v-if="item.type !== 'user'" class="left-message message-item">
+      <div class="left-message message-item" v-if="item.type !== 'user'">
         <div class="avatar">
           <el-avatar :src="roleAvatar" />
         </div>
@@ -10,8 +10,8 @@
           <div>
             <el-text class="time">{{ formatDate(item.createTime) }}</el-text>
           </div>
-          <div ref="markdownViewRef" class="left-text-container">
-            <MarkdownView :content="item.content" class="left-text" />
+          <div class="left-text-container" ref="markdownViewRef">
+            <MarkdownView class="left-text" :content="item.content" />
             <MessageKnowledge v-if="item.segments" :segments="item.segments" />
           </div>
           <div class="left-btns">
@@ -25,7 +25,7 @@
         </div>
       </div>
       <!-- 靠右 message：user 类型 -->
-      <div v-if="item.type === 'user'" class="right-message message-item">
+      <div class="right-message message-item" v-if="item.type === 'user'">
         <div class="avatar">
           <el-avatar :src="userAvatar" />
         </div>
@@ -59,7 +59,7 @@
     <el-button :icon="ArrowDownBold" circle />
   </div>
 </template>
-<script lang="ts" setup>
+<script setup lang="ts">
 import { PropType } from 'vue'
 import { formatDate } from '@/utils/formatTime'
 import MarkdownView from '@/components/MarkdownView/index.vue'
@@ -172,7 +172,7 @@ onMounted(async () => {
 })
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .message-container {
   position: relative;
   overflow-y: scroll;

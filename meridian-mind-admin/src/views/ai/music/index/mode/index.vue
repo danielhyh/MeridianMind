@@ -8,7 +8,7 @@
     <!-- 描述模式/歌词模式 切换 -->
     <component :is="generateMode === 'desc' ? desc : lyric" ref="modeRef" />
 
-    <el-button class="w-full" round type="primary" @click="generateMusic"> 创作音乐 </el-button>
+    <el-button type="primary" round class="w-full" @click="generateMusic"> 创作音乐 </el-button>
   </ContentWrap>
 </template>
 

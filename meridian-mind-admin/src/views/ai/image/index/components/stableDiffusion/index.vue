@@ -5,10 +5,10 @@
     <el-text tag="p">建议使用“形容词 + 动词 + 风格”的格式，使用“，”隔开</el-text>
     <el-input
       v-model="prompt"
+      maxlength="1024"
       :rows="5"
       class="w-100% mt-15px"
       input-style="border-radius: 7px;"
-      maxlength="1024"
       placeholder="例如：童话里的小屋应该是什么样子？"
       show-word-limit
       type="textarea"
@@ -18,13 +18,13 @@
     <div>
       <el-text tag="b">随机热词</el-text>
     </div>
-    <el-space class="word-list" wrap>
+    <el-space wrap class="word-list">
       <el-button
+        round
+        class="btn"
+        :type="selectHotWord === hotWord ? 'primary' : 'default'"
         v-for="hotWord in ImageHotEnglishWords"
         :key="hotWord"
-        :type="selectHotWord === hotWord ? 'primary' : 'default'"
-        class="btn"
-        round
         @click="handleHotWordClick(hotWord)"
       >
         {{ hotWord }}
@@ -35,8 +35,8 @@
     <div>
       <el-text tag="b">采样方法</el-text>
     </div>
-    <el-space class="group-item-body" wrap>
-      <el-select v-model="sampler" class="!w-350px" placeholder="Select" size="large">
+    <el-space wrap class="group-item-body">
+      <el-select v-model="sampler" placeholder="Select" size="large" class="!w-350px">
         <el-option
           v-for="item in StableDiffusionSamplers"
           :key="item.key"
@@ -50,8 +50,8 @@
     <div>
       <el-text tag="b">CLIP</el-text>
     </div>
-    <el-space class="group-item-body" wrap>
-      <el-select v-model="clipGuidancePreset" class="!w-350px" placeholder="Select" size="large">
+    <el-space wrap class="group-item-body">
+      <el-select v-model="clipGuidancePreset" placeholder="Select" size="large" class="!w-350px">
         <el-option
           v-for="item in StableDiffusionClipGuidancePresets"
           :key="item.key"
@@ -65,8 +65,8 @@
     <div>
       <el-text tag="b">风格</el-text>
     </div>
-    <el-space class="group-item-body" wrap>
-      <el-select v-model="stylePreset" class="!w-350px" placeholder="Select" size="large">
+    <el-space wrap class="group-item-body">
+      <el-select v-model="stylePreset" placeholder="Select" size="large" class="!w-350px">
         <el-option
           v-for="item in StableDiffusionStylePresets"
           :key="item.key"
@@ -80,7 +80,7 @@
     <div>
       <el-text tag="b">图片尺寸</el-text>
     </div>
-    <el-space class="group-item-body" wrap>
+    <el-space wrap class="group-item-body">
       <el-input v-model="width" class="w-170px" placeholder="图片宽度" />
       <el-input v-model="height" class="w-170px" placeholder="图片高度" />
     </el-space>
@@ -89,13 +89,13 @@
     <div>
       <el-text tag="b">迭代步数</el-text>
     </div>
-    <el-space class="group-item-body" wrap>
+    <el-space wrap class="group-item-body">
       <el-input
         v-model="steps"
+        type="number"
+        size="large"
         class="!w-350px"
         placeholder="Please input"
-        size="large"
-        type="number"
       />
     </el-space>
   </div>
@@ -103,13 +103,13 @@
     <div>
       <el-text tag="b">引导系数</el-text>
     </div>
-    <el-space class="group-item-body" wrap>
+    <el-space wrap class="group-item-body">
       <el-input
         v-model="scale"
+        type="number"
+        size="large"
         class="!w-350px"
         placeholder="Please input"
-        size="large"
-        type="number"
       />
     </el-space>
   </div>
@@ -117,30 +117,30 @@
     <div>
       <el-text tag="b">随机因子</el-text>
     </div>
-    <el-space class="group-item-body" wrap>
+    <el-space wrap class="group-item-body">
       <el-input
         v-model="seed"
+        type="number"
+        size="large"
         class="!w-350px"
         placeholder="Please input"
-        size="large"
-        type="number"
       />
     </el-space>
   </div>
   <div class="btns">
     <el-button
-      :disabled="prompt.length === 0"
-      :loading="drawIn"
-      round
-      size="large"
       type="primary"
+      size="large"
+      round
+      :loading="drawIn"
+      :disabled="prompt.length === 0"
       @click="handleGenerateImage"
     >
       {{ drawIn ? '生成中' : '生成内容' }}
     </el-button>
   </div>
 </template>
-<script lang="ts" setup>
+<script setup lang="ts">
 import { ImageApi, ImageDrawReqVO, ImageVO } from '@/api/ai/image'
 import { hasChinese } from '@/views/ai/utils/utils'
 import {
@@ -254,7 +254,7 @@ const settingValues = async (detail: ImageVO) => {
 /** 暴露组件方法 */
 defineExpose({ settingValues })
 </script>
-<style lang="scss" scoped>
+<style scoped lang="scss">
 // 提示词
 .prompt {
 }
