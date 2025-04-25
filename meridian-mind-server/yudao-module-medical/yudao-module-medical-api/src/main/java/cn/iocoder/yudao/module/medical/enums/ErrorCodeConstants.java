@@ -16,6 +16,7 @@ public interface ErrorCodeConstants {
     ErrorCode QUESTIONNAIRE_NAME_DUPLICATE = new ErrorCode(1_060_100_001, "体质评估问卷名称已存在");
     ErrorCode QUESTIONNAIRE_HAS_QUESTIONS = new ErrorCode(1_060_100_002, "问卷下存在题目，无法删除");
     ErrorCode QUESTIONNAIRE_HAS_RECORDS = new ErrorCode(1_060_100_003, "问卷已有评估记录，无法删除");
+    ErrorCode QUESTIONNAIRE_QUESTION_NOT_EXISTS = new ErrorCode(1_060_000_004, "问卷没有题目");
 
     // 问题相关
     ErrorCode QUESTION_NOT_EXISTS = new ErrorCode(1_060_101_000, "体质评估问题不存在");
@@ -31,7 +32,11 @@ public interface ErrorCodeConstants {
 
     // 统计分析相关
     ErrorCode STATISTICS_DATA_EMPTY = new ErrorCode(1_060_103_000, "暂无统计数据");
-    ErrorCode DIAGNOSTIC_NOT_EXISTS = new ErrorCode(1_060_000_001, "问诊记录不存在");
-    ErrorCode QUESTIONNAIRE_QUESTION_NOT_EXISTS = new ErrorCode(1_060_000_004, "问卷没有题目");
+
+    // 问诊记录相关
+    ErrorCode DIAGNOSTIC_NOT_EXISTS = new ErrorCode(1_060_104_001, "问诊记录不存在");
+
+    // AI相关
+    ErrorCode AI_PROMPT_NOT_EXISTS = new ErrorCode(1_060_005_001, "AI提示词模板不存在");
 
 }
