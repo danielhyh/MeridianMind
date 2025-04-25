@@ -4,11 +4,12 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.ai.core.enums.AiPlatformEnum;
+import cn.iocoder.yudao.framework.ai.core.model.maxkb.MaxKBApiResponse;
+import cn.iocoder.yudao.framework.ai.core.model.maxkb.MaxKBClient;
 import cn.iocoder.yudao.framework.ai.core.util.AiUtils;
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
-
 import cn.iocoder.yudao.module.ai.controller.admin.chat.vo.message.AiChatMessagePageReqVO;
 import cn.iocoder.yudao.module.ai.controller.admin.chat.vo.message.AiChatMessageSendReqVO;
 import cn.iocoder.yudao.module.ai.controller.admin.chat.vo.message.AiChatMessageSendRespVO;
@@ -80,7 +81,6 @@ public class AiChatMessageServiceImpl implements AiChatMessageService {
         List<AiChatMessageDO> historyMessages = chatMessageMapper.selectListByConversationId(conversation.getId());
         // 1.2 校验模型
         AiChatModelDO model = chatModalService.validateChatModel(conversation.getModelId());
-        ChatModel chatModel = apiKeyService.getChatModel(model.getKeyId());
 
         // 2. 插入 user 发送消息
         AiChatMessageDO userMessage = createChatMessage(conversation.getId(), null, model,
@@ -89,8 +89,14 @@ public class AiChatMessageServiceImpl implements AiChatMessageService {
         // 3.1 插入 assistant 接收消息
         AiChatMessageDO assistantMessage = createChatMessage(conversation.getId(), userMessage.getId(), model,
                 userId, conversation.getRoleId(), MessageType.ASSISTANT, "", sendReqVO.getUseContext());
+        // 判断是否使用MaxKB
+        boolean useMaxKB = AiPlatformEnum.MAXKB.getPlatform().equals(model.getPlatform());
+        if (useMaxKB) {
+            return sendMessageWithMaxKB(conversation, model, userMessage, assistantMessage, sendReqVO);
+        }
 
         // 3.2 召回段落
+        ChatModel chatModel = apiKeyService.getChatModel(model.getKeyId());
         List<AiKnowledgeSegmentDO> segmentList = recallSegment(sendReqVO.getContent(), conversation.getKnowledgeId());
 
         // 3.3 创建 chat 需要的 Prompt
@@ -104,6 +110,45 @@ public class AiChatMessageServiceImpl implements AiChatMessageService {
                 .setReceive(BeanUtils.toBean(assistantMessage, AiChatMessageSendRespVO.Message.class).setContent(newContent));
     }
 
+    /**
+     * 使用MaxKB发送消息
+     *
+     * @param conversation     对话
+     * @param userMessage      用户消息
+     * @param assistantMessage AI消息
+     * @param sendReqVO        发送请求
+     * @return 发送结果
+     */
+    private AiChatMessageSendRespVO sendMessageWithMaxKB(AiChatConversationDO conversation,
+                                                         AiChatModelDO model,
+                                                         AiChatMessageDO userMessage,
+                                                         AiChatMessageDO assistantMessage,
+                                                         AiChatMessageSendReqVO sendReqVO) {
+        // 调用MaxKB API
+        MaxKBClient maxKBClient = apiKeyService.getMaxKBClient(model.getKeyId());
+        MaxKBApiResponse response = maxKBClient.sendChatMessage(
+                conversation.getMaxkbChatId(), sendReqVO.getContent(), false, false);
+
+        // 更新AI消息，增加思考内容字段
+        String content = response.getContent();
+        String reasoningContent = response.getReasoningContent(); // 获取思考内容
+        chatMessageMapper.updateById(new AiChatMessageDO()
+                .setId(assistantMessage.getId())
+                .setContent(content)
+                .setReasoningContent(reasoningContent)); // 保存思考内容
+
+        // 返回结果，包含思考内容
+        AiChatMessageSendRespVO.Message receiveMessage = BeanUtils.toBean(assistantMessage,
+                        AiChatMessageSendRespVO.Message.class)
+                .setContent(content)
+                .setReasoningContent(reasoningContent); // 设置思考内容
+
+        return new AiChatMessageSendRespVO()
+                .setSend(BeanUtils.toBean(userMessage, AiChatMessageSendRespVO.Message.class))
+                .setReceive(receiveMessage)
+                .setReasoningContent(reasoningContent); // 设置顶层思考内容
+    }
+
     @Override
     public Flux<CommonResult<AiChatMessageSendRespVO>> sendChatMessageStream(AiChatMessageSendReqVO sendReqVO, Long userId) {
         // 1.1 校验对话存在
@@ -114,7 +159,6 @@ public class AiChatMessageServiceImpl implements AiChatMessageService {
         List<AiChatMessageDO> historyMessages = chatMessageMapper.selectListByConversationId(conversation.getId());
         // 1.2 校验模型
         AiChatModelDO model = chatModalService.validateChatModel(conversation.getModelId());
-        StreamingChatModel chatModel = apiKeyService.getChatModel(model.getKeyId());
 
         // 2. 插入 user 发送消息
         AiChatMessageDO userMessage = createChatMessage(conversation.getId(), null, model,
@@ -123,9 +167,14 @@ public class AiChatMessageServiceImpl implements AiChatMessageService {
         // 3.1 插入 assistant 接收消息
         AiChatMessageDO assistantMessage = createChatMessage(conversation.getId(), userMessage.getId(), model,
                 userId, conversation.getRoleId(), MessageType.ASSISTANT, "", sendReqVO.getUseContext());
-
+        // 判断是否使用MaxKB
+        boolean useMaxKB = AiPlatformEnum.MAXKB.getPlatform().equals(model.getPlatform());
+        if (useMaxKB)  {
+            return sendChatMessageStreamWithMaxKB(conversation, model, userMessage, assistantMessage, sendReqVO);
+        }
 
         // 3.2 召回段落
+        StreamingChatModel chatModel = apiKeyService.getChatModel(model.getKeyId());
         List<AiKnowledgeSegmentDO> segmentList = recallSegment(sendReqVO.getContent(), conversation.getKnowledgeId());
 
         // 3.3 构建 Prompt，并进行调用
@@ -153,6 +202,76 @@ public class AiChatMessageServiceImpl implements AiChatMessageService {
         }).onErrorResume(error -> Flux.just(error(ErrorCodeConstants.CHAT_STREAM_ERROR)));
     }
 
+    /**
+     * 使用MaxKB发送流式消息
+     *
+     * @param conversation     对话
+     * @param userMessage      用户消息
+     * @param assistantMessage AI消息
+     * @param sendReqVO        发送请求
+     * @return 流式发送结果
+     */
+    private Flux<CommonResult<AiChatMessageSendRespVO>> sendChatMessageStreamWithMaxKB(
+            AiChatConversationDO conversation,
+            AiChatModelDO model,
+            AiChatMessageDO userMessage,
+            AiChatMessageDO assistantMessage,
+            AiChatMessageSendReqVO sendReqVO) {
+        // 获取MaxKB会话ID
+        String maxkbChatId = conversation.getMaxkbChatId();
+        // 调用MaxKB流式API
+        MaxKBClient maxKBClient = apiKeyService.getMaxKBClient(model.getKeyId());
+        Flux<MaxKBApiResponse> responseFlux = maxKBClient.streamChatMessage(maxkbChatId, sendReqVO.getContent());
+
+        // 流式处理并返回
+        StringBuffer contentBuffer = new StringBuffer();
+        final String[] reasoningContent = {null}; // 使用数组存储思考内容，以便在lambda中修改
+
+        return responseFlux.map(response -> {
+            String content = response.getContent();
+            if (StrUtil.isNotBlank(content)) {
+                contentBuffer.append(content);
+            }
+
+            // 记录推理内容，通常只在最后一个响应块中
+            if (StrUtil.isNotBlank(response.getReasoningContent())) {
+                reasoningContent[0] = response.getReasoningContent();
+            }
+
+            AiChatMessageSendRespVO.Message receiveMessage = BeanUtils.toBean(assistantMessage,
+                            AiChatMessageSendRespVO.Message.class)
+                    .setContent(content);
+
+            // 如果有思考内容，则设置
+            if (reasoningContent[0] != null) {
+                receiveMessage.setReasoningContent(reasoningContent[0]);
+            }
+
+            AiChatMessageSendRespVO respVO = new AiChatMessageSendRespVO()
+                    .setSend(BeanUtils.toBean(userMessage, AiChatMessageSendRespVO.Message.class))
+                    .setReceive(receiveMessage);
+
+            // 如果有思考内容，则设置
+            if (reasoningContent[0] != null) {
+                respVO.setReasoningContent(reasoningContent[0]);
+            }
+
+            return success(respVO);
+        }).doOnComplete(() -> {
+            // 流结束时更新消息内容，包括思考内容
+            chatMessageMapper.updateById(new AiChatMessageDO()
+                    .setId(assistantMessage.getId())
+                    .setContent(contentBuffer.toString())
+                    .setReasoningContent(reasoningContent[0]));
+        }).doOnError(throwable -> {
+            log.error("[sendChatMessageStreamWithMaxKB][userId({}) sendReqVO({}) 发生异常]",
+                    userMessage.getUserId(), sendReqVO, throwable);
+            chatMessageMapper.updateById(new AiChatMessageDO()
+                    .setId(assistantMessage.getId())
+                    .setContent("MaxKB流式回复异常: " + throwable.getMessage()));
+        }).onErrorResume(error -> Flux.just(error(ErrorCodeConstants.CHAT_STREAM_ERROR)));
+    }
+
     private List<AiKnowledgeSegmentDO> recallSegment(String content, Long knowledgeId) {
         if (Objects.isNull(knowledgeId)) {
             return Collections.emptyList();
@@ -160,7 +279,7 @@ public class AiChatMessageServiceImpl implements AiChatMessageService {
         return knowledgeSegmentService.similaritySearch(new AiKnowledgeSegmentSearchReqVO().setKnowledgeId(knowledgeId).setContent(content));
     }
 
-    private Prompt buildPrompt(AiChatConversationDO conversation, List<AiChatMessageDO> messages,List<AiKnowledgeSegmentDO> segmentList,
+    private Prompt buildPrompt(AiChatConversationDO conversation, List<AiChatMessageDO> messages, List<AiKnowledgeSegmentDO> segmentList,
                                AiChatModelDO model, AiChatMessageSendReqVO sendReqVO) {
         // 1. 构建 Prompt Message 列表
         List<Message> chatMessages = new ArrayList<>();

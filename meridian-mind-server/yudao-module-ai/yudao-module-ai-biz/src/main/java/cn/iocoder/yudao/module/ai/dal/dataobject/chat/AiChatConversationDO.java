@@ -104,4 +104,10 @@ public class AiChatConversationDO extends BaseDO {
      */
     private Integer maxContexts;
 
+    /**
+     * MaxKB会话ID
+     * 用于存储与MaxKB平台的会话ID
+     */
+    private String maxkbChatId;
+
 }

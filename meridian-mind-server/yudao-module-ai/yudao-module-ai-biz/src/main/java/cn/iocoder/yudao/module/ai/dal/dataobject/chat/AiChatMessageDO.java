@@ -100,5 +100,10 @@ public class AiChatMessageDO extends BaseDO {
      * 是否携带上下文
      */
     private Boolean useContext;
+    /**
+     * 思考内容
+     * 存储AI生成回复时的思考过程
+     */
+    private String reasoningContent;
 
 }

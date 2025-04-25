@@ -4,6 +4,9 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.iocoder.yudao.framework.ai.core.enums.AiPlatformEnum;
+import cn.iocoder.yudao.framework.ai.core.model.maxkb.MaxKBClient;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.ai.controller.admin.chat.vo.conversation.AiChatConversationCreateMyReqVO;
@@ -14,6 +17,7 @@ import cn.iocoder.yudao.module.ai.dal.dataobject.model.AiChatModelDO;
 import cn.iocoder.yudao.module.ai.dal.dataobject.model.AiChatRoleDO;
 import cn.iocoder.yudao.module.ai.dal.mysql.chat.AiChatConversationMapper;
 import cn.iocoder.yudao.module.ai.service.knowledge.AiKnowledgeService;
+import cn.iocoder.yudao.module.ai.service.model.AiApiKeyService;
 import cn.iocoder.yudao.module.ai.service.model.AiChatModelService;
 import cn.iocoder.yudao.module.ai.service.model.AiChatRoleService;
 import jakarta.annotation.Resource;
@@ -49,6 +53,8 @@ public class AiChatConversationServiceImpl implements AiChatConversationService 
     private AiChatRoleService chatRoleService;
     @Resource
     private AiKnowledgeService knowledgeService;
+    @Resource
+    private AiApiKeyService apiKeyService;
 
     @Override
     public Long createChatConversationMy(AiChatConversationCreateMyReqVO createReqVO, Long userId) {
@@ -58,17 +64,33 @@ public class AiChatConversationServiceImpl implements AiChatConversationService 
         AiChatModelDO model = role != null && role.getModelId() != null ? chatModalService.validateChatModel(role.getModelId())
                 : chatModalService.getRequiredDefaultChatModel();
         Assert.notNull(model, "必须找到默认模型");
-        validateChatModel(model);
+        boolean useMaxKB = AiPlatformEnum.MAXKB.getPlatform().equals(model.getPlatform());
+        if (!useMaxKB) {
+            validateChatModel(model);
+        }
 
         // 1.3 校验知识库
         if (Objects.nonNull(createReqVO.getKnowledgeId())) {
             knowledgeService.validateKnowledgeExists(createReqVO.getKnowledgeId());
         }
 
+        // 1.4 处理MaxKB应用相关信息
+        String maxkbChatId = null;
+        if (useMaxKB) {
+            // 如果提供了applicationId，则预先创建MaxKB会话
+            String maxkbApplicationId = model.getMaxkbApplicationId();
+            if (StrUtil.isNotBlank(maxkbApplicationId)) {
+                MaxKBClient maxKBClient = apiKeyService.getMaxKBClient(model.getKeyId());
+                maxkbChatId = maxKBClient.openChat(maxkbApplicationId);
+            }
+        }
+
         // 2. 创建 AiChatConversationDO 聊天对话
         AiChatConversationDO conversation = new AiChatConversationDO().setUserId(userId).setPinned(false)
                 .setModelId(model.getId()).setModel(model.getModel()).setKnowledgeId(createReqVO.getKnowledgeId())
-                .setTemperature(model.getTemperature()).setMaxTokens(model.getMaxTokens()).setMaxContexts(model.getMaxContexts());
+                .setTemperature(model.getTemperature()).setMaxTokens(model.getMaxTokens()).setMaxContexts(model.getMaxContexts())
+                .setMaxkbChatId(maxkbChatId);
+
         if (role != null) {
             conversation.setTitle(role.getName()).setRoleId(role.getId()).setSystemMessage(role.getSystemMessage());
         } else {

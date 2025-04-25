@@ -10,6 +10,8 @@ import cn.iocoder.yudao.framework.ai.config.YudaoAiAutoConfiguration;
 import cn.iocoder.yudao.framework.ai.config.YudaoAiProperties;
 import cn.iocoder.yudao.framework.ai.core.enums.AiPlatformEnum;
 import cn.iocoder.yudao.framework.ai.core.model.deepseek.DeepSeekChatModel;
+import cn.iocoder.yudao.framework.ai.core.model.maxkb.MaxKBClient;
+import cn.iocoder.yudao.framework.ai.core.model.maxkb.MaxKBModelAdapter;
 import cn.iocoder.yudao.framework.ai.core.model.midjourney.api.MidjourneyApi;
 import cn.iocoder.yudao.framework.ai.core.model.suno.api.SunoApi;
 import cn.iocoder.yudao.framework.ai.core.model.xinghuo.XingHuoChatModel;
@@ -39,6 +41,7 @@ import org.springframework.ai.autoconfigure.zhipuai.ZhiPuAiConnectionProperties;
 import org.springframework.ai.autoconfigure.zhipuai.ZhiPuAiImageProperties;
 import org.springframework.ai.azure.openai.AzureOpenAiChatModel;
 import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.chat.model.StreamingChatModel;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.image.ImageModel;
 import org.springframework.ai.model.function.FunctionCallbackContext;
@@ -69,6 +72,8 @@ import redis.clients.jedis.JedisPooled;
 import redis.clients.jedis.search.Schema;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * AI Model 模型工厂的实现类
@@ -363,6 +368,44 @@ public class AiModelFactoryImpl implements AiModelFactory {
         TongYiConnectionProperties connectionProperties = new TongYiConnectionProperties();
         connectionProperties.setApiKey(apiKey);
         return new TongYiAutoConfiguration().tongYiTextEmbeddingClient(SpringUtil.getBean(TextEmbedding.class), connectionProperties);
+    }
+    /**
+     * ChatModel 缓存
+     */
+    private final Map<String, ChatModel> CHAT_MODEL_CACHE = new ConcurrentHashMap<>();
+
+    /**
+     * MaxKB模型缓存键生成
+     */
+    private String buildMaxKBCacheKey(String apiKey, String url, String applicationId) {
+        return String.format("maxkb-%s-%s-%s", apiKey, url, applicationId);
+    }
+
+    /**
+     * 获取或创建MaxKB聊天模型
+     *
+     * @param apiKey API密钥
+     * @param url API地址
+     * @param applicationId 应用ID
+     * @return ChatModel实例
+     */
+    @Override
+    public ChatModel getOrCreateMaxKBModel(String apiKey, String url, String applicationId) {
+        String cacheKey = buildMaxKBCacheKey(apiKey, url, applicationId);
+        return CHAT_MODEL_CACHE.computeIfAbsent(cacheKey, key -> {
+            MaxKBClient client = new MaxKBClient(apiKey, url);
+            return new MaxKBModelAdapter(client, applicationId);
+        });
+    }
+
+    /**
+     * 获取MaxKB流式聊天模型
+     * 由于MaxKBModelAdapter同时实现了ChatModel和StreamingChatModel接口，
+     * 我们可以直接将其转换为StreamingChatModel
+     */
+    @Override
+    public StreamingChatModel getOrCreateMaxKBStreamingModel(String apiKey, String url, String applicationId) {
+        return (StreamingChatModel) getOrCreateMaxKBModel(apiKey, url, applicationId);
     }
 
 }

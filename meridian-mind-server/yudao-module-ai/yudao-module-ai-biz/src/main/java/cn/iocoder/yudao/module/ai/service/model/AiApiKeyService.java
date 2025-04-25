@@ -1,6 +1,7 @@
 package cn.iocoder.yudao.module.ai.service.model;
 
 import cn.iocoder.yudao.framework.ai.core.enums.AiPlatformEnum;
+import cn.iocoder.yudao.framework.ai.core.model.maxkb.MaxKBClient;
 import cn.iocoder.yudao.framework.ai.core.model.midjourney.api.MidjourneyApi;
 import cn.iocoder.yudao.framework.ai.core.model.suno.api.SunoApi;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
@@ -9,6 +10,7 @@ import cn.iocoder.yudao.module.ai.controller.admin.model.vo.apikey.AiApiKeySaveR
 import cn.iocoder.yudao.module.ai.dal.dataobject.model.AiApiKeyDO;
 import jakarta.validation.Valid;
 import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.chat.model.StreamingChatModel;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.image.ImageModel;
 import org.springframework.ai.vectorstore.VectorStore;
@@ -128,5 +130,29 @@ public interface AiApiKeyService {
      * @return VectorStore 对象
      */
     VectorStore getOrCreateVectorStore(Long id);
+    /**
+     * 获取MaxKB聊天模型
+     *
+     * @param id API密钥ID
+     * @param applicationId MaxKB应用ID
+     * @return ChatModel实例
+     */
+    ChatModel getMaxKBChatModel(Long id, String applicationId);
 
+    /**
+     * 获取MaxKB流式聊天模型
+     *
+     * @param id API密钥ID
+     * @param applicationId MaxKB应用ID
+     * @return StreamingChatModel实例
+     */
+    StreamingChatModel getMaxKBStreamingChatModel(Long id, String applicationId);
+
+    /**
+     * 获取MaxKB客户端
+     *
+     * @param id API密钥ID
+     * @return MaxKBClient实例
+     */
+    MaxKBClient getMaxKBClient(Long id);
 }

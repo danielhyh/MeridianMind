@@ -88,7 +88,7 @@ public class YudaoAiAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean
         public MaxKBClient maxKBClient(YudaoAiProperties properties, RestTemplate restTemplate) {
-            return new MaxKBClient(restTemplate, properties.getMaxkb());
+            return new MaxKBClient(properties.getMaxkb().getApiKey(), properties.getMaxkb().getBaseUrl());
         }
 
         @Bean

@@ -2,6 +2,7 @@ package cn.iocoder.yudao.module.ai.service.model;
 
 import cn.iocoder.yudao.framework.ai.core.enums.AiPlatformEnum;
 import cn.iocoder.yudao.framework.ai.core.factory.AiModelFactory;
+import cn.iocoder.yudao.framework.ai.core.model.maxkb.MaxKBClient;
 import cn.iocoder.yudao.framework.ai.core.model.midjourney.api.MidjourneyApi;
 import cn.iocoder.yudao.framework.ai.core.model.suno.api.SunoApi;
 import cn.iocoder.yudao.framework.common.enums.CommonStatusEnum;
@@ -11,8 +12,10 @@ import cn.iocoder.yudao.module.ai.controller.admin.model.vo.apikey.AiApiKeyPageR
 import cn.iocoder.yudao.module.ai.controller.admin.model.vo.apikey.AiApiKeySaveReqVO;
 import cn.iocoder.yudao.module.ai.dal.dataobject.model.AiApiKeyDO;
 import cn.iocoder.yudao.module.ai.dal.mysql.model.AiApiKeyMapper;
+import cn.iocoder.yudao.module.ai.dal.mysql.model.AiChatModelMapper;
 import jakarta.annotation.Resource;
 import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.chat.model.StreamingChatModel;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.image.ImageModel;
 import org.springframework.ai.vectorstore.VectorStore;
@@ -38,6 +41,8 @@ public class AiApiKeyServiceImpl implements AiApiKeyService {
 
     @Resource
     private AiModelFactory modelFactory;
+    @Resource
+    private AiChatModelMapper chatModelMapper;
 
     @Override
     public Long createApiKey(AiApiKeySaveReqVO createReqVO) {
@@ -148,6 +153,33 @@ public class AiApiKeyServiceImpl implements AiApiKeyService {
         AiPlatformEnum platform = AiPlatformEnum.validatePlatform(apiKey.getPlatform());
         // 创建或获取 VectorStore 对象
         return modelFactory.getOrCreateVectorStore(getEmbeddingModel(id), platform, apiKey.getApiKey(), apiKey.getUrl());
+    }
+
+    @Override
+    public ChatModel getMaxKBChatModel(Long id, String applicationId) {
+        AiApiKeyDO apiKey = validateApiKey(id);
+        if (!AiPlatformEnum.MAXKB.getPlatform().equals(apiKey.getPlatform())) {
+            throw exception(API_KEY_PLATFORM_ERROR, apiKey.getPlatform());
+        }
+        return modelFactory.getOrCreateMaxKBModel(apiKey.getApiKey(), apiKey.getUrl(), applicationId);
+    }
+
+    @Override
+    public StreamingChatModel getMaxKBStreamingChatModel(Long id, String applicationId) {
+        AiApiKeyDO apiKey = validateApiKey(id);
+        if (!AiPlatformEnum.MAXKB.getPlatform().equals(apiKey.getPlatform())) {
+            throw exception(API_KEY_PLATFORM_ERROR, apiKey.getPlatform());
+        }
+        return modelFactory.getOrCreateMaxKBStreamingModel(apiKey.getApiKey(), apiKey.getUrl(), applicationId);
+    }
+
+    @Override
+    public MaxKBClient getMaxKBClient(Long id) {
+        AiApiKeyDO apiKey = validateApiKey(id);
+        if (!AiPlatformEnum.MAXKB.getPlatform().equals(apiKey.getPlatform())) {
+            throw exception(API_KEY_PLATFORM_ERROR, apiKey.getPlatform());
+        }
+        return new MaxKBClient(apiKey.getApiKey(), apiKey.getUrl());
     }
 
 }

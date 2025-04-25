@@ -79,5 +79,10 @@ public class AiChatModelDO extends BaseDO {
      * 上下文的最大 Message 数量
      */
     private Integer maxContexts;
+    /**
+     * MaxKB应用ID
+     * 用于标识对应的MaxKB应用
+     */
+    private String maxkbApplicationId;
 
 }

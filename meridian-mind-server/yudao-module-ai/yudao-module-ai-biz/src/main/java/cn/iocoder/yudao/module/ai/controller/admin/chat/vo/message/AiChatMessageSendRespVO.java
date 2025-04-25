@@ -14,6 +14,8 @@ public class AiChatMessageSendRespVO {
 
     @Schema(description = "接收消息", requiredMode = Schema.RequiredMode.REQUIRED)
     private Message receive;
+    @Schema(description = "AI响应的思考内容", example = "首先分析用户提问...")
+    private String reasoningContent;
 
     @Schema(description = "消息")
     @Data
@@ -30,6 +32,8 @@ public class AiChatMessageSendRespVO {
 
         @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
         private LocalDateTime createTime;
+        @Schema(description = "思考内容")
+        private String reasoningContent;
 
     }
 

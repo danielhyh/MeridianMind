@@ -1,82 +1,162 @@
 package cn.iocoder.yudao.framework.ai.core.model.maxkb;
 
-import cn.iocoder.yudao.framework.ai.config.YudaoAiProperties;
-import org.springframework.http.*;
-import org.springframework.web.client.RestTemplate;
+import cn.iocoder.yudao.framework.common.exception.ServiceException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.Nonnull;
+import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * MaxKB API客户端
+ * 封装对MaxKB平台API的调用
+ */
 public class MaxKBClient {
-    private final RestTemplate restTemplate;
-    private final YudaoAiProperties.MaxKBConfig config;
+    private final WebClient webClient;
+    private final ObjectMapper objectMapper;
 
-    public MaxKBClient(RestTemplate restTemplate, YudaoAiProperties.MaxKBConfig config) {
-        this.restTemplate = restTemplate;
-        this.config = config;
-
-        // 配置RestTemplate，添加认证头等
+    public MaxKBClient(String apiKey, String baseUrl) {
+        // 对baseUrl进行trim处理，移除前导和尾随空格
+        String trimmedBaseUrl = baseUrl != null ? baseUrl.trim() : "";
+        this.webClient = WebClient.builder()
+                .baseUrl(trimmedBaseUrl)
+                .defaultHeader("Authorization", apiKey)
+                .build();
+        this.objectMapper = new ObjectMapper();
     }
 
     /**
-     * 发送对话消息
+     * 打开一个新的MaxKB会话
+     *
+     * @param applicationId MaxKB应用ID
+     * @return 会话ID
      */
-    public String sendChatMessage(String chatId, String message, boolean reChat, boolean stream) {
-        String url = config.getBaseUrl() + "/application/chat_message/" + chatId;
+    public String openChat(@Nonnull String applicationId) {
+        try {
+            String response = webClient.get()
+                    .uri("/application/{applicationId}/chat/open", applicationId)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
 
-        // 构建请求体
+            Map<String, Object> responseMap = objectMapper.readValue(response, Map.class);
+            if (responseMap.get("code").equals(200)) {
+                return (String) responseMap.get("data");
+            } else {
+                throw new ServiceException(500, "创建MaxKB会话失败: " + responseMap.get("message"));
+            }
+        } catch (Exception e) {
+            throw new ServiceException(500, "创建MaxKB会话失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 发送消息到MaxKB API并获取响应（段式）
+     *
+     * @param chatId  会话ID
+     * @param message 消息内容
+     * @param reChat  是否重新生成
+     * @param stream  是否使用流式输出
+     * @return MaxKB API响应
+     */
+    public MaxKBApiResponse sendChatMessage(String chatId, String message, boolean reChat, boolean stream) {
+        try {
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("message", message);
+            requestBody.put("re_chat", reChat);
+            requestBody.put("stream", stream);
+
+            String response = webClient.post()
+                    .uri("/application/chat_message/{chatId}", chatId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(requestBody)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+
+            Map<String, Object> responseMap = objectMapper.readValue(response, Map.class);
+            if (responseMap.get("code").equals(200)) {
+                Map<String, Object> data = (Map<String, Object>) responseMap.get("data");
+                return MaxKBApiResponse.builder()
+                        .chatId((String) data.get("chat_id"))
+                        .id((String) data.get("id"))
+                        .content((String) data.get("content"))
+                        .reasoningContent((String) data.get("reasoning_content"))
+                        .promptTokens((Integer) data.get("prompt_tokens"))
+                        .completionTokens((Integer) data.get("completion_tokens"))
+                        .isEnd((Boolean) data.get("is_end"))
+                        .build();
+            } else {
+                throw new ServiceException(500, "发送MaxKB消息失败: " + responseMap.get("message"));
+            }
+        } catch (Exception e) {
+            throw new ServiceException(500, "发送MaxKB消息失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 发送消息到MaxKB API并获取流式响应
+     *
+     * @param chatId  会话ID
+     * @param message 消息内容
+     * @return 流式响应
+     */
+    public Flux<MaxKBApiResponse> streamChatMessage(String chatId, String message) {
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("message", message);
-        requestBody.put("re_chat", reChat);
-        requestBody.put("stream", stream);
+        requestBody.put("re_chat", false);
+        requestBody.put("stream", true);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", config.getApiKey());
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        return webClient.post()
+                .uri("/application/chat_message/{chatId}", chatId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToFlux(String.class)
+                .map(chunk -> {
+                    try {
+                        Map<String, Object> dataMap = objectMapper.readValue(chunk, Map.class);
+                        // 提取思考内容
+                        String reasoningContent = dataMap.containsKey("reasoning_content") ?
+                                (String) dataMap.get("reasoning_content") : null;
 
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
-
-        ResponseEntity<Map> response = restTemplate.exchange(
-                url, HttpMethod.POST, entity, Map.class);
-
-        // 处理响应
-        // ...
-
-        return response.getBody().get("message").toString();
+                        return MaxKBApiResponse.builder()
+                                .chatId((String) dataMap.get("chat_id"))
+                                .id((String) dataMap.get("chat_record_id"))
+                                .content((String) dataMap.get("content"))
+                                .reasoningContent(reasoningContent) // 设置思考内容
+                                .isEnd((Boolean) dataMap.get("is_end"))
+                                .build();
+                    } catch (Exception e) {
+                        throw new RuntimeException("解析MaxKB流式响应失败", e);
+                    }
+                });
     }
 
     /**
      * 获取应用信息
+     *
+     * @return 应用信息
      */
     public Map<String, Object> getApplicationProfile() {
-        String url = config.getBaseUrl() + "/application/profile";
+        try {
+            String response = webClient.get()
+                    .uri("/application/profile")
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", config.getApiKey());
-
-        HttpEntity<Void> entity = new HttpEntity<>(headers);
-
-        ResponseEntity<Map> response = restTemplate.exchange(
-                url, HttpMethod.GET, entity, Map.class);
-
-        return response.getBody();
-    }
-
-    /**
-     * 获取会话ID
-     */
-    public String openChat(String applicationId) {
-        String url = config.getBaseUrl() + "/application/" + applicationId + "/chat/open";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", config.getApiKey());
-
-        HttpEntity<Void> entity = new HttpEntity<>(headers);
-
-        ResponseEntity<Map> response = restTemplate.exchange(
-                url, HttpMethod.GET, entity, Map.class);
-
-        // 假设响应中包含chat_id字段
-        return response.getBody().get("chat_id").toString();
+            Map<String, Object> responseMap = objectMapper.readValue(response, Map.class);
+            if (responseMap.get("code").equals(200)) {
+                return (Map<String, Object>) responseMap.get("data");
+            } else {
+                throw new ServiceException(500, "获取MaxKB应用信息失败: " + responseMap.get("message"));
+            }
+        } catch (Exception e) {
+            throw new ServiceException(500, "获取MaxKB应用信息失败: " + e.getMessage());
+        }
     }
 }
