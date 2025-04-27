@@ -2,10 +2,7 @@ package cn.iocoder.yudao.module.medical.controller.app.fourdiagnosis;
 
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.module.medical.controller.app.fourdiagnosis.vo.AppFourDiagnosticRespVO;
-import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.dto.AuscultationDTO;
-import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.dto.FacialFeatureDTO;
-import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.dto.InquiryDTO;
-import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.dto.TongueFeatureDTO;
+import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.dto.*;
 import cn.iocoder.yudao.module.medical.service.fourdiagnosis.FourDiagnosticService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -97,7 +94,7 @@ public class AppFourDiagnosticController {
     @Operation(summary = "保存脉象数据")
     public CommonResult<AppFourDiagnosticRespVO> savePalpation(
             @RequestParam("id") Long id,
-            @RequestParam("palpationData") String palpationData) {
+            @RequestBody PulseFeatureDTO palpationData) {
         return success(fourDiagnosticService.savePalpation(id, palpationData));
     }
 

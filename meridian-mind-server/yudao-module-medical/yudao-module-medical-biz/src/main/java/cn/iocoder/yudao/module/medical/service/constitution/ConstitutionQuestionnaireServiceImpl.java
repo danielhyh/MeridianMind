@@ -81,7 +81,7 @@ public class ConstitutionQuestionnaireServiceImpl implements ConstitutionQuestio
         }
 
         // 3. 更新用户体质类型
-        patientService.updateConstitutionType(userId, record.getPrimaryType());
+        patientService.updateConstitutionType(userId, recordId);
 
         // 4. 标记记录为已应用
         record.setIsApplied(true);
@@ -359,16 +359,6 @@ public class ConstitutionQuestionnaireServiceImpl implements ConstitutionQuestio
         recordMapper.insert(record);
 
         return record;
-    }
-
-    /**
-     * 更新用户体质类型
-     *
-     * @param userId           用户ID
-     * @param constitutionType 体质类型
-     */
-    private void updateUserConstitutionType(Long userId, String constitutionType) {
-        patientService.updateConstitutionType(userId, constitutionType);
     }
 
     @Override

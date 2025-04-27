@@ -33,9 +33,6 @@ public class AppFourDiagnosticRespVO {
     @Schema(description = "面象图片URL")
     private String faceImage;
 
-    @Schema(description = "脉象描述")
-    private String pulseDescription;
-
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
 

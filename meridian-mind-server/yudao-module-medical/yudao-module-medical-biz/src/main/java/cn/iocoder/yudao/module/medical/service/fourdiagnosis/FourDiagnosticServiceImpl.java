@@ -172,7 +172,7 @@ public class FourDiagnosticServiceImpl implements FourDiagnosticService {
 
         // 将DTO转换为JSON并保存
         fourDiagnosticDO.setInquiry(JSONUtil.toJsonStr(
-                JSONUtil.parseObj(inquiry)
+                JSONUtil.parseObj(inquiry).set("inquiry", inquiryData)
         ));
 
         // 保存更新到数据库
@@ -184,13 +184,19 @@ public class FourDiagnosticServiceImpl implements FourDiagnosticService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public AppFourDiagnosticRespVO savePalpation(Long id, String palpationData) {
+    public AppFourDiagnosticRespVO savePalpation(Long id, PulseFeatureDTO palpationData) {
         // 获取并校验四诊信息
         FourDiagnosticDO fourDiagnosticDO = createDiagnosticIfAbsent(id);
 
-        // 更新数据
+        // 获取当前inquiry数据，如果为空则创建新对象
+        String palpationJson = fourDiagnosticDO.getPalpation();
+        Object palpation = ObjectUtil.isNotEmpty(palpationJson) ?
+                JSONUtil.parseObj(palpationJson) : JSONUtil.createObj();
+
+        // 将DTO转换为JSON并保存
         fourDiagnosticDO.setPalpation(JSONUtil.toJsonStr(
-                JSONUtil.createObj()));
+                JSONUtil.parseObj(palpation).set("palpation", palpationData)
+        ));
 
         // 保存更新
         fourDiagnosticMapper.updateById(fourDiagnosticDO);
@@ -299,18 +305,22 @@ public class FourDiagnosticServiceImpl implements FourDiagnosticService {
         FourDiagnosticDO fourDiagnosticDO = validateAndGet(id);
 
         // 获取当前inspection数据
-        String inspectionJson = fourDiagnosticDO.getInspection();
-        Object inspection = ObjectUtil.isNotEmpty(inspectionJson) ?
-                JSONUtil.parseObj(inspectionJson) : JSONUtil.createObj();
+        String auscultation = fourDiagnosticDO.getAuscultation();
+        Object entries = ObjectUtil.isNotEmpty(auscultation) ?
+                JSONUtil.parseObj(auscultation) : JSONUtil.createObj();
 
         // 更新嗓音数据
-        fourDiagnosticDO.setInspection(JSONUtil.toJsonStr(
-                JSONUtil.parseObj(inspection).set("voice", voiceFeature.getVoiceFeature())
-        ));
+        if (voiceFeature.getVoiceFeature() != null) {
+            fourDiagnosticDO.setAuscultation(JSONUtil.toJsonStr(
+                    JSONUtil.parseObj(entries).set("voice", voiceFeature.getVoiceFeature())
+            ));
+        }
         // 更新气味数据
-        fourDiagnosticDO.setInspection(JSONUtil.toJsonStr(
-                JSONUtil.parseObj(inspection).set("odor", voiceFeature.getOdorFeature()
-                )));
+        if (voiceFeature.getOdorFeature() != null) {
+            fourDiagnosticDO.setAuscultation(JSONUtil.toJsonStr(
+                    JSONUtil.parseObj(entries).set("odor", voiceFeature.getOdorFeature())
+            ));
+        }
 
         // 保存更新
         fourDiagnosticMapper.updateById(fourDiagnosticDO);

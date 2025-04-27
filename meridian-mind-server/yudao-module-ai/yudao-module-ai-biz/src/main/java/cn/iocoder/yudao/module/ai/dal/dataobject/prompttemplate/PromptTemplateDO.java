@@ -1,4 +1,4 @@
-package cn.iocoder.yudao.module.medical.dal.dataobject.aiprompt;
+package cn.iocoder.yudao.module.ai.dal.dataobject.prompttemplate;
 
 import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
 import com.baomidou.mybatisplus.annotation.KeySequence;
@@ -11,15 +11,15 @@ import lombok.*;
  *
  * @author 芋道源码
  */
-@TableName("medical_ai_prompt")
-@KeySequence("medical_ai_prompt_seq") // 用于 Oracle、PostgreSQL、Kingbase、DB2、H2 数据库的主键自增。如果是 MySQL 等数据库，可不写。
+@TableName("ai_prompt_template")
+@KeySequence("ai_prompt_template_seq") // 用于 Oracle、PostgreSQL、Kingbase、DB2、H2 数据库的主键自增。如果是 MySQL 等数据库，可不写。
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AiPromptDO extends BaseDO {
+public class PromptTemplateDO extends BaseDO {
 
     /**
      * 主键
@@ -37,18 +37,26 @@ public class AiPromptDO extends BaseDO {
     /**
      * 提示词文本
      */
-    private String promptText;
-    /**
-     * 类别:1诊断 2治疗 3健康管理
-     */
-    private Integer category;
+    private String content;
     /**
      * 参数定义(JSON)
      */
     private String parameters;
     /**
+     * 领域类型
+     */
+    private Integer domain;
+    /**
      * 状态:0禁用 1启用
      */
     private Integer status;
+    /**
+     * 默认模型编号
+     */
+    private Long defaultModelId;
+    /**
+     * 默认知识库编号
+     */
+    private Long defaultKnowledgeId;
 
 }

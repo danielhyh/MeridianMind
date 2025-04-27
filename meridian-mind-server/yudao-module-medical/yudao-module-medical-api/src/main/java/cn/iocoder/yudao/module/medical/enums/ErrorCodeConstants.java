@@ -36,7 +36,4 @@ public interface ErrorCodeConstants {
     // 问诊记录相关
     ErrorCode DIAGNOSTIC_NOT_EXISTS = new ErrorCode(1_060_104_001, "问诊记录不存在");
 
-    // AI相关
-    ErrorCode AI_PROMPT_NOT_EXISTS = new ErrorCode(1_060_005_001, "AI提示词模板不存在");
-
 }

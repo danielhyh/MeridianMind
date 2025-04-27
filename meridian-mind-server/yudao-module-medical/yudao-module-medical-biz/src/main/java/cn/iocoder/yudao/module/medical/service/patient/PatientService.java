@@ -2,7 +2,9 @@ package cn.iocoder.yudao.module.medical.service.patient;
 
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.module.medical.controller.admin.patient.vo.PatientProfilePageReqVO;
+import cn.iocoder.yudao.module.medical.controller.app.patient.vo.AppPatientProfileRespVO;
 import cn.iocoder.yudao.module.medical.controller.app.patient.vo.AppPatientProfileSaveReqVO;
+import cn.iocoder.yudao.module.medical.controller.app.patient.vo.AppPatientProfileUpdateReqVO;
 import cn.iocoder.yudao.module.medical.dal.dataobject.patient.PatientProfileDO;
 import jakarta.validation.Valid;
 
@@ -26,7 +28,7 @@ public interface PatientService {
      *
      * @param updateReqVO 更新信息
      */
-    void updatePatientProfile(@Valid AppPatientProfileSaveReqVO updateReqVO);
+    void updatePatientProfile(@Valid AppPatientProfileUpdateReqVO updateReqVO);
 
     /**
      * 删除患者管理
@@ -38,10 +40,10 @@ public interface PatientService {
     /**
      * 获得患者管理
      *
-     * @param memberId 会员编号
+     * @param userId 会员编号
      * @return 患者管理
      */
-    PatientProfileDO getPatientProfile(Long memberId);
+    AppPatientProfileRespVO getPatientProfile(Long userId);
 
     /**
      * 获得患者管理分页
@@ -53,9 +55,9 @@ public interface PatientService {
     /**
      * 更新用户体质类型
      *
-     * @param memberId 用户ID
-     * @param constitutionType 体质类型
+     * @param useId 用户ID
+     * @param recordId 体质类型
      */
-    void updateConstitutionType(Long memberId, String constitutionType);
+    void updateConstitutionType(Long useId, Long recordId);
 
 }

@@ -1,10 +1,8 @@
 package cn.iocoder.yudao.module.medical.controller.app.patient;
 
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
-import cn.iocoder.yudao.module.medical.controller.app.patient.vo.AppMedicalPatientRespVO;
-import cn.iocoder.yudao.module.medical.controller.app.patient.vo.AppPatientProfileSaveReqVO;
-import cn.iocoder.yudao.module.medical.convert.patient.MedicalPatientConvert;
-import cn.iocoder.yudao.module.medical.dal.dataobject.patient.PatientProfileDO;
+import cn.iocoder.yudao.module.medical.controller.app.patient.vo.AppPatientProfileRespVO;
+import cn.iocoder.yudao.module.medical.controller.app.patient.vo.AppPatientProfileUpdateReqVO;
 import cn.iocoder.yudao.module.medical.service.patient.PatientService;
 import cn.iocoder.yudao.module.member.controller.app.user.vo.*;
 import cn.iocoder.yudao.module.member.dal.dataobject.user.MemberUserDO;
@@ -33,10 +31,9 @@ public class AppMedicalPatientController {
 
     @GetMapping("/get")
     @Operation(summary = "获得患者信息")
-    public CommonResult<AppMedicalPatientRespVO> getPatient() {
+    public CommonResult<AppPatientProfileRespVO> getPatient() {
         MemberUserDO user = userService.getUser(getLoginUserId());
-        PatientProfileDO patientProfile = patientService.getPatientProfile(user.getId());
-        return success(MedicalPatientConvert.INSTANCE.convert(user, patientProfile));
+        return success(patientService.getPatientProfile(user.getId()));
     }
 
     @PutMapping("/update")
@@ -77,7 +74,7 @@ public class AppMedicalPatientController {
 
     @PutMapping("/profile/update")
     @Operation(summary = "更新患者档案信息")
-    public CommonResult<Boolean> updatePatientProfile(@Valid @RequestBody AppPatientProfileSaveReqVO updateReqVO) {
+    public CommonResult<Boolean> updatePatientProfile(@Valid @RequestBody AppPatientProfileUpdateReqVO updateReqVO) {
         patientService.updatePatientProfile(updateReqVO);
         return success(true);
     }

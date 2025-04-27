@@ -1,8 +1,7 @@
 package cn.iocoder.yudao.module.medical.framework.fourdiagnosis.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-
-import java.util.Map;
 
 /**
  * 脉象特征 DTO
@@ -10,47 +9,19 @@ import java.util.Map;
 @Data
 public class PulseFeatureDTO {
     /**
-     * 脉象类型
+     * 左脉象类型
      */
-    private String pulseType;
-    
+    @Schema(description = "左脉象类型", example = "滑脉")
+    private String leftPulseType;
     /**
-     * 脉象类型代码
+     * 右脉象类型
      */
-    private String pulseTypeCode;
-    
-    /**
-     * 脉象强度
-     */
-    private String pulseStrength;
-    
-    /**
-     * 脉象强度代码
-     */
-    private String pulseStrengthCode;
-    
-    /**
-     * 脉搏节律
-     */
-    private String pulseRhythm;
-    
-    /**
-     * 脉搏节律代码
-     */
-    private String pulseRhythmCode;
-    
-    /**
-     * 脉率（每分钟）
-     */
-    private Integer pulseRate;
+    @Schema(description = "右脉象类型", example = "浮脉")
+    private String rightPulseType;
     
     /**
      * 脉象描述
      */
+    @Schema(description = "脉象描述")
     private String description;
-    
-    /**
-     * 原始特征数据
-     */
-    private Map<String, Object> rawFeatures;
 }

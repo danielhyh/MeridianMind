@@ -54,9 +54,5 @@ public class FourDiagnosticDO extends BaseDO {
      * 面象图片URL
      */
     private String faceImage;
-    /**
-     * 脉象描述
-     */
-    private String pulseDescription;
 
 }

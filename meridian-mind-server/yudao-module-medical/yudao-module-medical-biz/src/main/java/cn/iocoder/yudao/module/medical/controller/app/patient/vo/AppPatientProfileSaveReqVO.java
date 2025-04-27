@@ -9,10 +9,6 @@ import java.math.BigDecimal;
 @Schema(description = "APP 用户 - 患者管理新增/修改 Request VO")
 @Data
 public class AppPatientProfileSaveReqVO {
-
-    @Schema(description = "主键", requiredMode = Schema.RequiredMode.REQUIRED, example = "32617")
-    private Long id;
-
     @Schema(description = "会员用户ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "28025")
     @NotNull(message = "会员用户ID不能为空")
     private Long userId;
@@ -23,7 +19,7 @@ public class AppPatientProfileSaveReqVO {
     @Schema(description = "体重(kg)")
     private BigDecimal weight;
 
-    @Schema(description = "血型", example = "1")
+    @Schema(description = "血型", example = "A")
     private String bloodType;
 
     @Schema(description = "过敏史")

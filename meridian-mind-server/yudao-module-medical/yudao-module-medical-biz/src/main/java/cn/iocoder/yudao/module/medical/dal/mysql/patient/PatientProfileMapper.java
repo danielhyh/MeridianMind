@@ -29,7 +29,7 @@ public interface PatientProfileMapper extends BaseMapperX<PatientProfileDO> {
                 .orderByDesc(PatientProfileDO::getId));
     }
 
-    default PatientProfileDO selectByMemberId(Long memberId) {
-        return selectOne(new LambdaQueryWrapperX<PatientProfileDO>().eq(PatientProfileDO::getUserId, memberId));
+    default PatientProfileDO selectByUserId(Long userId) {
+        return selectOne(new LambdaQueryWrapperX<PatientProfileDO>().eq(PatientProfileDO::getUserId, userId));
     }
 }

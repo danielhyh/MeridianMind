@@ -58,5 +58,4 @@ public interface DiagnosticService {
      * @return 问诊记录分页
      */
     PageResult<DiagnosticDO> getDiagnosticPage(AppDiagnosticPageReqVO pageReqVO);
-
 }

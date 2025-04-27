@@ -56,10 +56,12 @@ public interface ErrorCodeConstants {
     ErrorCode KNOWLEDGE_NOT_EXISTS = new ErrorCode(1_022_008_000, "知识库不存在!");
     ErrorCode KNOWLEDGE_DOCUMENT_NOT_EXISTS = new ErrorCode(1_022_008_001, "文档不存在!");
     ErrorCode KNOWLEDGE_SEGMENT_NOT_EXISTS = new ErrorCode(1_022_008_002, "段落不存在!");
-    // ========== MaxKB 相关错误码 1002000 ==========
-    ErrorCode MAXKB_APPLICATION_ID_NOT_EXISTS = new ErrorCode(1002001, "MaxKB应用ID不存在");
-    ErrorCode MAXKB_CHAT_ID_NOT_EXISTS = new ErrorCode(1002002, "MaxKB会话ID不存在");
-    ErrorCode MAXKB_API_ERROR = new ErrorCode(1002003, "MaxKB API调用异常: {}");
-    ErrorCode API_KEY_PLATFORM_ERROR = new ErrorCode(1002004, "API KEY平台错误");
+    // ========== MaxKB 相关错误码 1-022-009-000 ==========
+    ErrorCode MAXKB_APPLICATION_ID_NOT_EXISTS = new ErrorCode(1_022_009_000, "MaxKB应用ID不存在");
+    ErrorCode MAXKB_CHAT_ID_NOT_EXISTS = new ErrorCode(1_022_009_001, "MaxKB会话ID不存在");
+    ErrorCode MAXKB_API_ERROR = new ErrorCode(1_022_009_002, "MaxKB API调用异常: {}");
+    ErrorCode API_KEY_PLATFORM_ERROR = new ErrorCode(1_022_009_003, "API KEY平台错误");
+    // ========== AI提示词模板 1_022_010_000 ==========
+    ErrorCode PROMPT_TEMPLATE_NOT_EXISTS = new ErrorCode(1_022_010_000, "AI提示词模板不存在");
 
 }
