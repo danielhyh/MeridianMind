@@ -7,12 +7,15 @@ import cn.iocoder.yudao.framework.common.exception.ServiceException;
 import cn.iocoder.yudao.module.infra.api.file.FileApi;
 import cn.iocoder.yudao.module.medical.controller.app.fourdiagnosis.vo.AppFourDiagnosticRespVO;
 import cn.iocoder.yudao.module.medical.convert.fourdiagnosis.FourDiagnosticConvert;
+import cn.iocoder.yudao.module.medical.dal.dataobject.diagnostic.DiagnosticDO;
 import cn.iocoder.yudao.module.medical.dal.dataobject.fourdiagnosis.FourDiagnosticDO;
+import cn.iocoder.yudao.module.medical.dal.mysql.diagnostic.DiagnosticMapper;
 import cn.iocoder.yudao.module.medical.dal.mysql.fourdiagnosis.FourDiagnosticMapper;
 import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.adapter.FaceAnalysisAdapter;
 import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.adapter.TongueAnalysisAdapter;
 import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.adapter.VoiceAnalysisAdapter;
 import cn.iocoder.yudao.module.medical.framework.fourdiagnosis.dto.*;
+import cn.iocoder.yudao.module.medical.service.diagnosis.DiagnosisService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.medical.enums.ErrorCodeConstants.ERROR_CODE_SAVE_FACE_IMAGE;
@@ -43,6 +47,10 @@ public class FourDiagnosticServiceImpl implements FourDiagnosticService {
     private VoiceAnalysisAdapter voiceAnalysisAdapter;
     @Resource
     private FileApi fileApi;
+    @Resource
+    private DiagnosisService diagnosisService;
+    @Resource
+    private DiagnosticMapper diagnosticMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -178,6 +186,9 @@ public class FourDiagnosticServiceImpl implements FourDiagnosticService {
         // 保存更新到数据库
         fourDiagnosticMapper.updateById(fourDiagnosticDO);
 
+        // 触发AI诊断
+        triggerAiDiagnosis(fourDiagnosticDO.getDiagnosticId());
+
         // 返回更新后的结果
         return FourDiagnosticConvert.INSTANCE.convert(fourDiagnosticDO);
     }
@@ -203,6 +214,34 @@ public class FourDiagnosticServiceImpl implements FourDiagnosticService {
 
         // 返回结果
         return FourDiagnosticConvert.INSTANCE.convert(fourDiagnosticDO);
+    }
+    /**
+     * 触发AI诊断
+     *
+     * @param diagnosticId 问诊记录ID
+     */
+    private void triggerAiDiagnosis(Long diagnosticId) {
+        try {
+            // 获取问诊记录
+            DiagnosticDO diagnostic = diagnosticMapper.selectById(diagnosticId);
+            if (diagnostic == null) {
+                log.error("问诊记录不存在，ID: {}", diagnosticId);
+                return;
+            }
+
+            // 异步调用，避免等待时间过长
+            CompletableFuture.runAsync(() -> {
+                try {
+                    log.info("开始AI诊断，问诊ID: {}", diagnosticId);
+                    diagnosisService.generateDiagnosis(diagnostic.getUserId(), diagnosticId);
+                    log.info("AI诊断完成，问诊ID: {}", diagnosticId);
+                } catch (Exception e) {
+                    log.error("AI诊断异常，问诊ID: {}", diagnosticId, e);
+                }
+            });
+        } catch (Exception e) {
+            log.error("触发AI诊断异常，问诊ID: {}", diagnosticId, e);
+        }
     }
 
     @Override

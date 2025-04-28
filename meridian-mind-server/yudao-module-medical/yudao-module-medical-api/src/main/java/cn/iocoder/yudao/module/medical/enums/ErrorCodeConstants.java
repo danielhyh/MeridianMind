@@ -35,5 +35,15 @@ public interface ErrorCodeConstants {
 
     // 问诊记录相关
     ErrorCode DIAGNOSTIC_NOT_EXISTS = new ErrorCode(1_060_104_001, "问诊记录不存在");
+    // ========== 四诊信息 ==========
+    ErrorCode FOUR_DIAGNOSTIC_NOT_EXISTS = new ErrorCode(1_022_004_000, "四诊信息不存在");
+    ErrorCode FOUR_DIAGNOSTIC_INQUIRY_MISSING = new ErrorCode(1_022_004_001, "问诊信息未填写");
+    ErrorCode FOUR_DIAGNOSTIC_PALPATION_MISSING = new ErrorCode(1_022_004_002, "脉象信息未填写");
+
+    // ========== 诊断结果 1_060_105_000 ==========
+    ErrorCode DIAGNOSIS_NOT_EXISTS = new ErrorCode(1_022_005_000, "诊断结果不存在");
+    ErrorCode DIAGNOSIS_PARSE_ERROR = new ErrorCode(1_022_005_001, "诊断结果解析错误");
+    ErrorCode AI_RESPONSE_PARSE_ERROR = new ErrorCode(1_022_005_002, "AI回复解析错误");
+    ErrorCode DIAGNOSTIC_ACCESS_DENIED = new ErrorCode(1_022_005_003, "无权访问该问诊记录");
 
 }
