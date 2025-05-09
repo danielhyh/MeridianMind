@@ -61,8 +61,14 @@ public class AiChatConversationServiceImpl implements AiChatConversationService 
         // 1.1 获得 AiChatRoleDO 聊天角色
         AiChatRoleDO role = createReqVO.getRoleId() != null ? chatRoleService.validateChatRole(createReqVO.getRoleId()) : null;
         // 1.2 获得 AiChatModelDO 聊天模型
-        AiChatModelDO model = role != null && role.getModelId() != null ? chatModalService.validateChatModel(role.getModelId())
-                : chatModalService.getRequiredDefaultChatModel();
+        AiChatModelDO model;
+        if (role!= null && role.getModelId()!= null) {
+            model = chatModalService.validateChatModel(role.getModelId());
+        }else if (createReqVO.getModelId() != null) {
+            model = chatModalService.validateChatModel(createReqVO.getModelId());
+        }else {
+            model = chatModalService.getRequiredDefaultChatModel();
+        }
         Assert.notNull(model, "必须找到默认模型");
         boolean useMaxKB = AiPlatformEnum.MAXKB.getPlatform().equals(model.getPlatform());
         if (!useMaxKB) {

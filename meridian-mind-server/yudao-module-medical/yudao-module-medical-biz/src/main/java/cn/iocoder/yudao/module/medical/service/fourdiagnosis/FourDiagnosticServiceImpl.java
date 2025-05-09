@@ -186,9 +186,6 @@ public class FourDiagnosticServiceImpl implements FourDiagnosticService {
         // 保存更新到数据库
         fourDiagnosticMapper.updateById(fourDiagnosticDO);
 
-        // 触发AI诊断
-        triggerAiDiagnosis(fourDiagnosticDO.getDiagnosticId());
-
         // 返回更新后的结果
         return FourDiagnosticConvert.INSTANCE.convert(fourDiagnosticDO);
     }
@@ -211,6 +208,8 @@ public class FourDiagnosticServiceImpl implements FourDiagnosticService {
 
         // 保存更新
         fourDiagnosticMapper.updateById(fourDiagnosticDO);
+        // 触发AI诊断
+        triggerAiDiagnosis(fourDiagnosticDO.getDiagnosticId());
 
         // 返回结果
         return FourDiagnosticConvert.INSTANCE.convert(fourDiagnosticDO);

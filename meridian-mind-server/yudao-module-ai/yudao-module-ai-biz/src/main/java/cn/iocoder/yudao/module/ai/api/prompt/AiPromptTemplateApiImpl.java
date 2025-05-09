@@ -5,6 +5,7 @@ import cn.iocoder.yudao.module.ai.api.prompt.dto.AiPromptTemplateRenderReqDTO;
 import cn.iocoder.yudao.module.ai.api.prompt.dto.AiPromptTemplateRespDTO;
 import cn.iocoder.yudao.module.ai.service.prompttemplate.PromptTemplateService;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -13,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
  */
 @Service
 @Validated
+@Slf4j
 public class AiPromptTemplateApiImpl implements AiPromptTemplateApi {
 
     @Resource

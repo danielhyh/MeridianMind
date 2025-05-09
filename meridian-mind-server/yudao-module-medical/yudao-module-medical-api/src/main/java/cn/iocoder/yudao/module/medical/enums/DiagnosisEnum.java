@@ -11,14 +11,14 @@ import java.util.Arrays;
  */
 @Getter
 @AllArgsConstructor
-public enum MedicalDiagnosisEnum implements ArrayValuable<Integer> {
+public enum DiagnosisEnum implements ArrayValuable<Integer> {
 
     WAITING(0, "等待诊断"),
     IN_PROGRESS(1, "诊断中"),
     COMPLETED(2, "已完成"),
     CANCELLED(3, "已取消");
 
-    public static final Integer[] ARRAYS = Arrays.stream(values()).map(MedicalDiagnosisEnum::getStatus).toArray(Integer[]::new);
+    public static final Integer[] ARRAYS = Arrays.stream(values()).map(DiagnosisEnum::getStatus).toArray(Integer[]::new);
 
     /**
      * 状态

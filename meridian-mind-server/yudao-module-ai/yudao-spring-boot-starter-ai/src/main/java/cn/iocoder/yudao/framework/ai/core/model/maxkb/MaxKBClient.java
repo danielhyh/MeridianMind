@@ -2,11 +2,17 @@ package cn.iocoder.yudao.framework.ai.core.model.maxkb;
 
 import cn.iocoder.yudao.framework.common.exception.ServiceException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.netty.channel.ChannelOption;
 import jakarta.annotation.Nonnull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.netty.http.client.HttpClient;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +20,7 @@ import java.util.Map;
  * MaxKB API客户端
  * 封装对MaxKB平台API的调用
  */
+@Slf4j
 public class MaxKBClient {
     private final WebClient webClient;
     private final ObjectMapper objectMapper;
@@ -24,6 +31,12 @@ public class MaxKBClient {
         this.webClient = WebClient.builder()
                 .baseUrl(trimmedBaseUrl)
                 .defaultHeader("Authorization", apiKey)
+                .codecs(clientCodecConfigurer -> {
+                    clientCodecConfigurer.defaultCodecs().maxInMemorySize(16 * 1024 * 1024); // 增加缓冲区大小
+                })
+                .clientConnector(new ReactorClientHttpConnector(HttpClient.create()
+                        .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 30000)
+                        .responseTimeout(Duration.ofMinutes(10))))
                 .build();
         this.objectMapper = new ObjectMapper();
     }
@@ -37,7 +50,7 @@ public class MaxKBClient {
     public String openChat(@Nonnull String applicationId) {
         try {
             String response = webClient.get()
-                    .uri("/application/{applicationId}/chat/open", applicationId)
+                    .uri("/application/{application_id}/chat/open", applicationId)
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
@@ -75,7 +88,8 @@ public class MaxKBClient {
                     .bodyValue(requestBody)
                     .retrieve()
                     .bodyToMono(String.class)
-                    .block();
+                    .timeout(Duration.ofMinutes(10))
+                    .block(Duration.ofMinutes(10));
 
             Map<String, Object> responseMap = objectMapper.readValue(response, Map.class);
             if (responseMap.get("code").equals(200)) {
@@ -93,8 +107,45 @@ public class MaxKBClient {
                 throw new ServiceException(500, "发送MaxKB消息失败: " + responseMap.get("message"));
             }
         } catch (Exception e) {
+            log.error("发送MaxKB消息失败", e);
             throw new ServiceException(500, "发送MaxKB消息失败: " + e.getMessage());
         }
+    }
+    public Mono<MaxKBApiResponse> sendChatMessageAsync(String chatId, String message, boolean reChat, boolean stream) {
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("message", message);
+        requestBody.put("re_chat", reChat);
+        requestBody.put("stream", stream);
+
+        return webClient.post()
+                .uri("/application/chat_message/{chatId}", chatId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(String.class)
+                .timeout(Duration.ofMinutes(10))
+                .map(response -> {
+                    try {
+                        Map<String, Object> responseMap = objectMapper.readValue(response, Map.class);
+                        if (responseMap.get("code").equals(200)) {
+                            Map<String, Object> data = (Map<String, Object>) responseMap.get("data");
+                            return MaxKBApiResponse.builder()
+                                    .chatId((String) data.get("chat_id"))
+                                    .id((String) data.get("id"))
+                                    .content((String) data.get("content"))
+                                    .reasoningContent((String) data.get("reasoning_content"))
+                                    .promptTokens((Integer) data.get("prompt_tokens"))
+                                    .completionTokens((Integer) data.get("completion_tokens"))
+                                    .isEnd((Boolean) data.get("is_end"))
+                                    .build();
+                        } else {
+                            throw new ServiceException(500, "发送MaxKB消息失败: " + responseMap.get("message"));
+                        }
+                    } catch (Exception e) {
+                        log.error("发送MaxKB消息失败", e);
+                        return null;
+                    }
+                });
     }
 
     /**

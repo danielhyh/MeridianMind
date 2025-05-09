@@ -12,4 +12,7 @@ public class AiChatConversationCreateMyReqVO {
 
     @Schema(description = "知识库编号", example = "1204")
     private Long knowledgeId;
+
+    @Schema(description = "聊天模型编号", example = "1204")
+    private Long modelId;
 }

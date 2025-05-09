@@ -61,15 +61,6 @@ public interface DiagnosisService {
     AppDiagnosisResultRespVO generateDiagnosis(Long userId, Long diagnosticId);
 
     /**
-     * 保存诊断结果
-     *
-     * @param diagnosticId 问诊记录ID
-     * @param diagnosisResult 诊断结果
-     * @return 诊断ID
-     */
-    Long saveDiagnosisResult(Long diagnosticId, AppDiagnosisResultRespVO diagnosisResult);
-
-    /**
      * 获取诊断结果
      *
      * @param diagnosticId 问诊记录ID

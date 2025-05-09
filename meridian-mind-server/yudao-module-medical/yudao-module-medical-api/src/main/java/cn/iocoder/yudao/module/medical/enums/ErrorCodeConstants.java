@@ -45,5 +45,12 @@ public interface ErrorCodeConstants {
     ErrorCode DIAGNOSIS_PARSE_ERROR = new ErrorCode(1_022_005_001, "诊断结果解析错误");
     ErrorCode AI_RESPONSE_PARSE_ERROR = new ErrorCode(1_022_005_002, "AI回复解析错误");
     ErrorCode DIAGNOSTIC_ACCESS_DENIED = new ErrorCode(1_022_005_003, "无权访问该问诊记录");
+    ErrorCode AI_RESPONSE_EMPTY = new ErrorCode(1_022_005_004, "AI回复内容为空");
+    ErrorCode DIAGNOSIS_EIGHT_PRINCIPLES_MISSING = new ErrorCode(1_022_005_005, "八纲辨证数据缺失");
+    ErrorCode DIAGNOSIS_EIGHT_PRINCIPLES_FORMAT_ERROR = new ErrorCode(1_022_005_006, "八纲辨证数据格式错误");
+    ErrorCode DIAGNOSIS_EIGHT_PRINCIPLES_STRENGTH_ERROR = new ErrorCode(1_022_005_007, "八纲辨证强度值范围错误");
+
+    // ========== 中医诊断治疗一体化 1_060_105_000 ==========
+    ErrorCode DIAGNOSIS_TREATMENT_NOT_EXISTS = new ErrorCode(1_022_005_000, "中医诊断治疗一体化不存在");
 
 }

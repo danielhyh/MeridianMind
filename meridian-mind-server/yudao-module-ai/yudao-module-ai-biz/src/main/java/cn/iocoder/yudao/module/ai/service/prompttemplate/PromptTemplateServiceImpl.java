@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.ai.enums.ErrorCodeConstants.PROMPT_TEMPLATE_NOT_EXISTS;
@@ -79,22 +81,28 @@ public class PromptTemplateServiceImpl implements PromptTemplateService {
             throw exception(PROMPT_TEMPLATE_NOT_EXISTS);
         }
 
-        // 渲染模板
         String content = template.getContent();
         if (CollUtil.isEmpty(parameters)) {
             return content;
         }
 
-        // 简单的模板参数替换
-        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-            String key = entry.getKey();
-            Object value = entry.getValue();
-            if (value != null) {
-                content = content.replace("{" + key + "}", value.toString());
-            }
-        }
+        // 使用正则表达式匹配所有{{...}}模式
+        Pattern pattern = Pattern.compile("\\{\\{([^{}]+)\\}\\}");
+        Matcher matcher = pattern.matcher(content);
+        StringBuffer result = new StringBuffer();
 
-        return content;
+        while (matcher.find()) {
+            String placeholder = matcher.group(1).trim();
+            // 获取对应参数值
+            Object value = parameters.get(placeholder);
+            String replacement = (value != null) ? value.toString() : "";
+
+            // 替换当前占位符
+            matcher.appendReplacement(result, Matcher.quoteReplacement(replacement));
+        }
+        matcher.appendTail(result);
+
+        return result.toString();
     }
 
 }
