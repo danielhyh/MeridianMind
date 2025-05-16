@@ -10,9 +10,10 @@ navigationBarTitleText: '经络心智',
   <view class="relative h-full">
     <!-- banner区域 -->
     <view class="absolute w-full h-480rpx">
-      <view class="color-white pt-[116rpx] pl-[68rpx] z-10">
-        <view><text class="text-[64rpx] font-700">你好</text></view>
-        <view class="mt-[36rpx]"><text class="text-[36rpx]">欢迎登录经络心智中医智能问诊系统</text></view>
+      <view class="color-white text-center pt-[80rpx] z-10">
+        <image src="/static/images/logo.png" class="logo-image mx-auto" />
+        <view><text class="text-[64rpx] font-700">经络心智</text></view>
+        <view class="mt-[16rpx]"><text class="text-[36rpx]">中医智能问诊系统</text></view>
       </view>
       <image
         class="absolute w-full top-0 -z-1"
@@ -20,6 +21,7 @@ navigationBarTitleText: '经络心智',
         src="/static/images/login-bg.png"
       />
     </view>
+
     <!-- 主要容器区域 -->
     <view
       class="top-[430rpx] h-[calc(100vh-430rpx-50rpx)] w-full rounded-t-2xl bg-white flex flex-col items-center absolute px-4 box-border"
@@ -73,10 +75,12 @@ const openPrivacyPolicy = () => {
 }
 
 onLoad(() => {
-  // 检查是否有缓存的记住我状态
-  const rememberMe = uni.getStorageSync('rememberMe')
-  if (rememberMe) {
-    agree.value = true
+  // 检查是否有缓存的登录态
+  const token = uni.getStorageSync('token')
+  if (token) {
+    uni.switchTab({
+      url: '/pages/work/index'
+    })
   }
 })
 </script>
@@ -92,5 +96,11 @@ onLoad(() => {
 
 .text-primary {
   color: var(--primary-color);
+}
+
+.logo-image {
+  width: 120rpx;
+  height: 120rpx;
+  margin-bottom: 20rpx;
 }
 </style>
