@@ -7,57 +7,41 @@ navigationBarTitleText: '经络心智',
 </route>
 
 <template>
-  <view class="relative h-full">
-    <!-- banner区域 -->
-    <view class="absolute w-full h-480rpx">
-      <view class="color-white text-center pt-[80rpx] z-10">
-        <image src="/static/images/logo.png" class="logo-image mx-auto" />
-        <view><text class="text-[64rpx] font-700">经络心智</text></view>
-        <view class="mt-[16rpx]"><text class="text-[36rpx]">中医智能问诊系统</text></view>
+  <view class="flex flex-col justify-between items-center min-h-screen bg-background relative px-6">
+    <!-- 中医图案背景 -->
+    <view class="absolute inset-0 z-0 opacity-5 bg-cover bg-center" style="background-image: url('https://img.freepik.com/free-vector/seamless-chinese-pattern_1159-6423.jpg');"></view>
+
+    <!-- Logo和标题 -->
+    <view class="w-full flex flex-col items-center mt-8 mb-4">
+      <view class="relative mb-2">
+        <view class="w-24 h-24 bg-white rounded-full flex justify-center items-center shadow">
+          <image src="/static/images/logo.png" class="w-16 h-16" />
+        </view>
       </view>
-      <image
-        class="absolute w-full top-0 -z-1"
-        mode="aspectFit"
-        src="/static/images/login-bg.png"
-      />
+      <view class="text-xl font-bold text-gray-800">经络心智</view>
+      <view class="text-gray-500 text-xs mt-1">中医智能问诊系统</view>
     </view>
 
-    <!-- 主要容器区域 -->
-    <view
-      class="top-[430rpx] h-[calc(100vh-430rpx-50rpx)] w-full rounded-t-2xl bg-white flex flex-col items-center absolute px-4 box-border"
-    >
-      <!-- tabs 切换 -->
-      <wd-tabs v-model="tab" custom-class="h-full">
-        <block :key="0">
-          <wd-tab title="手机号登录">
-            <PhoneLogin :agree="agree" />
-          </wd-tab>
-        </block>
-        <block :key="1">
-          <wd-tab title="密码登录">
-            <LoginForm :agree="agree" />
-          </wd-tab>
-        </block>
-      </wd-tabs>
+    <!-- 登录表单 -->
+    <view class="w-85% max-w-140 bg-white rounded-xl shadow p-6 mb-6">
+      <MobileLoginForm :agree="agree" />
+    </view>
 
-      <!-- 隐私与用户条款 -->
-      <view class="text-[14px] text-[#999] mt-4 h-50rpx flex justify-center">
-        <wd-checkbox v-model="agree" class="inline-block"></wd-checkbox>
-        <text>已阅读并同意</text>
-        <text class="text-primary" @click="openUserAgreement">《用户协议》</text>
-        <text>和</text>
-        <text class="text-primary" @click="openPrivacyPolicy">《隐私政策》</text>
-      </view>
+    <!-- 用户协议 -->
+    <view class="flex items-center justify-center mb-4">
+      <wd-checkbox v-model="agree" custom-class="mr-1"></wd-checkbox>
+      <text class="text-xs text-gray-500">登录即表示您同意</text>
+      <text class="text-xs text-primary mx-1" @click="openUserAgreement">《用户协议》</text>
+      <text class="text-xs text-gray-500">和</text>
+      <text class="text-xs text-primary mx-1" @click="openPrivacyPolicy">《隐私政策》</text>
     </view>
   </view>
 </template>
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import LoginForm from '@/pages/login/components/LoginForm.vue'
-import PhoneLogin from '@/pages/login/components/PhoneLogin.vue'
+import MobileLoginForm from './components/MobileLoginForm.vue'
 
-const tab = ref(0) // 默认选择手机号登录
 const agree = ref(false) // 是否同意协议
 
 // 打开用户协议
@@ -74,33 +58,24 @@ const openPrivacyPolicy = () => {
   })
 }
 
-onLoad(() => {
-  // 检查是否有缓存的登录态
-  const token = uni.getStorageSync('token')
-  if (token) {
-    uni.switchTab({
-      url: '/pages/work/index'
-    })
-  }
-})
+// onLoad(() => {
+//   // 检查是否有缓存的登录态
+//   const token = uni.getStorageSync('token')
+//   if (token) {
+//     uni.switchTab({
+//       url: '/pages/work/index'
+//     })
+//   }
+// })
 </script>
 
-<style lang="scss" scoped>
-:deep(.wd-tab) {
-  color: var(--primary-color);
-}
-
-:deep(.wd-tabs__line) {
-  background-color: var(--primary-color);
-}
-
+<style>
+/* 由于使用UnoCss，这里只需要定义极少量的自定义样式 */
 .text-primary {
   color: var(--primary-color);
 }
 
-.logo-image {
-  width: 120rpx;
-  height: 120rpx;
-  margin-bottom: 20rpx;
+.bg-background {
+  background-color: var(--background-color);
 }
 </style>

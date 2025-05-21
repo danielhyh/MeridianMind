@@ -1,100 +1,91 @@
 <template>
-  <view class="mt-4">
-    <wd-form ref="phoneForm" :model="phoneData.loginForm">
-      <view class="flex flex-col items-center gap-4">
-        <!-- 手机号输入框 -->
-        <view
-          :class="{
-            'border-4rpx border-primary p-8rpx': focusInput === 'mobile',
-          }"
-          class="rounded-xl p-10rpx border-2rpx border-primary border-solid"
-        >
-          <wd-input
-            v-model="phoneData.loginForm.mobile"
-            :no-border="true"
-            custom-class="w-620rpx"
-            placeholder="请输入手机号"
-            type="number"
-            :maxlength="11"
-            @focus="() => handleInputFocus('mobile')"
-          />
-        </view>
+  <view class="mobile-login-form">
+    <!-- 手机号输入框 -->
+    <view class="mb-3">
+      <text class="block text-xs font-medium text-gray-700 mb-1">手机号</text>
+      <view
+        class="border border-solid rounded-lg p-2"
+        :class="focusInput === 'mobile' ? 'border-primary shadow-input' : 'border-gray-300'"
+      >
+        <wd-input
+          v-model="phoneData.loginForm.mobile"
+          :no-border="true"
+          custom-class="w-full"
+          placeholder="请输入手机号"
+          type="number"
+          :maxlength="11"
+          @focus="() => handleInputFocus('mobile')"
+          @blur="() => handleInputBlur()"
+        />
+      </view>
+    </view>
 
-        <!-- 验证码输入框 -->
+    <!-- 验证码输入框 -->
+    <view class="mb-4">
+      <text class="block text-xs font-medium text-gray-700 mb-1">验证码</text>
+      <view class="flex">
         <view
-          :class="{
-            'border-4rpx border-primary p-8rpx': focusInput === 'code',
-          }"
-          class="rounded-xl p-10rpx border-2rpx border-primary border-solid flex justify-between"
+          class="flex-1 border border-solid rounded-lg p-2 mr-2"
+          :class="focusInput === 'code' ? 'border-primary shadow-input' : 'border-gray-300'"
         >
           <wd-input
             v-model="phoneData.loginForm.code"
             :no-border="true"
-            custom-class="w-380rpx"
             placeholder="请输入验证码"
             type="number"
             :maxlength="6"
             @focus="() => handleInputFocus('code')"
+            @blur="() => handleInputBlur()"
           />
-          <wd-button
-            size="small"
-            :loading="phoneData.codeSending"
-            :disabled="phoneData.codeSending || !isValidPhone"
-            @click="handleSendCode"
-          >
-            {{ phoneData.codeText }}
-          </wd-button>
         </view>
+        <button
+          class="px-3 py-1 rounded-lg text-xs bg-gray-100 text-gray-600 h-60rpx min-w-130rpx"
+          :class="{'opacity-50': phoneData.codeSending || !isValidPhone}"
+          :disabled="phoneData.codeSending || !isValidPhone"
+          @tap="handleSendCode"
+        >
+          {{ phoneData.codeText }}
+        </button>
       </view>
-    </wd-form>
-
-    <!-- 登录按钮 -->
-    <view class="w-620rpx mx-auto">
-      <wd-button
-        block
-        custom-class="mt-8"
-        type="primary"
-        @click="handlePhoneLogin"
-        :disabled="!canLogin"
-      >
-        <text>登录/注册</text>
-      </wd-button>
     </view>
 
+    <!-- 登录按钮 -->
+    <button
+      class="w-full py-2 rounded-lg font-medium h-72rpx border-none text-sm"
+      :class="canLogin ? 'bg-primary text-white' : 'bg-gray-300 text-white'"
+      :disabled="!canLogin"
+      @tap="handlePhoneLogin"
+    >
+      登录 / 注册
+    </button>
+
     <!-- 分隔线 -->
-    <view class="divider-container w-620rpx mx-auto flex items-center justify-center mt-8">
-      <view class="divider"></view>
-      <text class="mx-4 text-gray-400">或</text>
-      <view class="divider"></view>
+    <view class="flex items-center justify-center my-4">
+      <view class="flex-1 h-px bg-gray-200"></view>
+      <text class="mx-3 text-xs text-gray-400">或</text>
+      <view class="flex-1 h-px bg-gray-200"></view>
     </view>
 
     <!-- 微信一键登录按钮 -->
-    <view class="w-620rpx mx-auto mt-6">
-      <!-- 普通按钮 -->
-      <button
-        v-if="!isAuthBtnVisible"
-        class="wechat-btn"
-        @tap="checkAgreementBeforeAuth"
-      >
-        <view class="flex items-center justify-center">
-          <text class="iconfont icon-chat mr-2"></text>
-          <text>微信一键登录</text>
-        </view>
-      </button>
+    <button
+      v-if="!isAuthBtnVisible"
+      class="w-full flex items-center justify-center py-2 rounded-lg text-sm bg-green-500 text-white h-72rpx"
+      @tap="checkAgreementBeforeAuth"
+    >
+      <text class="iconfont icon-wechat mr-1"></text>
+      <text>微信一键登录</text>
+    </button>
 
-      <!-- 微信授权按钮（条件显示） -->
-      <button
-        v-if="isAuthBtnVisible"
-        class="wechat-btn"
-        open-type="getPhoneNumber"
-        @getphonenumber="onGetPhoneNumber"
-      >
-        <view class="flex items-center justify-center">
-          <text class="iconfont icon-chat mr-2"></text>
-          <text>微信一键登录</text>
-        </view>
-      </button>
-    </view>
+    <!-- 微信授权按钮（条件显示） -->
+    <button
+      v-if="isAuthBtnVisible"
+      class="w-full flex items-center justify-center py-2 rounded-lg text-sm bg-green-500 text-white h-72rpx"
+      open-type="getPhoneNumber"
+      @getphonenumber="onGetPhoneNumber"
+    >
+      <text class="iconfont icon-wechat mr-1"></text>
+      <text>微信一键登录</text>
+    </button>
 
     <!-- 提示组件 -->
     <wd-toast />
@@ -102,7 +93,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, computed } from 'vue'
+import { reactive, ref, computed, onUnmounted } from 'vue'
 import { useToast } from 'wot-design-uni'
 import { sendSmsCode, smsLogin, weixinMiniAppLogin } from '@/service/login/LoginAPI'
 import { useUserStore } from '@/store'
@@ -111,12 +102,20 @@ import * as authUtil from '@/utils/auth'
 /** 提示组件 */
 const toast = useToast()
 const userStore = useUserStore()
+
 // 控制授权按钮的显示
 const isAuthBtnVisible = ref(false)
+
 /** 输入框焦点状态 */
 const focusInput = ref('')
 const handleInputFocus = (type: string) => {
   focusInput.value = type
+}
+const handleInputBlur = () => {
+  // 延迟清除焦点，确保用户体验流畅
+  setTimeout(() => {
+    focusInput.value = ''
+  }, 100)
 }
 
 /** 组件属性 */
@@ -140,6 +139,7 @@ const phoneData = reactive({
   codeText: '获取验证码',
   timer: null as any
 })
+
 // 检查协议同意状态
 const checkAgreementBeforeAuth = () => {
   // 检查是否同意协议
@@ -151,6 +151,7 @@ const checkAgreementBeforeAuth = () => {
   // 协议已同意，显示微信授权按钮
   isAuthBtnVisible.value = true
 }
+
 /** 验证手机号格式 */
 const isValidPhone = computed(() => {
   const phoneReg = /^1[3-9]\d{9}$/
@@ -192,7 +193,7 @@ const handleSendCode = async () => {
 /** 开始倒计时 */
 const startCountdown = () => {
   phoneData.countdown = 60
-  phoneData.codeText = `${phoneData.countdown}秒后重新获取`
+  phoneData.codeText = `${phoneData.countdown}秒`
 
   if (phoneData.timer) {
     clearInterval(phoneData.timer)
@@ -200,7 +201,7 @@ const startCountdown = () => {
 
   phoneData.timer = setInterval(() => {
     phoneData.countdown--
-    phoneData.codeText = `${phoneData.countdown}秒后重新获取`
+    phoneData.codeText = `${phoneData.countdown}秒`
 
     if (phoneData.countdown <= 0) {
       clearInterval(phoneData.timer)
@@ -261,10 +262,8 @@ const handlePhoneLogin = async () => {
 
 /** 微信手机号授权回调 */
 const onGetPhoneNumber = async (e) => {
-  // 重置授权按钮状态
+  // 重置授权按钮状态，不论成功失败
   isAuthBtnVisible.value = false
-
-  console.log('获取手机号回调', e)
 
   // 用户拒绝授权
   if (e.detail.errMsg && e.detail.errMsg.includes('deny')) {
@@ -281,7 +280,7 @@ const onGetPhoneNumber = async (e) => {
   try {
     uni.showLoading({ title: '登录中...' })
 
-    // 新版API方式：先获取微信登录凭证（与手机号分开处理）
+    // 获取微信登录凭证
     const loginRes = await new Promise((resolve, reject) => {
       uni.login({
         success: (res) => resolve(res),
@@ -293,11 +292,14 @@ const onGetPhoneNumber = async (e) => {
       throw new Error('获取微信登录凭证失败')
     }
 
-    // 调用微信小程序登录接口，严格区分两个code的用途
+    // 生成随机state
+    const state = Math.random().toString(36).substring(2)
+
+    // 调用微信小程序登录接口
     const res = await weixinMiniAppLogin({
-      phoneCode: e.detail.code,    // 手机号授权的code
-      loginCode: loginRes.code,    // 登录凭证的code
-      state: Math.random().toString(36).substring(2)
+      phoneCode: e.detail.code,
+      loginCode: loginRes.code,
+      state: state
     })
 
     if (!res) {
@@ -332,23 +334,28 @@ onUnmounted(() => {
 })
 </script>
 
-<style lang="scss" scoped>
-.wechat-btn {
-  width: 100%;
-  height: 88rpx;
-  background-color: #07c160;
-  color: #ffffff;
-  border-radius: 8rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 32rpx;
-  border: none;
+<style>
+/* 保留极少量自定义样式 */
+.border-primary {
+  border-color: var(--primary-color);
 }
 
-.divider {
-  flex: 1;
-  height: 1px;
-  background-color: #ddd;
+.shadow-input {
+  box-shadow: 0 0 0 2px rgba(58, 125, 68, 0.2);
+}
+
+.bg-primary {
+  background-color: var(--primary-color);
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-wechat:before {
+  content: "\e6d5";
 }
 </style>
