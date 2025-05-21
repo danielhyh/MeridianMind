@@ -2,7 +2,8 @@ type UserVO = {
   id: number
   avatar: string
   nickname: string
-  deptId: number
+  gender: number
+  mobile: string
 }
 
 // USER 缓存

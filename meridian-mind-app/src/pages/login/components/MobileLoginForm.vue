@@ -27,6 +27,7 @@
         <view
           class="flex-1 border border-solid rounded-lg p-2 mr-2"
           :class="focusInput === 'code' ? 'border-primary shadow-input' : 'border-gray-300'"
+          style="width: 65%;"
         >
           <wd-input
             v-model="phoneData.loginForm.code"
@@ -38,21 +39,23 @@
             @blur="() => handleInputBlur()"
           />
         </view>
-        <button
-          class="px-3 py-1 rounded-lg text-xs bg-gray-100 text-gray-600 h-60rpx min-w-130rpx"
-          :class="{'opacity-50': phoneData.codeSending || !isValidPhone}"
-          :disabled="phoneData.codeSending || !isValidPhone"
-          @tap="handleSendCode"
-        >
-          {{ phoneData.codeText }}
-        </button>
+        <view style="width: 35%;">
+          <button
+            class="w-full px-3 py-1 rounded-lg text-xs bg-gray-300 text-gray-800 h-60rpx text-center"
+            :class="{'opacity-80': phoneData.codeSending || !isValidPhone}"
+            :disabled="phoneData.codeSending || !isValidPhone"
+            @tap="handleSendCode"
+          >
+            {{ phoneData.codeText }}
+          </button>
+        </view>
       </view>
     </view>
 
     <!-- 登录按钮 -->
     <button
       class="w-full py-2 rounded-lg font-medium h-72rpx border-none text-sm"
-      :class="canLogin ? 'bg-primary text-white' : 'bg-gray-300 text-white'"
+      :class="canLogin ? 'bg-primary text-white' : 'bg-gray-400 text-white'"
       :disabled="!canLogin"
       @tap="handlePhoneLogin"
     >
@@ -72,7 +75,7 @@
       class="w-full flex items-center justify-center py-2 rounded-lg text-sm bg-green-500 text-white h-72rpx"
       @tap="checkAgreementBeforeAuth"
     >
-      <text class="iconfont icon-wechat mr-1"></text>
+      <view class="i-carbon:logo-wechat text-white" />
       <text>微信一键登录</text>
     </button>
 
@@ -83,7 +86,7 @@
       open-type="getPhoneNumber"
       @getphonenumber="onGetPhoneNumber"
     >
-      <text class="iconfont icon-wechat mr-1"></text>
+      <view class="i-carbon:logo-wechat text-white" />
       <text>微信一键登录</text>
     </button>
 
@@ -292,14 +295,11 @@ const onGetPhoneNumber = async (e) => {
       throw new Error('获取微信登录凭证失败')
     }
 
-    // 生成随机state
-    const state = Math.random().toString(36).substring(2)
-
     // 调用微信小程序登录接口
     const res = await weixinMiniAppLogin({
       phoneCode: e.detail.code,
       loginCode: loginRes.code,
-      state: state
+      state: 'default'
     })
 
     if (!res) {
@@ -320,7 +320,6 @@ const onGetPhoneNumber = async (e) => {
     })
   } catch (error) {
     console.error('微信登录失败', error)
-    toast.error('登录失败，请尝试使用手机号登录')
   } finally {
     uni.hideLoading()
   }
@@ -335,7 +334,6 @@ onUnmounted(() => {
 </script>
 
 <style>
-/* 保留极少量自定义样式 */
 .border-primary {
   border-color: var(--primary-color);
 }

@@ -134,13 +134,13 @@ export const getEvnBaseUrl = () => {
     // 开发、体验、正式版 三种不同的小程序都可以配置不同的后端 url
     switch (envVersion) {
       case 'develop':
-        baseUrl = 'https://jingluo.fangliyun.com/app-api'
+        baseUrl = 'http://localhost:48080/app-api'
         break
       case 'trial':
-        baseUrl = 'https://jingluo.fangliyun.com/app-api'
+        baseUrl = 'http://localhost:48080/app-api'
         break
       case 'release':
-        baseUrl = 'https://jingluo.fangliyun.com/app-api'
+        baseUrl = 'http://localhost:48080/app-api'
         break
     }
   }

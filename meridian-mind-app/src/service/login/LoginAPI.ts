@@ -21,7 +21,7 @@ export const loginOut = () => {
  * 获取用户信息
  */
 export const getInfo = (): Promise<UserInfoVO> => {
-  return httpGet<UserInfoVO>('/system/auth/get-permission-info')
+  return httpGet<UserInfoVO>('/member/user/get')
 }
 
 /**

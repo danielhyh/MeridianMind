@@ -9,9 +9,10 @@ const initState = {
   isSetUser: false,
   user: {
     id: 0,
-    avatar: '',
-    nickname: '',
-    deptId: 0,
+    avatar: '', // 头像
+    nickname: '', // 昵称
+    gender: 0, // 性别
+    mobile: '', // 手机号
   },
 }
 

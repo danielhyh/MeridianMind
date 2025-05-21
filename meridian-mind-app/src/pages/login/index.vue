@@ -9,13 +9,13 @@ navigationBarTitleText: '经络心智',
 <template>
   <view class="flex flex-col justify-between items-center min-h-screen bg-background relative px-6">
     <!-- 中医图案背景 -->
-    <view class="absolute inset-0 z-0 opacity-5 bg-cover bg-center" style="background-image: url('https://img.freepik.com/free-vector/seamless-chinese-pattern_1159-6423.jpg');"></view>
+    <view class="absolute inset-0 z-0 opacity-5 bg-cover bg-center" style="background-image: url('http://cdn.fangliyun.com/seamless-chinese-pattern_1159-6423.avif');"></view>
 
     <!-- Logo和标题 -->
     <view class="w-full flex flex-col items-center mt-8 mb-4">
       <view class="relative mb-2">
-        <view class="w-24 h-24 bg-white rounded-full flex justify-center items-center shadow">
-          <image src="/static/images/logo.png" class="w-16 h-16" />
+        <view class="w-20 h-20 bg-white rounded-full flex justify-center items-center shadow">
+          <image src="/static/images/logo.png" class="w-18 h-18" />
         </view>
       </view>
       <view class="text-xl font-bold text-gray-800">经络心智</view>
@@ -23,7 +23,7 @@ navigationBarTitleText: '经络心智',
     </view>
 
     <!-- 登录表单 -->
-    <view class="w-85% max-w-140 bg-white rounded-xl shadow p-6 mb-6">
+    <view class="w-85% max-w-140 bg-white bg-opacity-90 rounded-xl shadow p-6 mb-6">
       <MobileLoginForm :agree="agree" />
     </view>
 

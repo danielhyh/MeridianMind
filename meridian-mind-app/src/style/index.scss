@@ -7,17 +7,7 @@
   padding-top: 4px;
   color: red;
 }
-
-:root {
-  --primary-color: #3A7D44;    // 中国传统绿色
-  --secondary-color: #9CC5A1;  // 淡雅绿色
-  --accent-color: #5D3A3A;     // 中医药材色
-  --background-color: #F9F5F0; // 米白色背景
-  --text-color: #333333;       // 文本色
-  --disabled-color: #C7C7CD;   // 禁用色
-  --placeholder-color: #9B9B9B; // 占位符颜色
-}
-page {
+:root, page {
   // 修改按主题色
   // --wot-color-theme: #37c2bc;
 
@@ -25,6 +15,13 @@ page {
   // --wot-button-primary-bg-color: green;
 
   //
+  --primary-color: #3A7D44;    // 中国传统绿色
+  --secondary-color: #9CC5A1;  // 淡雅绿色
+  --accent-color: #5D3A3A;     // 中医药材色
+  --background-color: #F9F5F0; // 米白色背景
+  --text-color: #333333;       // 文本色
+  --disabled-color: #C7C7CD;   // 禁用色
+  --placeholder-color: #9B9B9B; // 占位符颜色
   --wot-search-light-bg: #f2f3f7;
   --wot-search-input-radius: 5px;
 }
